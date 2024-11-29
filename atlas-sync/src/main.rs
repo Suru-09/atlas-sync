@@ -1,7 +1,12 @@
 mod ignore_list;
 mod item;
 mod uuid_wrapper;
+mod watcher;
 
-fn main() {
-    println!("Hello, world!");
+use std::path::Path;
+use watcher::watcher::watch_path;
+
+fn main() -> notify::Result<()> {
+    watch_path(Path::new("src/resources/test_watcher"))?;
+    Ok(())
 }
