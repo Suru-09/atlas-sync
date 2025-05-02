@@ -5,10 +5,22 @@ edition = "2021"
 
 [dependencies]
 clap = "4.5.21"
+futures = "0.3.31"
+libp2p = { version = "0.39", features = ["tcp-tokio", "mdns"] }
 notify = "7.0.0"
 regex = "1.11.1"
+<<<<<<< HEAD
 serde = { version = "1.0.219", features = ["derive"] }
 serde_derive = "1.0.219"
 serde_json = "1.0.140"
+=======
+serde = "1.0.219"
+tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
+>>>>>>> 614a0dc (Interesting example)
 uuid = { version = "1.11.0", features = ["v7"] }
 walkdir = "2.5.0"
+tokio = { version = "1.44.2", features = ["full"] }
+once_cell = "1.21.3"
+pretty_env_logger = "0.5.0"
+log = "0.4.27"
+serde_json = "1.0.140"
