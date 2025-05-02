@@ -22,6 +22,7 @@ use log::{error, info};
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
+use std::path::Path;
 use tokio::{fs, io::AsyncBufReadExt, sync::mpsc};
 
 use watcher::watcher::watch_path;
@@ -64,6 +65,7 @@ impl NetworkBehaviourEventProcess<FloodsubEvent> for MyFileBehavior {
     fn inject_event(&mut self, event: FloodsubEvent) {
         match event {
             FloodsubEvent::Message(msg) => {
+                let _ = watch_path(Path::new(WATCHED_FILE_PATH), &self.response_sender);
                 if let Ok(resp) = serde_json::from_slice::<FilesResponse>(&msg.data) {
                     if resp.receiver == PEER_ID.to_string() {
                         info!("Response from {}:", msg.source);
@@ -136,12 +138,9 @@ async fn main() {
     )
     .expect("swarm can be started");
 
-    let mut stdin = tokio::io::BufReader::new(tokio::io::stdin()).lines();
-
     loop {
         let evt = {
             tokio::select! {
-                _ = stdin.next_line() => Some(EventType::FileUploaded(MyFile { name: String::from("Hello") })),
                 event = swarm.next() => {
                     info!("Unhandled Swarm Event: {:?}", event);
                     None
@@ -152,10 +151,10 @@ async fn main() {
 
         if let Some(event) = evt {
             match event {
-                EventType::FileUploaded(resp) => {
+                EventType::FileUploaded(_) => {
                     info!("File uploaded!");
                 }
-                EventType::AllFiles(line) => {
+                EventType::AllFiles(_) => {
                     info!("All files command");
                 }
             }
