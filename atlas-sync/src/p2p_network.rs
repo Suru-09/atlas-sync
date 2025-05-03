@@ -7,9 +7,8 @@ pub mod p2p_network {
         swarm::NetworkBehaviourEventProcess,
         NetworkBehaviour, PeerId,
     };
-    use log::info;
+    use log::{error, info, trace};
     use once_cell::sync::Lazy;
-    use tokio::sync::mpsc;
 
     pub static KEYS: Lazy<identity::Keypair> = Lazy::new(|| identity::Keypair::generate_ed25519());
     pub static PEER_ID: Lazy<PeerId> = Lazy::new(|| PeerId::from(KEYS.public()));
@@ -19,20 +18,20 @@ pub mod p2p_network {
     pub struct AtlasSyncBehavior {
         pub floodsub: Floodsub,
         pub mdns: Mdns,
-        #[behaviour(ignore)]
-        pub response_sender: mpsc::UnboundedSender<FileEventType>,
     }
 
     impl NetworkBehaviourEventProcess<FloodsubEvent> for AtlasSyncBehavior {
         fn inject_event(&mut self, event: FloodsubEvent) {
             match event {
                 FloodsubEvent::Message(msg) => {
-                    if let Ok(resp) = serde_json::from_slice::<FileEventType>(&msg.data) {
-                        info!("Response from {}:", msg.source);
-                        info!("Response data: {:?}", resp);
+                    match serde_json::from_slice::<FileEventType>(&msg.data) {
+                        Ok(parsed) => info!("Got event: {:?}", parsed),
+                        Err(e) => error!("Failed to parse: {}", e),
                     }
                 }
-                _ => (),
+                _ => {
+                    trace!("subscription event: {:?}", event);
+                }
             }
         }
     }

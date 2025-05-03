@@ -53,7 +53,6 @@ async fn main() {
         mdns: Mdns::new(Default::default())
             .await
             .expect("can create mdns"),
-        response_sender: response_sender.clone(),
     };
 
     behaviour.floodsub.subscribe(TOPIC.clone());
@@ -78,8 +77,8 @@ async fn main() {
     loop {
         let evt = {
             tokio::select! {
-                event = swarm.next() => {
-                    info!("Unhandled Swarm Event: {:?}", event);
+                _ = swarm.next() => {
+                    //info!("Unhandled Swarm Event: {:?}", event);
                     None
                 },
                 response = response_rcv.recv() => Some(response.expect("Has some data")),
@@ -87,17 +86,27 @@ async fn main() {
         };
 
         if let Some(event) = evt {
-            match event {
+            let json_bytes = match event {
                 FileEventType::Created(create_op) => {
                     info!("File created: {:?}.", create_op);
+                    serde_json::to_vec(&FileEventType::Created(create_op))
+                        .expect("Should be serializable")
                 }
                 FileEventType::Updated(update_op) => {
                     info!("File updated : {:?}!", update_op);
+                    serde_json::to_vec(&FileEventType::Updated(update_op))
+                        .expect("Should be serializable")
                 }
                 FileEventType::Deleted(delete_op) => {
                     info!("File deleted: {:?}.", delete_op);
+                    serde_json::to_vec(&FileEventType::Deleted(delete_op))
+                        .expect("Should be serializable")
                 }
-            }
+            };
+            swarm
+                .behaviour_mut()
+                .floodsub
+                .publish(TOPIC.clone(), json_bytes);
         }
     }
 }
