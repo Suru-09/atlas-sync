@@ -1,8 +1,8 @@
 mod coordinator;
 mod crdt;
+mod file;
 mod ignore_list;
 mod index;
-mod item;
 mod p2p_network;
 mod uuid_wrapper;
 mod watcher;
@@ -22,6 +22,7 @@ use log::info;
 use std::path::Path;
 use tokio::sync::mpsc;
 
+use file::file::FileEventType;
 use p2p_network::p2p_network::*;
 use watcher::watcher::watch_path;
 
@@ -47,7 +48,7 @@ async fn main() {
         .multiplex(mplex::MplexConfig::new())
         .boxed();
 
-    let mut behaviour = MyFileBehavior {
+    let mut behaviour = AtlasSyncBehavior {
         floodsub: Floodsub::new(PEER_ID.clone()),
         mdns: Mdns::new(Default::default())
             .await
@@ -87,17 +88,14 @@ async fn main() {
 
         if let Some(event) = evt {
             match event {
-                FileEventType::Created(_) => {
-                    info!("File created!");
+                FileEventType::Created(create_op) => {
+                    info!("File created: {:?}.", create_op);
                 }
-                FileEventType::Updated(_) => {
-                    info!("File updated!");
+                FileEventType::Updated(update_op) => {
+                    info!("File updated : {:?}!", update_op);
                 }
-                FileEventType::Deleted(_) => {
-                    info!("File deleted!");
-                }
-                FileEventType::Moved(_) => {
-                    info!("File moved!");
+                FileEventType::Deleted(delete_op) => {
+                    info!("File deleted: {:?}.", delete_op);
                 }
             }
         }
