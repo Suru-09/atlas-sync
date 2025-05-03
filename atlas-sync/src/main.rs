@@ -16,7 +16,7 @@ use libp2p::{
     noise::{Keypair, NoiseConfig, X25519Spec},
     swarm::{NetworkBehaviourEventProcess, Swarm, SwarmBuilder},
     tcp::TokioTcpConfig,
-    NetworkBehaviour, PeerId, Transport,
+    Multiaddr, NetworkBehaviour, PeerId, Transport,
 };
 use log::{error, info};
 use once_cell::sync::Lazy;
@@ -25,6 +25,7 @@ use std::collections::HashSet;
 use std::path::Path;
 use tokio::{fs, io::AsyncBufReadExt, sync::mpsc};
 
+use item::item::ItemUpdate;
 use watcher::watcher::watch_path;
 
 const WATCHED_FILE_PATH: &str = "src/resources/test_watcher";
@@ -33,24 +34,14 @@ type Result<T> = std::result::Result<T, Box<dyn std::error::Error + Send + Sync 
 
 static KEYS: Lazy<identity::Keypair> = Lazy::new(|| identity::Keypair::generate_ed25519());
 static PEER_ID: Lazy<PeerId> = Lazy::new(|| PeerId::from(KEYS.public()));
-static TOPIC: Lazy<Topic> = Lazy::new(|| Topic::new("watcher"));
-
-type MyFiles = Vec<MyFile>;
+static TOPIC: Lazy<Topic> = Lazy::new(|| Topic::new("FILE_SHARING"));
 
 #[derive(Debug, Serialize, Deserialize)]
-struct MyFile {
-    name: String,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct FilesResponse {
-    data: MyFiles,
-    receiver: String,
-}
-
-enum EventType {
-    FileUploaded(MyFile),
-    AllFiles(FilesResponse),
+enum FileEventType {
+    Created(ItemUpdate),
+    Updated(ItemUpdate),
+    Deleted(ItemUpdate),
+    Moved(ItemUpdate),
 }
 
 #[derive(NetworkBehaviour)]
@@ -58,19 +49,16 @@ struct MyFileBehavior {
     floodsub: Floodsub,
     mdns: Mdns,
     #[behaviour(ignore)]
-    response_sender: mpsc::UnboundedSender<FilesResponse>,
+    response_sender: mpsc::UnboundedSender<FileEventType>,
 }
 
 impl NetworkBehaviourEventProcess<FloodsubEvent> for MyFileBehavior {
     fn inject_event(&mut self, event: FloodsubEvent) {
         match event {
             FloodsubEvent::Message(msg) => {
-                let _ = watch_path(Path::new(WATCHED_FILE_PATH), &self.response_sender);
-                if let Ok(resp) = serde_json::from_slice::<FilesResponse>(&msg.data) {
-                    if resp.receiver == PEER_ID.to_string() {
-                        info!("Response from {}:", msg.source);
-                        resp.data.iter().for_each(|r| info!("{:?}", r));
-                    }
+                if let Ok(resp) = serde_json::from_slice::<FileEventType>(&msg.data) {
+                    info!("Response from {}:", msg.source);
+                    info!("Response data: {:?}", resp);
                 }
             }
             _ => (),
@@ -99,9 +87,12 @@ impl NetworkBehaviourEventProcess<MdnsEvent> for MyFileBehavior {
 
 #[tokio::main]
 async fn main() {
+    if std::env::var("RUST_LOG").is_err() {
+        std::env::set_var("RUST_LOG", "info")
+    }
     pretty_env_logger::init();
 
-    error!("Peer Id: {}", PEER_ID.clone());
+    info!("Peer Id: {}", PEER_ID.clone());
     let (response_sender, mut response_rcv) = mpsc::unbounded_channel();
 
     let auth_keys = Keypair::<X25519Spec>::new()
@@ -119,7 +110,7 @@ async fn main() {
         mdns: Mdns::new(Default::default())
             .await
             .expect("can create mdns"),
-        response_sender,
+        response_sender: response_sender.clone(),
     };
 
     behaviour.floodsub.subscribe(TOPIC.clone());
@@ -138,6 +129,9 @@ async fn main() {
     )
     .expect("swarm can be started");
 
+    watch_path(Path::new(WATCHED_FILE_PATH), response_sender.clone())
+        .expect("Failed to start file watcher");
+
     loop {
         let evt = {
             tokio::select! {
@@ -145,17 +139,23 @@ async fn main() {
                     info!("Unhandled Swarm Event: {:?}", event);
                     None
                 },
-                response = response_rcv.recv() => Some(EventType::AllFiles(response.expect("response exists"))),
+                response = response_rcv.recv() => Some(response.expect("Has some data")),
             }
         };
 
         if let Some(event) = evt {
             match event {
-                EventType::FileUploaded(_) => {
-                    info!("File uploaded!");
+                FileEventType::Created(_) => {
+                    info!("File created!");
                 }
-                EventType::AllFiles(_) => {
-                    info!("All files command");
+                FileEventType::Updated(_) => {
+                    info!("File updated!");
+                }
+                FileEventType::Deleted(_) => {
+                    info!("File deleted!");
+                }
+                FileEventType::Moved(_) => {
+                    info!("File moved!");
                 }
             }
         }

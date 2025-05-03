@@ -1,20 +1,21 @@
 pub mod item {
+    use serde::{Deserialize, Serialize};
     use uuid::Uuid;
 
-    #[derive(Debug)]
+    #[derive(Debug, Serialize, Deserialize)]
     pub enum ItemType {
         File(FileType),
         Directory,
     }
 
-    #[derive(Debug)]
+    #[derive(Debug, Serialize, Deserialize)]
     pub enum FileType {
         Binary,
         Image,
         Text,
     }
 
-    #[derive(Debug)]
+    #[derive(Debug, Serialize, Deserialize)]
     pub enum ItemUpdateType {
         Created,
         Updated,
@@ -22,12 +23,13 @@ pub mod item {
         Moved,
     }
 
-    #[derive(Debug)]
+    #[derive(Debug, Serialize, Deserialize)]
     pub struct ItemUpdate {
         pub update_type: ItemUpdateType,
         pub update_time: String, // TODO: Add a real time here..
     }
 
+    #[derive(Debug)]
     pub struct Item {
         path: String,
         uid: Uuid,
