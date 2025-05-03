@@ -1,3 +1,4 @@
+mod args_parser;
 mod coordinator;
 mod crdt;
 mod file;
@@ -7,6 +8,7 @@ mod p2p_network;
 mod uuid_wrapper;
 mod watcher;
 
+use clap::Parser;
 use libp2p::{
     core::upgrade,
     floodsub::Floodsub,
@@ -22,11 +24,12 @@ use log::info;
 use std::path::Path;
 use tokio::sync::mpsc;
 
+use args_parser::args_parser::Args;
 use file::file::FileEventType;
 use p2p_network::p2p_network::*;
 use watcher::watcher::watch_path;
 
-const WATCHED_FILE_PATH: &str = "src/resources/test_watcher";
+static WATCHED_FILE_PATH: &str = "src/resources/test_watcher";
 
 #[tokio::main]
 async fn main() {
@@ -34,6 +37,13 @@ async fn main() {
         std::env::set_var("RUST_LOG", "info")
     }
     pretty_env_logger::init();
+
+    let args = Args::parse();
+
+    let watched_file_path = match args.watch_path.is_empty() {
+        true => WATCHED_FILE_PATH,
+        false => &args.watch_path,
+    };
 
     info!("Peer Id: {}", PEER_ID.clone());
     let (response_sender, mut response_rcv) = mpsc::unbounded_channel();
@@ -71,14 +81,14 @@ async fn main() {
     )
     .expect("swarm can be started");
 
-    watch_path(Path::new(WATCHED_FILE_PATH), response_sender.clone())
+    watch_path(Path::new(watched_file_path), response_sender.clone())
         .expect("Failed to start file watcher");
 
+    let mut first_time = true;
     loop {
         let evt = {
             tokio::select! {
                 _ = swarm.next() => {
-                    //info!("Unhandled Swarm Event: {:?}", event);
                     None
                 },
                 response = response_rcv.recv() => Some(response.expect("Has some data")),
@@ -103,6 +113,20 @@ async fn main() {
                         .expect("Should be serializable")
                 }
             };
+
+            // handle initial sync.
+            if !args.peer_id.is_empty() && first_time {
+                let json_bytes = serde_json::to_vec(&PeerConnectionEvent::InitialConnection(
+                    args.peer_id.clone(),
+                ))
+                .expect("Should be serializable");
+                swarm
+                    .behaviour_mut()
+                    .floodsub
+                    .publish(TOPIC.clone(), json_bytes);
+                first_time = false;
+            }
+
             swarm
                 .behaviour_mut()
                 .floodsub

@@ -1,1 +1,4 @@
-pub mod coordinator {}
+pub mod coordinator {
+
+    pub fn consolidate() {}
+}

@@ -7,7 +7,6 @@ pub mod watcher {
     use notify::{
         Event, EventKind, RecommendedWatcher, RecursiveMode, Result as NotifyResult, Watcher,
     };
-    use std::any::Any;
     use std::path::{Path, PathBuf};
     use std::sync::mpsc::channel;
     use std::thread;
