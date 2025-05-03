@@ -1,7 +1,11 @@
 pub mod watcher {
     use crate::item::item::{ItemUpdate, ItemUpdateType};
     use crate::FileEventType;
-    use notify::{Event, RecommendedWatcher, RecursiveMode, Result as NotifyResult, Watcher};
+    use log::{error, info};
+    use notify::event::AccessKind;
+    use notify::{
+        Event, EventKind, RecommendedWatcher, RecursiveMode, Result as NotifyResult, Watcher,
+    };
     use std::path::Path;
     use std::sync::mpsc::channel;
     use std::thread;
@@ -20,15 +24,27 @@ pub mod watcher {
 
             for res in rx {
                 match res {
-                    Ok(event) => {
-                        // You can inspect `event.kind` and send different FileEventType values.
-                        let _ = file_tx.send(FileEventType::Created(ItemUpdate {
-                            update_type: ItemUpdateType::Created,
-                            update_time: "now".to_string(),
-                        }));
-                        println!("event: {:?}", event.kind);
-                    }
-                    Err(e) => println!("watch error: {:?}", e),
+                    Ok(event) => match event.kind {
+                        EventKind::Access(_) => {
+                            // not really interesting in a file sharing app.
+                        }
+                        EventKind::Create(create_kind) => {
+                            info!("{:?}", create_kind);
+                        }
+                        EventKind::Modify(modify_kind) => {
+                            info!("{:?}", modify_kind);
+                        }
+                        EventKind::Remove(remove_kind) => {
+                            info!("{:?}", remove_kind);
+                        }
+                        EventKind::Other => {
+                            info!("Other Event type");
+                        }
+                        _ => {
+                            panic!("Unrecognized event!")
+                        }
+                    },
+                    Err(e) => error!("watch error: {:?}", e),
                 }
             }
         });
