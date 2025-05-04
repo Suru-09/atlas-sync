@@ -1,12 +1,10 @@
 pub mod file {
     use log::error;
     use serde::{Deserialize, Serialize};
-    use sha2::{Digest, Sha256, Sha512};
-    use std::collections::HashMap;
+    use sha2::{Digest, Sha256};
     use std::io::Write;
     use std::path::{Path, PathBuf};
     use std::{fs, io};
-    use walkdir::WalkDir;
 
     #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
     pub struct LogicalTimestamp(pub u64);
