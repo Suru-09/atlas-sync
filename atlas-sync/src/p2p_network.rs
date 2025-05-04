@@ -1,5 +1,5 @@
 pub mod p2p_network {
-    use crate::file::file::FileEventType;
+    use crate::file::file::{FileBlob, FileEventType};
     use libp2p::{
         floodsub::{Floodsub, FloodsubEvent, Topic},
         identity,
@@ -8,12 +8,14 @@ pub mod p2p_network {
         NetworkBehaviour, PeerId,
     };
     use log::{debug, error, info};
-    use once_cell::sync::Lazy;
+    use once_cell::sync::{Lazy, OnceCell};
     use serde::{Deserialize, Serialize};
+    use std::path::Path;
 
     pub static KEYS: Lazy<identity::Keypair> = Lazy::new(|| identity::Keypair::generate_ed25519());
     pub static PEER_ID: Lazy<PeerId> = Lazy::new(|| PeerId::from(KEYS.public()));
     pub static TOPIC: Lazy<Topic> = Lazy::new(|| Topic::new("FILE_SHARING"));
+    pub static WATCHED_PATH: OnceCell<String> = OnceCell::new();
 
     #[derive(NetworkBehaviour)]
     pub struct AtlasSyncBehavior {
@@ -23,7 +25,8 @@ pub mod p2p_network {
 
     #[derive(Debug, Serialize, Deserialize)]
     pub enum PeerConnectionEvent {
-        InitialConnection(String),
+        InitialConnection((String, String)),
+        SyncFile((String, FileBlob)),
     }
 
     impl NetworkBehaviourEventProcess<FloodsubEvent> for AtlasSyncBehavior {
@@ -35,7 +38,31 @@ pub mod p2p_network {
                     } else if let Ok(parsed) =
                         serde_json::from_slice::<PeerConnectionEvent>(&msg.data)
                     {
-                        info!("Yeah I am in!!!: {:?}", parsed);
+                        let base_path = Path::new(WATCHED_PATH.get().unwrap());
+                        match parsed {
+                            PeerConnectionEvent::InitialConnection((target_peer, source_peer)) => {
+                                info!("Target peer: {}, Source peer: {}", target_peer, source_peer);
+                                if PEER_ID.to_string() == target_peer {
+                                    // go through each file and do stuff.
+                                    let blob_files =
+                                        FileBlob::collect_files_to_be_synced(base_path).unwrap();
+                                    for file_blob in blob_files.iter() {
+                                        let json_bytes =
+                                            serde_json::to_vec(&PeerConnectionEvent::SyncFile((
+                                                source_peer.clone(),
+                                                file_blob.clone(),
+                                            )))
+                                            .expect("File Blob is serializable");
+                                        self.floodsub.publish(TOPIC.clone(), json_bytes);
+                                    }
+                                }
+                            }
+                            PeerConnectionEvent::SyncFile((target_peer, file_blob)) => {
+                                if PEER_ID.to_string() == target_peer {
+                                    let _ = file_blob.write_to_disk(&base_path);
+                                }
+                            }
+                        }
                     } else {
                         error!("Failed to parse!");
                     }

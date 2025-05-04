@@ -1,8 +1,9 @@
 pub mod file {
+    use log::error;
     use serde::{Deserialize, Serialize};
     use sha2::{Digest, Sha256, Sha512};
     use std::collections::HashMap;
-    use std::io::Read;
+    use std::io::Write;
     use std::path::{Path, PathBuf};
     use std::{fs, io};
     use walkdir::WalkDir;
@@ -51,7 +52,7 @@ pub mod file {
         Deleted(DeleteOp),
     }
 
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Serialize, Deserialize, Clone)]
     pub struct FileBlob {
         name: String,
         checksum: String,
@@ -84,68 +85,35 @@ pub mod file {
             }
             Ok(blobs)
         }
-    }
 
-    #[derive(Debug, Serialize, Deserialize)]
-    pub struct DirectoryTree {
-        pub name: String,
-        pub children: HashMap<String, DirectoryTree>,
-    }
+        pub fn write_to_disk(&self, base_path: &Path) -> io::Result<()> {
+            let full_path = base_path.join(&self.name);
 
-    impl DirectoryTree {
-        pub fn new(root: &Path) -> Self {
-            let root_name = root
-                .file_name()
-                .map(|s| s.to_string_lossy().into_owned())
-                .unwrap_or_else(|| "".into());
+            if let Some(parent) = full_path.parent() {
+                fs::create_dir_all(parent)?;
+            } else {
+                error!("Parent path: {:?} does not exist!", full_path.parent());
+            }
 
-            let mut root_dir = DirectoryTree {
-                name: root_name,
-                children: HashMap::new(),
+            let computed_checksum = {
+                let mut hasher = Sha256::new();
+                hasher.update(&self.content);
+                format!("{:x}", hasher.finalize())
             };
 
-            for entry in WalkDir::new(root)
-                .into_iter()
-                .filter_map(Result::ok)
-                .filter(|e| e.path().is_dir() && e.path() != root)
-            {
-                let relative_path = entry.path().strip_prefix(root).unwrap();
-                let components: Vec<String> = relative_path
-                    .components()
-                    .map(|c| c.as_os_str().to_string_lossy().into_owned())
-                    .collect();
-
-                root_dir.insert_path(&components);
+            if computed_checksum != self.checksum {
+                return Err(io::Error::new(
+                    io::ErrorKind::InvalidData,
+                    "Checksum mismatch",
+                ));
             }
 
-            root_dir
-        }
-
-        fn insert_path(&mut self, components: &[String]) {
-            if components.is_empty() {
-                return;
+            if self.content.len() as u64 != self.size {
+                return Err(io::Error::new(io::ErrorKind::InvalidData, "Size mismatch"));
             }
 
-            let head = &components[0];
-            let child = self
-                .children
-                .entry(head.clone())
-                .or_insert_with(|| DirectoryTree {
-                    name: head.clone(),
-                    children: HashMap::new(),
-                });
-
-            child.insert_path(&components[1..]);
-        }
-
-        pub fn write_to_disk(&self, base: &Path) -> std::io::Result<()> {
-            let current_path = base.join(&self.name);
-            std::fs::create_dir_all(&current_path)?;
-
-            for child in self.children.values() {
-                child.write_to_disk(&current_path)?;
-            }
-
+            let mut file = fs::File::create(&full_path)?;
+            file.write_all(&self.content)?;
             Ok(())
         }
     }

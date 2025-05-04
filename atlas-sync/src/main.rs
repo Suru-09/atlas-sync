@@ -8,7 +8,9 @@ mod p2p_network;
 mod uuid_wrapper;
 mod watcher;
 
+use args_parser::args_parser::Args;
 use clap::Parser;
+use file::file::FileEventType;
 use libp2p::{
     core::upgrade,
     floodsub::Floodsub,
@@ -21,15 +23,10 @@ use libp2p::{
     Transport,
 };
 use log::info;
+use p2p_network::p2p_network::*;
 use std::path::Path;
 use tokio::sync::mpsc;
-
-use args_parser::args_parser::Args;
-use file::file::FileEventType;
-use p2p_network::p2p_network::*;
 use watcher::watcher::watch_path;
-
-static WATCHED_FILE_PATH: &str = "src/resources/test_watcher";
 
 #[tokio::main]
 async fn main() {
@@ -40,10 +37,18 @@ async fn main() {
 
     let args = Args::parse();
 
-    let watched_file_path = match args.watch_path.is_empty() {
-        true => WATCHED_FILE_PATH,
-        false => &args.watch_path,
-    };
+    match args.watch_path.is_empty() {
+        true => {
+            WATCHED_PATH
+                .set(String::from("src/resources/test_watcher"))
+                .expect("WATCHED_PATH can only be set once");
+        }
+        false => {
+            WATCHED_PATH
+                .set(args.watch_path)
+                .expect("WATCHED_PATH can only be set once");
+        }
+    }
 
     info!("Peer Id: {}", PEER_ID.clone());
     let (response_sender, mut response_rcv) = mpsc::unbounded_channel();
@@ -81,8 +86,11 @@ async fn main() {
     )
     .expect("swarm can be started");
 
-    watch_path(Path::new(watched_file_path), response_sender.clone())
-        .expect("Failed to start file watcher");
+    watch_path(
+        Path::new(WATCHED_PATH.get().unwrap()),
+        response_sender.clone(),
+    )
+    .expect("Failed to start file watcher");
 
     let mut first_time = true;
     loop {
@@ -116,9 +124,10 @@ async fn main() {
 
             // handle initial sync.
             if !args.peer_id.is_empty() && first_time {
-                let json_bytes = serde_json::to_vec(&PeerConnectionEvent::InitialConnection(
+                let json_bytes = serde_json::to_vec(&PeerConnectionEvent::InitialConnection((
                     args.peer_id.clone(),
-                ))
+                    PEER_ID.to_string(),
+                )))
                 .expect("Should be serializable");
                 swarm
                     .behaviour_mut()
