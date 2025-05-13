@@ -1,26 +1,35 @@
 pub mod crdt {
-    use std::collections::{BTreeMap, HashMap, HashSet};
+    use std::collections::{BTreeMap, HashSet};
     use uuid::Uuid;
 
-    // Lamport timestamp structure
     #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
     pub struct LamportTimestamp {
         pub counter: u64,
         pub replica_id: Uuid,
     }
 
-    // Operation structure as defined by Kleppmann
+    impl LamportTimestamp {
+        pub fn increment(&mut self) {
+            self.counter += 1
+        }
+
+        pub fn swap(&mut self, other: &LamportTimestamp) {
+            self.counter = other.counter;
+        }
+    }
+
     #[derive(Debug, Clone)]
     pub struct Operation {
         pub id: LamportTimestamp,
         pub deps: HashSet<LamportTimestamp>,
-        pub cursor: Vec<String>, // Path to the node
+        pub cursor: Vec<String>,
         pub mutation: Mutation,
     }
 
     #[derive(Debug, Clone)]
     pub enum Mutation {
         Insert { key: String, value: JsonNode },
+        Edit { key: String, value: JsonNode },
         Delete { key: String },
     }
 
@@ -41,14 +50,13 @@ pub mod crdt {
             JsonNode::List(Vec::new())
         }
 
-        // Apply an operation to the CRDT
         pub fn apply(
             &mut self,
             op: &Operation,
             applied_ops: &mut HashSet<LamportTimestamp>,
         ) -> bool {
             if !op.deps.is_subset(applied_ops) {
-                return false; // dependencies not satisfied
+                return false;
             }
 
             let mut target = self;
@@ -74,13 +82,22 @@ pub mod crdt {
                     }
                     _ => return false,
                 },
+                Mutation::Edit { key, value } => match target {
+                    JsonNode::Map(map) => {
+                        if map.contains_key(key) && !matches!(map[key], JsonNode::Tombstone) {
+                            map.insert(key.clone(), value.clone());
+                        } else {
+                            return false;
+                        }
+                    }
+                    _ => return false,
+                },
             }
 
             applied_ops.insert(op.id.clone());
             true
         }
 
-        /// Compresses tombstones recursively
         pub fn compress(&mut self) {
             match self {
                 JsonNode::Map(map) => {
@@ -103,11 +120,12 @@ pub mod crdt {
     #[cfg(test)]
     mod tests {
         use super::*;
+        use crate::uuid_wrapper::uuid_wrapper::create_new_uuid;
         use uuid::{uuid, Uuid};
 
         #[test]
         fn json_crdt_operations_and_consistency() {
-            let replica_id = uuid!("67e55044-10b1-426f-9247-bb680e5fe0c8");
+            let replica_id = create_new_uuid();
             let mut applied_ops = HashSet::new();
             let mut root = JsonNode::new_map();
 
@@ -148,8 +166,9 @@ pub mod crdt {
                 },
                 deps: [op2.id.clone()].iter().cloned().collect(),
                 cursor: vec!["dir1".into()],
-                mutation: Mutation::Delete {
+                mutation: Mutation::Edit {
                     key: "file.txt".into(),
+                    value: JsonNode::File("updated content".into()),
                 },
             };
 
@@ -160,7 +179,10 @@ pub mod crdt {
             if let JsonNode::Map(map) = &root {
                 let dir1 = map.get("dir1").unwrap();
                 if let JsonNode::Map(dir_map) = dir1 {
-                    assert!(!dir_map.contains_key("file.txt"));
+                    assert_eq!(
+                        dir_map.get("file.txt"),
+                        Some(&JsonNode::File("updated content".into()))
+                    );
                 }
             }
         }
