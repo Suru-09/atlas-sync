@@ -10,6 +10,7 @@ pub mod watcher {
     use std::path::{Path, PathBuf};
     use std::sync::mpsc::channel;
     use std::thread;
+    use std::time::{SystemTime, UNIX_EPOCH};
     use tokio::sync::mpsc::UnboundedSender;
 
     pub fn watch_path(path: &Path, file_tx: UnboundedSender<FileEventType>) -> NotifyResult<()> {
@@ -63,7 +64,12 @@ pub mod watcher {
 
     fn extract_create_op(paths: &Vec<PathBuf>, create_kind: &CreateKind) -> Option<CreateOp> {
         assert!(paths.len() == 1); // why would I have multiple paths on a create operation?
+
         let path = paths.first().unwrap().clone();
+        let epoch_time = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("Time ??")
+            .as_secs();
 
         match create_kind {
             CreateKind::Any | CreateKind::Other => {
@@ -72,7 +78,7 @@ pub mod watcher {
             }
             CreateKind::File => {
                 let file_metadata = FileMetadata {
-                    logical_time: LogicalTimestamp(1),
+                    logical_time: LogicalTimestamp(epoch_time),
                     is_directory: false,
                 };
                 Some(CreateOp {
@@ -82,7 +88,7 @@ pub mod watcher {
             }
             CreateKind::Folder => {
                 let file_metadata = FileMetadata {
-                    logical_time: LogicalTimestamp(2),
+                    logical_time: LogicalTimestamp(epoch_time),
                     is_directory: true,
                 };
                 Some(CreateOp {
@@ -96,6 +102,10 @@ pub mod watcher {
     fn extract_remove_op(paths: &Vec<PathBuf>, remove_kind: &RemoveKind) -> Option<DeleteOp> {
         assert!(paths.len() == 1); // why would I have multiple paths on a create operation?
         let path = paths.first().unwrap().clone();
+        let epoch_time = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("Time ??")
+            .as_secs();
 
         match remove_kind {
             RemoveKind::Any | RemoveKind::Other => {
@@ -107,7 +117,7 @@ pub mod watcher {
             }
             RemoveKind::File => {
                 let file_metadata = FileMetadata {
-                    logical_time: LogicalTimestamp(1),
+                    logical_time: LogicalTimestamp(epoch_time),
                     is_directory: false,
                 };
                 Some(DeleteOp {
@@ -117,7 +127,7 @@ pub mod watcher {
             }
             RemoveKind::Folder => {
                 let file_metadata = FileMetadata {
-                    logical_time: LogicalTimestamp(2),
+                    logical_time: LogicalTimestamp(epoch_time),
                     is_directory: true,
                 };
                 Some(DeleteOp {
@@ -133,8 +143,13 @@ pub mod watcher {
             panic!("Should be some logical value...");
         }
 
+        let epoch_time = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .expect("Time ??")
+            .as_secs();
+
         let metadata = FileMetadata {
-            logical_time: LogicalTimestamp(0),
+            logical_time: LogicalTimestamp(epoch_time),
             is_directory: false,
         };
 

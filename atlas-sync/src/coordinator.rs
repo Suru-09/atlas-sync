@@ -10,7 +10,7 @@ pub mod coordinator {
         mdns::Mdns,
         mplex,
         noise::{Keypair, NoiseConfig, X25519Spec},
-        swarm::{Swarm, SwarmBuilder},
+        swarm::{self, Swarm, SwarmBuilder},
         tcp::TokioTcpConfig,
         Transport,
     };
@@ -81,11 +81,21 @@ pub mod coordinator {
                     _ = swarm.next() => {
                         None
                     },
-                    response = response_rcv.recv() => Some(response.expect("Has some data")),
+                    response = response_rcv.recv() => {
+                        handle_peer_connection(&mut first_time, &args.peer_id, &PEER_ID.to_string(), &mut swarm);
+                        Some(response.expect("Has some data"))
+                    },
                 }
             };
 
             if let Some(event) = evt {
+                handle_peer_connection(
+                    &mut first_time,
+                    &args.peer_id,
+                    &PEER_ID.to_string(),
+                    &mut swarm,
+                );
+
                 let json_bytes = match event {
                     FileEventType::Created(create_op) => {
                         info!("File created: {:?}.", create_op);
@@ -104,25 +114,34 @@ pub mod coordinator {
                     }
                 };
 
-                // handle initial sync.
-                if !args.peer_id.is_empty() && first_time {
-                    let json_bytes = serde_json::to_vec(&PeerConnectionEvent::InitialConnection((
-                        args.peer_id.clone(),
-                        PEER_ID.to_string(),
-                    )))
-                    .expect("Should be serializable");
-                    swarm
-                        .behaviour_mut()
-                        .floodsub
-                        .publish(TOPIC.clone(), json_bytes);
-                    first_time = false;
-                }
-
                 swarm
                     .behaviour_mut()
                     .floodsub
                     .publish(TOPIC.clone(), json_bytes);
             }
+        }
+    }
+
+    fn handle_peer_connection(
+        first_time: &mut bool,
+        peer_id: &str,
+        local_peer_id: &str,
+        swarm: &mut Swarm<AtlasSyncBehavior>,
+    ) {
+        if !peer_id.is_empty() && *first_time {
+            let json_bytes = serde_json::to_vec(&PeerConnectionEvent::InitialConnection((
+                peer_id.to_string(),
+                local_peer_id.to_string(),
+            )))
+            .expect("Should be serializable");
+
+            info!("Hahah happening rn!!");
+
+            swarm
+                .behaviour_mut()
+                .floodsub
+                .publish(TOPIC.clone(), json_bytes);
+            *first_time = false;
         }
     }
 }
