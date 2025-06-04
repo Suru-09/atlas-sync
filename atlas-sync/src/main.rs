@@ -1,9 +1,9 @@
 mod args_parser;
 mod coordinator;
 mod crdt;
-mod file;
+mod crdt_index;
+mod fswrapper;
 mod ignore_list;
-mod index;
 mod p2p_network;
 mod uuid_wrapper;
 mod watcher;

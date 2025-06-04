@@ -1,7 +1,8 @@
 pub mod watcher {
-    use crate::file::file::{
-        CreateOp, DeleteOp, FileChange, FileEventType, FileMetadata, LogicalTimestamp, UpdateOp,
-    };
+    use crate::crdt::crdt::Operation;
+    use crate::crdt_index::crdt_index::IndexCmd;
+    use crate::fswrapper::fswrapper::{FileMeta, LogicalTimestamp};
+    use crate::p2p_network::p2p_network::WATCHED_PATH;
     use log::{error, info};
     use notify::event::{CreateKind, DataChange, MetadataKind, ModifyKind, RemoveKind, RenameMode};
     use notify::{
@@ -9,11 +10,12 @@ pub mod watcher {
     };
     use std::path::{Path, PathBuf};
     use std::sync::mpsc::channel;
+    use tokio::sync::mpsc;
     use std::thread;
     use std::time::{SystemTime, UNIX_EPOCH};
     use tokio::sync::mpsc::UnboundedSender;
 
-    pub fn watch_path(path: &Path, file_tx: UnboundedSender<FileEventType>) -> NotifyResult<()> {
+    pub fn watch_path(path: &Path, file_tx: UnboundedSender<Operation>, index_tx: mpsc::Sender<IndexCmd>) -> NotifyResult<()> {
         let path = path.to_path_buf();
         thread::spawn(move || {
             let (tx, rx) = channel::<notify::Result<Event>>();
@@ -28,12 +30,12 @@ pub mod watcher {
                 match res {
                     Ok(event) => match event.kind {
                         EventKind::Access(_) => {
-                            // not really interesting in a file sharing app.
+                            // interesting only for initial connections, generally ignored.
                         }
                         EventKind::Create(create_kind) => {
-                            let create_op = extract_create_op(&event.paths, &create_kind);
+                            let create_op = extract_new_operation(&event.paths, &create_kind);
                             if let Some(c_op) = create_op {
-                                let _ = file_tx.send(FileEventType::Created(c_op));
+                                let _ = file_tx.send(Mutation::Created(c_op));
                             }
                         }
                         EventKind::Modify(modify_kind) => {
@@ -62,10 +64,24 @@ pub mod watcher {
         Ok(())
     }
 
-    fn extract_create_op(paths: &Vec<PathBuf>, create_kind: &CreateKind) -> Option<CreateOp> {
+    fn relative_intersection(full_path: &Path, sub_path: &Path) -> Option<PathBuf> {
+        let full_components: Vec<_> = full_path.components().collect();
+        let sub_components: Vec<_> = sub_path.components().collect();
+
+        full_components
+            .windows(sub_components.len())
+            .position(|window| window == sub_components.as_slice())
+            .map(|index| full_components[index..].iter().collect())
+    }
+
+    fn extract_new_operation(paths: &Vec<PathBuf>, create_kind: &CreateKind) -> Option<Operation> {
         assert!(paths.len() == 1); // why would I have multiple paths on a create operation?
 
-        let path = paths.first().unwrap().clone();
+        let path = relative_intersection(
+            &paths.first().unwrap().clone(),
+            &Path::new(WATCHED_PATH.get().unwrap()),
+        )
+        .unwrap();
         let epoch_time = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .expect("Time ??")
@@ -77,9 +93,8 @@ pub mod watcher {
                 None
             }
             CreateKind::File => {
-                let file_metadata = FileMetadata {
-                    logical_time: LogicalTimestamp(epoch_time),
-                    is_directory: false,
+                let file_metadata =  {
+                    name:
                 };
                 Some(CreateOp {
                     metadata: file_metadata,
@@ -101,7 +116,11 @@ pub mod watcher {
 
     fn extract_remove_op(paths: &Vec<PathBuf>, remove_kind: &RemoveKind) -> Option<DeleteOp> {
         assert!(paths.len() == 1); // why would I have multiple paths on a create operation?
-        let path = paths.first().unwrap().clone();
+        let path = relative_intersection(
+            &paths.first().unwrap().clone(),
+            &Path::new(WATCHED_PATH.get().unwrap()),
+        )
+        .unwrap();
         let epoch_time = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .expect("Time ??")
@@ -159,13 +178,21 @@ pub mod watcher {
         match modify_kind {
             ModifyKind::Any | ModifyKind::Other => {
                 assert!(paths.len() == 1);
-                path = paths.first().unwrap().clone();
+                path = relative_intersection(
+                    &paths.first().unwrap().clone(),
+                    &Path::new(WATCHED_PATH.get().unwrap()),
+                )
+                .unwrap();
                 error!("Why am I receiving Other/Any on update operation? update_kind: {:?} with path: {:?}", modify_kind, path);
                 None
             }
             ModifyKind::Data(data_change) => {
                 assert!(paths.len() == 1);
-                path = paths.first().unwrap().clone();
+                path = relative_intersection(
+                    &paths.first().unwrap().clone(),
+                    &Path::new(WATCHED_PATH.get().unwrap()),
+                )
+                .unwrap();
                 match data_change {
                     DataChange::Any | DataChange::Other => {
                         changes.push(FileChange::ContentHash(String::from(
@@ -187,7 +214,11 @@ pub mod watcher {
             }
             ModifyKind::Metadata(metadata_kind) => {
                 assert!(paths.len() == 1);
-                path = paths.first().unwrap().clone();
+                path = relative_intersection(
+                    &paths.first().unwrap().clone(),
+                    &Path::new(WATCHED_PATH.get().unwrap()),
+                )
+                .unwrap();
                 match metadata_kind {
                     MetadataKind::Ownership => {
                         changes.push(FileChange::Owner(String::from("HihihiHahaha")));
@@ -210,7 +241,11 @@ pub mod watcher {
                 info!("Name: {:?}", name);
                 path = match name {
                     RenameMode::Both => {
-                        let tmp_path = paths.get(1).unwrap().clone();
+                        let tmp_path = relative_intersection(
+                            &paths.get(1).unwrap().clone(),
+                            &Path::new(WATCHED_PATH.get().unwrap()),
+                        )
+                        .unwrap();
                         let name = tmp_path
                             .file_name()
                             .map(|os_str| os_str.to_string_lossy().to_string());
@@ -219,7 +254,11 @@ pub mod watcher {
                         }
                         tmp_path
                     }
-                    _ => paths.first().unwrap().clone(),
+                    _ => relative_intersection(
+                        &paths.first().unwrap().clone(),
+                        &Path::new(WATCHED_PATH.get().unwrap()),
+                    )
+                    .unwrap(),
                 };
                 Some(UpdateOp {
                     metadata,

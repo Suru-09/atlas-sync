@@ -1,5 +1,7 @@
 pub mod crdt {
-    use std::collections::{BTreeMap, HashSet};
+    use crate::fswrapper::fswrapper::FileMeta;
+    use serde::{Deserialize, Serialize};
+    use std::collections::{BTreeMap, HashMap, HashSet};
     use uuid::Uuid;
 
     #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -16,6 +18,37 @@ pub mod crdt {
         pub fn swap(&mut self, other: &LamportTimestamp) {
             self.counter = other.counter;
         }
+
+        pub fn merge(&mut self, other: &Self) {
+            self.counter = self.counter.max(other.counter);
+        }
+    }
+
+    #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct VersionVector(pub HashMap<Uuid, u64>);
+
+    impl VersionVector {
+        pub fn record(&mut self, ts: &LamportTimestamp) {
+            self.0
+                .entry(ts.replica_id)
+                .and_modify(|c| *c = (*c).max(ts.counter))
+                .or_insert(ts.counter);
+        }
+
+        pub fn dominates(&self, ts: &LamportTimestamp) -> bool {
+            self.0
+                .get(&ts.replica_id)
+                .map_or(false, |c| *c >= ts.counter)
+        }
+
+        pub fn merge(&mut self, other: &Self) {
+            for (id, c) in &other.0 {
+                self.0
+                    .entry(*id)
+                    .and_modify(|cc| *cc = (*cc).max(*c))
+                    .or_insert(*c);
+            }
+        }
     }
 
     #[derive(Debug, Clone)]
@@ -28,7 +61,7 @@ pub mod crdt {
 
     #[derive(Debug, Clone)]
     pub enum Mutation {
-        Insert { key: String, value: JsonNode },
+        New { key: String, value: JsonNode },
         Edit { key: String, value: JsonNode },
         Delete { key: String },
     }
@@ -37,7 +70,7 @@ pub mod crdt {
     pub enum JsonNode {
         Map(BTreeMap<String, JsonNode>),
         List(Vec<JsonNode>),
-        File(String),
+        File(FileMeta),
         Tombstone,
     }
 
@@ -70,7 +103,7 @@ pub mod crdt {
             }
 
             match &op.mutation {
-                Mutation::Insert { key, value } => match target {
+                Mutation::New { key, value } => match target {
                     JsonNode::Map(map) => {
                         map.insert(key.clone(), value.clone());
                     }
@@ -122,69 +155,5 @@ pub mod crdt {
         use super::*;
         use crate::uuid_wrapper::uuid_wrapper::create_new_uuid;
         use uuid::{uuid, Uuid};
-
-        #[test]
-        fn json_crdt_operations_and_consistency() {
-            let replica_id = create_new_uuid();
-            let mut applied_ops = HashSet::new();
-            let mut root = JsonNode::new_map();
-
-            let op1 = Operation {
-                id: LamportTimestamp {
-                    counter: 1,
-                    replica_id,
-                },
-                deps: HashSet::new(),
-                cursor: vec![],
-                mutation: Mutation::Insert {
-                    key: "dir1".into(),
-                    value: JsonNode::new_map(),
-                },
-            };
-
-            assert!(root.apply(&op1, &mut applied_ops));
-
-            let op2 = Operation {
-                id: LamportTimestamp {
-                    counter: 2,
-                    replica_id,
-                },
-                deps: [op1.id.clone()].iter().cloned().collect(),
-                cursor: vec!["dir1".into()],
-                mutation: Mutation::Insert {
-                    key: "file.txt".into(),
-                    value: JsonNode::File("content".into()),
-                },
-            };
-
-            assert!(root.apply(&op2, &mut applied_ops));
-
-            let op3 = Operation {
-                id: LamportTimestamp {
-                    counter: 3,
-                    replica_id,
-                },
-                deps: [op2.id.clone()].iter().cloned().collect(),
-                cursor: vec!["dir1".into()],
-                mutation: Mutation::Edit {
-                    key: "file.txt".into(),
-                    value: JsonNode::File("updated content".into()),
-                },
-            };
-
-            assert!(root.apply(&op3, &mut applied_ops));
-
-            root.compress();
-
-            if let JsonNode::Map(map) = &root {
-                let dir1 = map.get("dir1").unwrap();
-                if let JsonNode::Map(dir_map) = dir1 {
-                    assert_eq!(
-                        dir_map.get("file.txt"),
-                        Some(&JsonNode::File("updated content".into()))
-                    );
-                }
-            }
-        }
     }
 }

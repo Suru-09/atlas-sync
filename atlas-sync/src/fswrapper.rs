@@ -1,53 +1,26 @@
-pub mod file {
+pub mod fswrapper {
     use log::error;
     use serde::{Deserialize, Serialize};
     use sha2::{Digest, Sha256};
     use std::io::Write;
-    use std::path::{Path, PathBuf};
+    use std::path::Path;
     use std::{fs, io};
 
     #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
     pub struct LogicalTimestamp(pub u64);
 
-    #[derive(Debug, Clone, Serialize, Deserialize)]
-    pub struct FileMetadata {
-        pub logical_time: LogicalTimestamp,
+    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+    pub struct FileMeta {
+        pub name: String,
+        pub path: String,
         pub is_directory: bool,
-    }
-
-    #[derive(Debug, Clone, Serialize, Deserialize)]
-    pub struct CreateOp {
-        pub metadata: FileMetadata,
-        pub path: PathBuf,
-    }
-
-    #[derive(Debug, Clone, Serialize, Deserialize)]
-    pub struct UpdateOp {
-        pub metadata: FileMetadata,
-        pub path: PathBuf,
-        pub changes: Vec<FileChange>,
-    }
-
-    #[derive(Debug, Clone, Serialize, Deserialize)]
-    pub struct DeleteOp {
-        pub metadata: FileMetadata,
-        pub path: PathBuf,
-    }
-
-    #[derive(Debug, Clone, Serialize, Deserialize)]
-    pub enum FileChange {
-        ContentHash(String),
-        Permissions(u32),
-        TimestampModified(u64),
-        Owner(String),
-        Renamed(String),
-    }
-
-    #[derive(Debug, Clone, Serialize, Deserialize)]
-    pub enum FileEventType {
-        Created(CreateOp),
-        Updated(UpdateOp),
-        Deleted(DeleteOp),
+        pub accessed: Option<u64>,
+        pub modified: Option<u64>,
+        pub created: Option<u64>,
+        pub permissions: Option<u32>,
+        pub size: Option<u64>,
+        pub owner: Option<String>,
+        pub content_hash: Option<String>,
     }
 
     #[derive(Debug, Serialize, Deserialize, Clone)]

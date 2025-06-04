@@ -1,7 +1,9 @@
 pub mod coordinator {
     use crate::args_parser::args_parser::Args;
-    use crate::file::file::FileEventType;
+    use crate::crdt::crdt::Mutation;
+    use crate::crdt_index::crdt_index::{CRDTIndex, IndexCmd};
     use crate::p2p_network::p2p_network::*;
+    use crate::uuid_wrapper::uuid_wrapper::create_new_uuid;
     use crate::watcher::watcher::watch_path;
     use libp2p::{
         core::upgrade,
@@ -68,9 +70,12 @@ pub mod coordinator {
         )
         .expect("swarm can be started");
 
+        let index_tx = build_index();
+
         watch_path(
             Path::new(WATCHED_PATH.get().unwrap()),
             response_sender.clone(),
+            index_tx,
         )
         .expect("Failed to start file watcher");
 
@@ -96,8 +101,8 @@ pub mod coordinator {
                     &mut swarm,
                 );
 
-                let json_bytes = match event {
-                    FileEventType::Created(create_op) => {
+                let json_bytes = match event.mutation {
+                    Mutation::New(_, _) => {
                         info!("File created: {:?}.", create_op);
                         serde_json::to_vec(&FileEventType::Created(create_op))
                             .expect("Should be serializable")
@@ -111,6 +116,9 @@ pub mod coordinator {
                         info!("File deleted: {:?}.", delete_op);
                         serde_json::to_vec(&FileEventType::Deleted(delete_op))
                             .expect("Should be serializable")
+                    }
+                    FileEventType::Acces => {
+                        serde_json::to_vec(&FileEventType::Acces).expect("Should be serializable")
                     }
                 };
 
@@ -143,5 +151,26 @@ pub mod coordinator {
                 .publish(TOPIC.clone(), json_bytes);
             *first_time = false;
         }
+    }
+
+    pub fn build_index() -> mpsc::Sender<IndexCmd> {
+        let index_uuid = create_new_uuid();
+        let index = CRDTIndex::new(index_uuid);
+
+        let (tx, mut rx) = mpsc::channel::<IndexCmd>(1024);
+        tokio::spawn(async move {
+            let mut index = index;
+            while let Some(cmd) = rx.recv().await {
+                match cmd {
+                    IndexCmd::LocalOp(op) => {
+                        index.record_apply(op);
+                    }
+                    IndexCmd::RemoteOp(op) => {
+                        index.apply_remote(&op);
+                    }
+                }
+            }
+        });
+        tx
     }
 }

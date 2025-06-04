@@ -1,5 +1,5 @@
 pub mod p2p_network {
-    use crate::file::file::{FileBlob, FileEventType};
+    use crate::fswrapper::fswrapper::{FileBlob, FileEventType};
     use libp2p::{
         floodsub::{Floodsub, FloodsubEvent, Topic},
         identity,
@@ -34,7 +34,14 @@ pub mod p2p_network {
             match event {
                 FloodsubEvent::Message(msg) => {
                     if let Ok(parsed) = serde_json::from_slice::<FileEventType>(&msg.data) {
-                        info!("Got event: {:?}", parsed)
+                        match parsed {
+                            FileEventType::Created(_)
+                            | FileEventType::Deleted(_)
+                            | FileEventType::Updated(_) => {
+                                info!("Got event: {:?}", parsed)
+                            }
+                            FileEventType::Acces => {}
+                        }
                     } else if let Ok(parsed) =
                         serde_json::from_slice::<PeerConnectionEvent>(&msg.data)
                     {
