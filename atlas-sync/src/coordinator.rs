@@ -162,11 +162,13 @@ pub mod coordinator {
             let mut index = index;
             while let Some(cmd) = rx.recv().await {
                 match cmd {
-                    IndexCmd::LocalOp(op) => {
+                    IndexCmd::LocalOp { mutation, cur } => {
+                        let op = index.make_op(cur, mutation);
                         index.record_apply(op);
                     }
-                    IndexCmd::RemoteOp(op) => {
-                        index.apply_remote(&op);
+                    IndexCmd::RemoteOp { mutation, cur } => {
+                        let op = index.make_op(cur, mutation);
+                        index.record_apply(op);
                     }
                 }
             }

@@ -1,5 +1,5 @@
 pub mod watcher {
-    use crate::crdt::crdt::Operation;
+    use crate::crdt::crdt::{JsonNode, Mutation};
     use crate::crdt_index::crdt_index::IndexCmd;
     use crate::fswrapper::fswrapper::{FileMeta, LogicalTimestamp};
     use crate::p2p_network::p2p_network::WATCHED_PATH;
@@ -8,14 +8,18 @@ pub mod watcher {
     use notify::{
         Event, EventKind, RecommendedWatcher, RecursiveMode, Result as NotifyResult, Watcher,
     };
-    use std::path::{Path, PathBuf};
+    use std::path::{Component, Path, PathBuf};
     use std::sync::mpsc::channel;
-    use tokio::sync::mpsc;
     use std::thread;
     use std::time::{SystemTime, UNIX_EPOCH};
+    use tokio::sync::mpsc;
     use tokio::sync::mpsc::UnboundedSender;
 
-    pub fn watch_path(path: &Path, file_tx: UnboundedSender<Operation>, index_tx: mpsc::Sender<IndexCmd>) -> NotifyResult<()> {
+    pub fn watch_path(
+        path: &Path,
+        file_tx: UnboundedSender<Mutation>,
+        index_tx: mpsc::Sender<IndexCmd>,
+    ) -> NotifyResult<()> {
         let path = path.to_path_buf();
         thread::spawn(move || {
             let (tx, rx) = channel::<notify::Result<Event>>();
@@ -33,13 +37,12 @@ pub mod watcher {
                             // interesting only for initial connections, generally ignored.
                         }
                         EventKind::Create(create_kind) => {
-                            let create_op = extract_new_operation(&event.paths, &create_kind);
-                            if let Some(c_op) = create_op {
-                                let _ = file_tx.send(Mutation::Created(c_op));
+                            if let Some(new_cmd) = extract_new_cmd(&event.paths, &create_kind) {
+                                let _ = index_tx.send(new_cmd);
                             }
                         }
                         EventKind::Modify(modify_kind) => {
-                            let updated_op = extract_update_op(&event.paths, &modify_kind);
+                            let updated_op = extract_update_cmd(&event.paths, &modify_kind);
                             if let Some(u_op) = updated_op {
                                 if u_op.changes.len() > 0 {
                                     let _ = file_tx.send(FileEventType::Updated(u_op));
@@ -74,7 +77,29 @@ pub mod watcher {
             .map(|index| full_components[index..].iter().collect())
     }
 
-    fn extract_new_operation(paths: &Vec<PathBuf>, create_kind: &CreateKind) -> Option<Operation> {
+    pub fn path_to_vec(path: &Path) -> Vec<String> {
+        path.components()
+            .filter_map(|c| match c {
+                Component::RootDir => None,
+                Component::Prefix(p) => Some(p.as_os_str().to_string_lossy().into_owned()),
+                Component::Normal(s) => Some(s.to_string_lossy().into_owned()),
+                Component::CurDir | Component::ParentDir => None,
+            })
+            .collect()
+    }
+
+    pub fn last_name(path: &Path) -> Option<String> {
+        if let Some(os) = path.file_name() {
+            return Some(os.to_string_lossy().into_owned());
+        }
+
+        path.components().rev().find_map(|c| match c {
+            Component::Normal(os) => Some(os.to_string_lossy().into_owned()),
+            _ => None,
+        })
+    }
+
+    fn extract_new_cmd(paths: &Vec<PathBuf>, create_kind: &CreateKind) -> Option<IndexCmd> {
         assert!(paths.len() == 1); // why would I have multiple paths on a create operation?
 
         let path = relative_intersection(
@@ -82,10 +107,6 @@ pub mod watcher {
             &Path::new(WATCHED_PATH.get().unwrap()),
         )
         .unwrap();
-        let epoch_time = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .expect("Time ??")
-            .as_secs();
 
         match create_kind {
             CreateKind::Any | CreateKind::Other => {
@@ -93,28 +114,51 @@ pub mod watcher {
                 None
             }
             CreateKind::File => {
-                let file_metadata =  {
-                    name:
+                let file_metadata = FileMeta {
+                    name: path.to_str().unwrap().to_string(),
+                    path: path.to_str().unwrap().to_string(),
+                    is_directory: false,
+                    accessed: None,
+                    modified: None,
+                    created: None,
+                    permissions: None,
+                    size: None,
+                    content_hash: None,
+                    owner: None,
                 };
-                Some(CreateOp {
-                    metadata: file_metadata,
-                    path,
+                Some(IndexCmd::LocalOp {
+                    cur: path_to_vec(&path),
+                    mutation: Mutation::New {
+                        key: last_name(&path).unwrap(),
+                        value: JsonNode::File(file_metadata),
+                    },
                 })
             }
             CreateKind::Folder => {
-                let file_metadata = FileMetadata {
-                    logical_time: LogicalTimestamp(epoch_time),
+                let file_metadata = FileMeta {
+                    name: path.to_str().unwrap().to_string(),
+                    path: path.to_str().unwrap().to_string(),
                     is_directory: true,
+                    accessed: None,
+                    modified: None,
+                    created: None,
+                    permissions: None,
+                    size: None,
+                    content_hash: None,
+                    owner: None,
                 };
-                Some(CreateOp {
-                    metadata: file_metadata,
-                    path,
+                Some(IndexCmd::LocalOp {
+                    cur: path_to_vec(&path),
+                    mutation: Mutation::New {
+                        key: last_name(&path).unwrap(),
+                        value: JsonNode::File(file_metadata),
+                    },
                 })
             }
         }
     }
 
-    fn extract_remove_op(paths: &Vec<PathBuf>, remove_kind: &RemoveKind) -> Option<DeleteOp> {
+    fn extract_remove_op(paths: &Vec<PathBuf>, remove_kind: &RemoveKind) -> Option<IndexCmd> {
         assert!(paths.len() == 1); // why would I have multiple paths on a create operation?
         let path = relative_intersection(
             &paths.first().unwrap().clone(),
@@ -157,23 +201,13 @@ pub mod watcher {
         }
     }
 
-    fn extract_update_op(paths: &Vec<PathBuf>, modify_kind: &ModifyKind) -> Option<UpdateOp> {
+    fn extract_update_cmd(paths: &Vec<PathBuf>, modify_kind: &ModifyKind) -> Option<IndexCmd> {
         if paths.len() >= 3 || paths.len() < 1 {
             panic!("Should be some logical value...");
         }
 
-        let epoch_time = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .expect("Time ??")
-            .as_secs();
-
-        let metadata = FileMetadata {
-            logical_time: LogicalTimestamp(epoch_time),
-            is_directory: false,
-        };
-
+        let mut file_metadata: FileMeta { name: String::from("placeholder"), };
         let path;
-        let mut changes = vec![];
 
         match modify_kind {
             ModifyKind::Any | ModifyKind::Other => {
@@ -193,23 +227,27 @@ pub mod watcher {
                     &Path::new(WATCHED_PATH.get().unwrap()),
                 )
                 .unwrap();
+
+                file_metadata.name = last_name(&path).unwrap();
+                file_metadata.path = path.to_str().unwrap().to_string();
+
                 match data_change {
                     DataChange::Any | DataChange::Other => {
-                        changes.push(FileChange::ContentHash(String::from(
-                            "any_other_data_change",
-                        )));
+                        file_metadata.content_hash = Some(String::from("Data change"));
                     }
                     DataChange::Size => {
-                        changes.push(FileChange::ContentHash(String::from("size_data_change")));
+                        file_metadata.size = Some(156);
                     }
                     DataChange::Content => {
-                        changes.push(FileChange::ContentHash(String::from("content_data_change")));
+                        file_metadata.content_hash = Some(String::from("Content change"));
                     }
                 }
-                Some(UpdateOp {
-                    metadata,
-                    path,
-                    changes,
+                Some(IndexCmd::LocalOp {
+                    cur: path_to_vec(&path),
+                    mutation: Mutation::Edit {
+                        key: last_name(&path).unwrap(),
+                        value: JsonNode::File(file_metadata),
+                    },
                 })
             }
             ModifyKind::Metadata(metadata_kind) => {
@@ -221,20 +259,27 @@ pub mod watcher {
                 .unwrap();
                 match metadata_kind {
                     MetadataKind::Ownership => {
-                        changes.push(FileChange::Owner(String::from("HihihiHahaha")));
+                        file_metadata.owner = Some(String::from("Suru"));
                     }
                     MetadataKind::Permissions => {
-                        changes.push(FileChange::Permissions(644));
+                        file_metadata.permissions = Some(777);
                     }
                     MetadataKind::WriteTime => {
-                        changes.push(FileChange::TimestampModified(21321321));
+                        file_metadata.modified = Some(
+                            SystemTime::now()
+                                .duration_since(UNIX_EPOCH)
+                                .unwrap()
+                                .as_secs(),
+                        )
                     }
                     _ => {}
                 }
-                Some(UpdateOp {
-                    metadata,
-                    path,
-                    changes,
+                Some(IndexCmd::LocalOp {
+                    cur: path_to_vec(&path),
+                    mutation: Mutation::Edit {
+                        key: file_metadata.name,
+                        value: JsonNode::File(file_metadata),
+                    },
                 })
             }
             ModifyKind::Name(name) => {
@@ -250,7 +295,7 @@ pub mod watcher {
                             .file_name()
                             .map(|os_str| os_str.to_string_lossy().to_string());
                         if let Some(name) = name {
-                            changes.push(FileChange::Renamed(String::from(name)));
+                            file_metadata.name = name;
                         }
                         tmp_path
                     }
@@ -260,10 +305,12 @@ pub mod watcher {
                     )
                     .unwrap(),
                 };
-                Some(UpdateOp {
-                    metadata,
-                    path,
-                    changes,
+                Some(IndexCmd::LocalOp {
+                    cur: path_to_vec(&path),
+                    mutation: Mutation::Edit {
+                        key: file_metadata.name,
+                        value: JsonNode::File(file_metadata),
+                    },
                 })
             }
         }

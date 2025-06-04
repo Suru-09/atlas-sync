@@ -118,16 +118,13 @@ pub mod crdt_index {
             self.op_log.retain(|op| !retain_after.dominates(&op.id));
         }
 
-        pub fn make_op(&mut self, mutation: Mutation) -> Operation {
-            let id =
-
+        pub fn make_op(&mut self, cursor: Vec<String>, mutation: Mutation) -> Operation {
             let op = Operation {
                 id: self.next_ts(),
+                cursor: cursor,
                 deps: self.current_deps(),
                 mutation,
             };
-
-            self.record_apply(op.clone());
 
             op
         }
@@ -135,7 +132,13 @@ pub mod crdt_index {
 
     #[derive(Debug)]
     pub enum IndexCmd {
-        LocalOp(Mutation),
-        RemoteOp(Mutation),
+        LocalOp {
+            mutation: Mutation,
+            cur: Vec<String>,
+        },
+        RemoteOp {
+            mutation: Mutation,
+            cur: Vec<String>,
+        },
     }
 }
