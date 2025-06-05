@@ -3,7 +3,9 @@ pub mod fswrapper {
     use serde::{Deserialize, Serialize};
     use sha2::{Digest, Sha256};
     use std::io::Write;
+    use std::os::unix::fs::{MetadataExt, PermissionsExt};
     use std::path::Path;
+    use std::time::UNIX_EPOCH;
     use std::{fs, io};
 
     #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
@@ -86,6 +88,87 @@ pub mod fswrapper {
             let mut file = fs::File::create(&full_path)?;
             file.write_all(&self.content)?;
             Ok(())
+        }
+
+        pub fn from_path(path: &Path) -> std::io::Result<Self> {
+            let name = path.to_string_lossy().into_owned();
+            let content = fs::read(&path)?;
+            let mut hasher = Sha256::new();
+            hasher.update(&content);
+            let checksum = format!("{:x}", hasher.finalize());
+            let size = fs::metadata(&path)?.len();
+            Ok(FileBlob {
+                name,
+                checksum,
+                size,
+                content,
+            })
+        }
+    }
+
+    impl FileMeta {
+        pub fn from_path(path: &Path) -> std::io::Result<Self> {
+            if !path.exists() {
+                return Err(std::io::Error::new(
+                    std::io::ErrorKind::NotFound,
+                    "Path not found",
+                ));
+            }
+
+            let name = path.to_string_lossy().into_owned();
+            let metadata = fs::metadata(&path)?;
+            let last_accesed = if let Ok(access_time) = metadata.accessed() {
+                Some(access_time.duration_since(UNIX_EPOCH).unwrap().as_secs())
+            } else {
+                None
+            };
+
+            let last_modified = if let Ok(edit_time) = metadata.modified() {
+                Some(edit_time.duration_since(UNIX_EPOCH).unwrap().as_secs())
+            } else {
+                None
+            };
+
+            let created = if let Ok(create_time) = metadata.created() {
+                Some(create_time.duration_since(UNIX_EPOCH).unwrap().as_secs())
+            } else {
+                None
+            };
+
+            if path.is_dir() {
+                return Ok(FileMeta {
+                    name,
+                    path: path.to_str().unwrap().to_string(),
+                    is_directory: true,
+                    accessed: last_accesed,
+                    modified: last_modified,
+                    created: created,
+                    size: Some(metadata.size()),
+                    permissions: Some(metadata.permissions().mode()),
+                    owner: None,
+                    content_hash: None,
+                });
+            } else if path.is_file() {
+                let content = fs::read(&path)?;
+                let mut hasher = Sha256::new();
+                hasher.update(&content);
+                let checksum = format!("{:x}", hasher.finalize());
+
+                return Ok(FileMeta {
+                    name,
+                    path: path.to_str().unwrap().to_string(),
+                    is_directory: true,
+                    accessed: last_accesed,
+                    modified: last_modified,
+                    created: created,
+                    size: Some(metadata.size()),
+                    permissions: Some(metadata.permissions().mode()),
+                    owner: None,
+                    content_hash: Some(checksum),
+                });
+            }
+
+            Err(std::io::Error::new(std::io::ErrorKind::Other, "HMM.."))
         }
     }
 }

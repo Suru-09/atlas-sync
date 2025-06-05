@@ -1,11 +1,15 @@
 pub mod crdt_index {
     use crate::crdt::crdt::{JsonNode, LamportTimestamp, Mutation, Operation, VersionVector};
+    use crate::fswrapper::fswrapper::{FileBlob, FileMeta};
+    use crate::p2p_network::p2p_network::WATCHED_PATH;
+    use serde::{Deserialize, Serialize};
     use std::collections::HashSet;
     use std::path::Path;
     use tokio::sync::{mpsc, oneshot};
     use uuid::Uuid;
+    use walkdir::WalkDir;
 
-    #[derive(Clone, Debug)]
+    #[derive(Clone, Debug, Serialize, Deserialize)]
     pub struct CRDTIndex {
         pub replica_id: Uuid,
         root: JsonNode,
@@ -27,7 +31,6 @@ pub mod crdt_index {
             }
         }
 
-        /// Lamport *tick* → allocate fresh id
         pub fn next_ts(&mut self) -> LamportTimestamp {
             self.clock += 1;
             LamportTimestamp {
@@ -37,7 +40,7 @@ pub mod crdt_index {
         }
 
         pub fn record_apply(&mut self, op: Operation) -> Operation {
-            let _ = self.root.apply(&op, &mut self.applied); // always true (deps satisfied)
+            let _ = self.root.apply(&op, &mut self.applied);
             self.vv.record(&op.id);
             self.op_log.push(op.clone());
             op
@@ -54,7 +57,6 @@ pub mod crdt_index {
                 .collect()
         }
 
-        /// User‑level mutation APIs ------------------------------------------------
         pub fn insert(&mut self, cursor: &[String], key: String, value: JsonNode) -> Operation {
             let id = self.next_ts();
             let deps = self.current_deps();
@@ -94,7 +96,6 @@ pub mod crdt_index {
             self.record_apply(op)
         }
 
-        /// Apply op from *remote* peer – returns true if integrated, false otherwise
         pub fn apply_remote(&mut self, op: &Operation) -> bool {
             if self.applied.contains(&op.id) || !op.deps.iter().all(|d| self.applied.contains(d)) {
                 return false; // duplicate or out‑of‑causal‑order
@@ -107,12 +108,10 @@ pub mod crdt_index {
             ok
         }
 
-        /// Produce the doc’s current *version vector* (cheap) – send in handshake.
         pub fn summary(&self) -> &VersionVector {
             &self.vv
         }
 
-        /// Compress both state (tombstones) and op‑log older than `retain_after`.
         pub fn compact(&mut self, retain_after: &VersionVector) {
             self.root.compress();
             self.op_log.retain(|op| !retain_after.dominates(&op.id));
@@ -127,6 +126,61 @@ pub mod crdt_index {
             };
 
             op
+        }
+
+        pub fn load_or_init(path: &Path, replica_id: Uuid) -> std::io::Result<Self> {
+            if path.exists() {
+                let bytes = std::fs::read(path)?;
+                let mut idx: CRDTIndex = serde_json::from_slice(&bytes)
+                    .map_err(|e| std::io::Error::new(std::io::ErrorKind::InvalidData, e))?;
+
+                idx.applied = idx.op_log.iter().map(|op| op.id.clone()).collect();
+                for id in &idx.applied {
+                    idx.vv.record(id);
+                }
+                return Ok(idx);
+            }
+
+            /* ---------- Cold start: build from filesystem ------------------ */
+            let mut idx = CRDTIndex::new(replica_id);
+
+            let root = Path::new(WATCHED_PATH.get().unwrap());
+
+            for entry in WalkDir::new(root)
+                .into_iter()
+                .filter_map(Result::ok)
+                .filter(|e| e.file_type().is_file())
+            {
+                let rel = entry.path().strip_prefix(root).unwrap();
+                let cursor: Vec<String> = rel
+                    .parent()
+                    .map(|p| p.iter().map(|c| c.to_string_lossy().into_owned()).collect())
+                    .unwrap_or_default();
+
+                let key = entry.file_name().to_string_lossy().to_string();
+
+                let meta = FileMeta::from_path(entry.path())?;
+                let mutation = Mutation::New {
+                    key: key.clone(),
+                    value: JsonNode::File(meta),
+                };
+
+                let op = idx.make_op(cursor, mutation);
+                idx.record_apply(op.clone());
+                idx.op_log.push(op);
+            }
+
+            let _ = idx.save_to_disk(&path);
+            Ok(idx)
+        }
+
+        pub fn save_to_disk(&self, path: &Path) -> std::io::Result<()> {
+            if let Some(parent) = path.parent() {
+                std::fs::create_dir_all(parent)?;
+            }
+            let json = serde_json::to_vec_pretty(self)
+                .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+            std::fs::write(path, json)
         }
     }
 
