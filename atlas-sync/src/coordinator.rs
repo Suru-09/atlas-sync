@@ -1,6 +1,6 @@
 pub mod coordinator {
     use crate::args_parser::args_parser::Args;
-    use crate::crdt::crdt::Mutation;
+    use crate::crdt::crdt::{Mutation, Operation};
     use crate::crdt_index::crdt_index::{CRDTIndex, IndexCmd};
     use crate::p2p_network::p2p_network::*;
     use crate::uuid_wrapper::uuid_wrapper::create_new_uuid;
@@ -19,6 +19,7 @@ pub mod coordinator {
     use log::info;
     use std::path::Path;
     use tokio::sync::mpsc;
+    use tokio::sync::mpsc::UnboundedSender;
 
     pub async fn start_coordination(args: Args) {
         match args.watch_path.is_empty() {
@@ -70,14 +71,10 @@ pub mod coordinator {
         )
         .expect("swarm can be started");
 
-        let index_tx = build_index();
+        let index_tx = build_index(response_sender.clone());
 
-        watch_path(
-            Path::new(WATCHED_PATH.get().unwrap()),
-            response_sender.clone(),
-            index_tx,
-        )
-        .expect("Failed to start file watcher");
+        watch_path(Path::new(WATCHED_PATH.get().unwrap()), index_tx)
+            .expect("Failed to start file watcher");
 
         let mut first_time = true;
         loop {
@@ -101,26 +98,19 @@ pub mod coordinator {
                     &mut swarm,
                 );
 
-                let json_bytes = match event.mutation {
-                    Mutation::New(_, _) => {
-                        info!("File created: {:?}.", create_op);
-                        serde_json::to_vec(&FileEventType::Created(create_op))
-                            .expect("Should be serializable")
+                match event.mutation.clone() {
+                    Mutation::New { key, value } => {
+                        info!("[LOCAL_EVENT] New mutation: {:?}", event.mutation);
                     }
-                    FileEventType::Updated(update_op) => {
-                        info!("File updated : {:?}!", update_op);
-                        serde_json::to_vec(&FileEventType::Updated(update_op))
-                            .expect("Should be serializable")
+                    Mutation::Edit { key, value } => {
+                        info!("[LOCAL_EVENT] EDIT mutation: {:?}", event.mutation);
                     }
-                    FileEventType::Deleted(delete_op) => {
-                        info!("File deleted: {:?}.", delete_op);
-                        serde_json::to_vec(&FileEventType::Deleted(delete_op))
-                            .expect("Should be serializable")
+                    Mutation::Delete { key } => {
+                        info!("[LOCAL_EVENT] DELETED mutation: {:?}", event.mutation);
                     }
-                    FileEventType::Acces => {
-                        serde_json::to_vec(&FileEventType::Acces).expect("Should be serializable")
-                    }
-                };
+                }
+
+                let json_bytes = serde_json::to_vec(&event).unwrap();
 
                 swarm
                     .behaviour_mut()
@@ -153,22 +143,24 @@ pub mod coordinator {
         }
     }
 
-    pub fn build_index() -> mpsc::Sender<IndexCmd> {
+    pub fn build_index(broadcast_tx: UnboundedSender<Operation>) -> UnboundedSender<IndexCmd> {
         let index_uuid = create_new_uuid();
         let index = CRDTIndex::new(index_uuid);
 
-        let (tx, mut rx) = mpsc::channel::<IndexCmd>(1024);
+        let (tx, mut rx) = mpsc::unbounded_channel();
         tokio::spawn(async move {
             let mut index = index;
             while let Some(cmd) = rx.recv().await {
                 match cmd {
                     IndexCmd::LocalOp { mutation, cur } => {
                         let op = index.make_op(cur, mutation);
-                        index.record_apply(op);
+                        index.record_apply(op.clone());
+                        let _ = broadcast_tx.send(op);
                     }
                     IndexCmd::RemoteOp { mutation, cur } => {
                         let op = index.make_op(cur, mutation);
-                        index.record_apply(op);
+                        index.record_apply(op.clone());
+                        let _ = broadcast_tx.send(op);
                     }
                 }
             }

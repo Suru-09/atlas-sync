@@ -1,5 +1,6 @@
 pub mod p2p_network {
-    use crate::fswrapper::fswrapper::{FileBlob, FileEventType};
+    use crate::crdt::crdt::{Mutation, Operation};
+    use crate::fswrapper::fswrapper::FileBlob;
     use libp2p::{
         floodsub::{Floodsub, FloodsubEvent, Topic},
         identity,
@@ -33,14 +34,23 @@ pub mod p2p_network {
         fn inject_event(&mut self, event: FloodsubEvent) {
             match event {
                 FloodsubEvent::Message(msg) => {
-                    if let Ok(parsed) = serde_json::from_slice::<FileEventType>(&msg.data) {
-                        match parsed {
-                            FileEventType::Created(_)
-                            | FileEventType::Deleted(_)
-                            | FileEventType::Updated(_) => {
-                                info!("Got event: {:?}", parsed)
+                    if let Ok(parsed) = serde_json::from_slice::<Operation>(&msg.data) {
+                        match parsed.mutation {
+                            Mutation::New { key, value } => {
+                                info!(
+                                    "[REMOTE_EVENT] New mutation with key: {:?} and value: {:?}",
+                                    key, value
+                                );
                             }
-                            FileEventType::Acces => {}
+                            Mutation::Edit { key, value } => {
+                                info!(
+                                    "[REMOTE_EVENT] EDIT mutation with key: {:?} and value: {:?}",
+                                    key, value
+                                );
+                            }
+                            Mutation::Delete { key } => {
+                                info!("[REMOTE_EVENT] DELETE mutation with key: {:?}.", key);
+                            }
                         }
                     } else if let Ok(parsed) =
                         serde_json::from_slice::<PeerConnectionEvent>(&msg.data)

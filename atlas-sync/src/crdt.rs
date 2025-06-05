@@ -4,7 +4,7 @@ pub mod crdt {
     use std::collections::{BTreeMap, HashMap, HashSet};
     use uuid::Uuid;
 
-    #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+    #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
     pub struct LamportTimestamp {
         pub counter: u64,
         pub replica_id: Uuid,
@@ -51,7 +51,7 @@ pub mod crdt {
         }
     }
 
-    #[derive(Debug, Clone)]
+    #[derive(Debug, Clone, Serialize, Deserialize)]
     pub struct Operation {
         pub id: LamportTimestamp,
         pub deps: HashSet<LamportTimestamp>,
@@ -59,14 +59,14 @@ pub mod crdt {
         pub mutation: Mutation,
     }
 
-    #[derive(Debug, Clone)]
+    #[derive(Debug, Clone, Serialize, Deserialize)]
     pub enum Mutation {
         New { key: String, value: JsonNode },
         Edit { key: String, value: JsonNode },
         Delete { key: String },
     }
 
-    #[derive(Debug, Clone, PartialEq)]
+    #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
     pub enum JsonNode {
         Map(BTreeMap<String, JsonNode>),
         List(Vec<JsonNode>),

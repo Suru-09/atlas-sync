@@ -1,7 +1,7 @@
 pub mod watcher {
-    use crate::crdt::crdt::{JsonNode, Mutation};
+    use crate::crdt::crdt::{JsonNode, Mutation, Operation};
     use crate::crdt_index::crdt_index::IndexCmd;
-    use crate::fswrapper::fswrapper::{FileMeta, LogicalTimestamp};
+    use crate::fswrapper::fswrapper::FileMeta;
     use crate::p2p_network::p2p_network::WATCHED_PATH;
     use log::{error, info};
     use notify::event::{CreateKind, DataChange, MetadataKind, ModifyKind, RemoveKind, RenameMode};
@@ -12,14 +12,9 @@ pub mod watcher {
     use std::sync::mpsc::channel;
     use std::thread;
     use std::time::{SystemTime, UNIX_EPOCH};
-    use tokio::sync::mpsc;
-    use tokio::sync::mpsc::UnboundedSender;
+    use tokio::sync::mpsc::{self, UnboundedSender};
 
-    pub fn watch_path(
-        path: &Path,
-        file_tx: UnboundedSender<Mutation>,
-        index_tx: mpsc::Sender<IndexCmd>,
-    ) -> NotifyResult<()> {
+    pub fn watch_path(path: &Path, index_tx: UnboundedSender<IndexCmd>) -> NotifyResult<()> {
         let path = path.to_path_buf();
         thread::spawn(move || {
             let (tx, rx) = channel::<notify::Result<Event>>();
@@ -38,21 +33,22 @@ pub mod watcher {
                         }
                         EventKind::Create(create_kind) => {
                             if let Some(new_cmd) = extract_new_cmd(&event.paths, &create_kind) {
+                                //info!("Sending new cmd: {:?}", new_cmd);
                                 let _ = index_tx.send(new_cmd);
                             }
                         }
                         EventKind::Modify(modify_kind) => {
-                            let updated_op = extract_update_cmd(&event.paths, &modify_kind);
-                            if let Some(u_op) = updated_op {
-                                if u_op.changes.len() > 0 {
-                                    let _ = file_tx.send(FileEventType::Updated(u_op));
-                                }
+                            if let Some(update_cmd) = extract_update_cmd(&event.paths, &modify_kind)
+                            {
+                                //info!("Sending EDIT cmd: {:?}", update_cmd);
+                                let _ = index_tx.send(update_cmd);
                             }
                         }
                         EventKind::Remove(remove_kind) => {
-                            let delete_op = extract_remove_op(&event.paths, &remove_kind);
-                            if let Some(del_op) = delete_op {
-                                let _ = file_tx.send(FileEventType::Deleted(del_op));
+                            if let Some(delete_cmd) = extract_remove_op(&event.paths, &remove_kind)
+                            {
+                                //info!("Sending DELETE cmd: {:?}", delete_cmd);
+                                let _ = index_tx.send(delete_cmd);
                             }
                         }
                         EventKind::Other | EventKind::Any => {
@@ -165,10 +161,6 @@ pub mod watcher {
             &Path::new(WATCHED_PATH.get().unwrap()),
         )
         .unwrap();
-        let epoch_time = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .expect("Time ??")
-            .as_secs();
 
         match remove_kind {
             RemoveKind::Any | RemoveKind::Other => {
@@ -178,26 +170,18 @@ pub mod watcher {
                 );
                 None
             }
-            RemoveKind::File => {
-                let file_metadata = FileMetadata {
-                    logical_time: LogicalTimestamp(epoch_time),
-                    is_directory: false,
-                };
-                Some(DeleteOp {
-                    metadata: file_metadata,
-                    path,
-                })
-            }
-            RemoveKind::Folder => {
-                let file_metadata = FileMetadata {
-                    logical_time: LogicalTimestamp(epoch_time),
-                    is_directory: true,
-                };
-                Some(DeleteOp {
-                    metadata: file_metadata,
-                    path,
-                })
-            }
+            RemoveKind::File => Some(IndexCmd::LocalOp {
+                cur: path_to_vec(&path),
+                mutation: Mutation::Delete {
+                    key: last_name(&path).unwrap(),
+                },
+            }),
+            RemoveKind::Folder => Some(IndexCmd::LocalOp {
+                cur: path_to_vec(&path),
+                mutation: Mutation::Delete {
+                    key: last_name(&path).unwrap(),
+                },
+            }),
         }
     }
 
@@ -206,7 +190,18 @@ pub mod watcher {
             panic!("Should be some logical value...");
         }
 
-        let mut file_metadata: FileMeta { name: String::from("placeholder"), };
+        let mut file_metadata = FileMeta {
+            name: String::from("placeholder"),
+            path: String::from("placeholder"),
+            is_directory: false,
+            accessed: None,
+            modified: None,
+            created: None,
+            permissions: None,
+            size: None,
+            content_hash: None,
+            owner: None,
+        };
         let path;
 
         match modify_kind {
@@ -277,13 +272,12 @@ pub mod watcher {
                 Some(IndexCmd::LocalOp {
                     cur: path_to_vec(&path),
                     mutation: Mutation::Edit {
-                        key: file_metadata.name,
+                        key: last_name(&path).unwrap(),
                         value: JsonNode::File(file_metadata),
                     },
                 })
             }
             ModifyKind::Name(name) => {
-                info!("Name: {:?}", name);
                 path = match name {
                     RenameMode::Both => {
                         let tmp_path = relative_intersection(
@@ -308,7 +302,7 @@ pub mod watcher {
                 Some(IndexCmd::LocalOp {
                     cur: path_to_vec(&path),
                     mutation: Mutation::Edit {
-                        key: file_metadata.name,
+                        key: last_name(&path).unwrap(),
                         value: JsonNode::File(file_metadata),
                     },
                 })
