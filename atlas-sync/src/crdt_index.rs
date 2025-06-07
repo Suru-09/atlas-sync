@@ -57,6 +57,24 @@ pub mod crdt_index {
                 .collect()
         }
 
+        pub fn apply_local_op(&mut self, cursor: &[String], mutation: Mutation) -> Operation {
+            match mutation.clone() {
+                Mutation::New { key, value } => {
+                    self.insert(cursor, key, value);
+                }
+                Mutation::Edit { key, value } => {
+                    self.edit(cursor, key, value);
+                }
+                Mutation::Delete { key } => {
+                    self.delete(cursor, key);
+                }
+            }
+
+            let op = self.make_op(cursor.to_vec(), mutation);
+            self.record_apply(op.clone());
+            op
+        }
+
         pub fn insert(&mut self, cursor: &[String], key: String, value: JsonNode) -> Operation {
             let id = self.next_ts();
             let deps = self.current_deps();
@@ -68,6 +86,8 @@ pub mod crdt_index {
                 mutation: Mutation::New { key, value },
             };
             self.record_apply(op)
+
+            self.root.
         }
 
         pub fn edit(&mut self, cursor: &[String], key: String, value: JsonNode) -> Operation {
@@ -175,9 +195,6 @@ pub mod crdt_index {
         }
 
         pub fn save_to_disk(&self, path: &Path) -> std::io::Result<()> {
-            if let Some(parent) = path.parent() {
-                std::fs::create_dir_all(parent)?;
-            }
             let json = serde_json::to_vec_pretty(self)
                 .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
             std::fs::write(path, json)

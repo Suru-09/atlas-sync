@@ -1,0 +1,259 @@
+{
+  "replica_id": "019741f7-cb80-75ca-baa0-629c2891314b",
+  "root": {
+    "Map": {
+      "amogus1": {
+        "File": {
+          "name": "src/resources/test_watcher/amogus1",
+          "path": "src/resources/test_watcher/amogus1",
+          "is_directory": true,
+          "accessed": 1749157914,
+          "modified": 1749157914,
+          "created": 1749155266,
+          "permissions": 33204,
+          "size": 10,
+          "owner": null,
+          "content_hash": "e6721b43ae23c9fa7be562af48301df8b2f0a7eb48bc450b865549da8351fe75"
+        }
+      },
+      "random_directory": {
+        "Map": {
+          "nested_file.txt": {
+            "File": {
+              "name": "src/resources/test_watcher/random_directory/nested_file.txt",
+              "path": "src/resources/test_watcher/random_directory/nested_file.txt",
+              "is_directory": true,
+              "accessed": 1749151050,
+              "modified": 1746284889,
+              "created": 1746284889,
+              "permissions": 33204,
+              "size": 27,
+              "owner": null,
+              "content_hash": "697c1d8dc8c06b27e653b3b20aeace65a984bfa72f5e4509aee1b8f0d96bfe8c"
+            }
+          }
+        }
+      },
+      "random_file.txt": {
+        "File": {
+          "name": "src/resources/test_watcher/random_file.txt",
+          "path": "src/resources/test_watcher/random_file.txt",
+          "is_directory": true,
+          "accessed": 1749151050,
+          "modified": 1746210795,
+          "created": 1746210795,
+          "permissions": 33204,
+          "size": 36,
+          "owner": null,
+          "content_hash": "615cb33331b920ff4a48af1d32e8720a934b83d5ae42d4323f0f611ff4826633"
+        }
+      }
+    }
+  },
+  "clock": 3,
+  "vv": {
+    "019741f7-cb80-75ca-baa0-629c2891314b": 3
+  },
+  "applied": [
+    {
+      "counter": 3,
+      "replica_id": "019741f7-cb80-75ca-baa0-629c2891314b"
+    },
+    {
+      "counter": 1,
+      "replica_id": "019741f7-cb80-75ca-baa0-629c2891314b"
+    },
+    {
+      "counter": 2,
+      "replica_id": "019741f7-cb80-75ca-baa0-629c2891314b"
+    }
+  ],
+  "op_log": [
+    {
+      "id": {
+        "counter": 1,
+        "replica_id": "019741f7-cb80-75ca-baa0-629c2891314b"
+      },
+      "deps": [],
+      "cursor": [],
+      "mutation": {
+        "New": {
+          "key": "amogus1",
+          "value": {
+            "File": {
+              "name": "src/resources/test_watcher/amogus1",
+              "path": "src/resources/test_watcher/amogus1",
+              "is_directory": true,
+              "accessed": 1749157914,
+              "modified": 1749157914,
+              "created": 1749155266,
+              "permissions": 33204,
+              "size": 10,
+              "owner": null,
+              "content_hash": "e6721b43ae23c9fa7be562af48301df8b2f0a7eb48bc450b865549da8351fe75"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 1,
+        "replica_id": "019741f7-cb80-75ca-baa0-629c2891314b"
+      },
+      "deps": [],
+      "cursor": [],
+      "mutation": {
+        "New": {
+          "key": "amogus1",
+          "value": {
+            "File": {
+              "name": "src/resources/test_watcher/amogus1",
+              "path": "src/resources/test_watcher/amogus1",
+              "is_directory": true,
+              "accessed": 1749157914,
+              "modified": 1749157914,
+              "created": 1749155266,
+              "permissions": 33204,
+              "size": 10,
+              "owner": null,
+              "content_hash": "e6721b43ae23c9fa7be562af48301df8b2f0a7eb48bc450b865549da8351fe75"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 2,
+        "replica_id": "019741f7-cb80-75ca-baa0-629c2891314b"
+      },
+      "deps": [
+        {
+          "counter": 1,
+          "replica_id": "019741f7-cb80-75ca-baa0-629c2891314b"
+        }
+      ],
+      "cursor": [
+        "random_directory"
+      ],
+      "mutation": {
+        "New": {
+          "key": "nested_file.txt",
+          "value": {
+            "File": {
+              "name": "src/resources/test_watcher/random_directory/nested_file.txt",
+              "path": "src/resources/test_watcher/random_directory/nested_file.txt",
+              "is_directory": true,
+              "accessed": 1749151050,
+              "modified": 1746284889,
+              "created": 1746284889,
+              "permissions": 33204,
+              "size": 27,
+              "owner": null,
+              "content_hash": "697c1d8dc8c06b27e653b3b20aeace65a984bfa72f5e4509aee1b8f0d96bfe8c"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 2,
+        "replica_id": "019741f7-cb80-75ca-baa0-629c2891314b"
+      },
+      "deps": [
+        {
+          "counter": 1,
+          "replica_id": "019741f7-cb80-75ca-baa0-629c2891314b"
+        }
+      ],
+      "cursor": [
+        "random_directory"
+      ],
+      "mutation": {
+        "New": {
+          "key": "nested_file.txt",
+          "value": {
+            "File": {
+              "name": "src/resources/test_watcher/random_directory/nested_file.txt",
+              "path": "src/resources/test_watcher/random_directory/nested_file.txt",
+              "is_directory": true,
+              "accessed": 1749151050,
+              "modified": 1746284889,
+              "created": 1746284889,
+              "permissions": 33204,
+              "size": 27,
+              "owner": null,
+              "content_hash": "697c1d8dc8c06b27e653b3b20aeace65a984bfa72f5e4509aee1b8f0d96bfe8c"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 3,
+        "replica_id": "019741f7-cb80-75ca-baa0-629c2891314b"
+      },
+      "deps": [
+        {
+          "counter": 2,
+          "replica_id": "019741f7-cb80-75ca-baa0-629c2891314b"
+        }
+      ],
+      "cursor": [],
+      "mutation": {
+        "New": {
+          "key": "random_file.txt",
+          "value": {
+            "File": {
+              "name": "src/resources/test_watcher/random_file.txt",
+              "path": "src/resources/test_watcher/random_file.txt",
+              "is_directory": true,
+              "accessed": 1749151050,
+              "modified": 1746210795,
+              "created": 1746210795,
+              "permissions": 33204,
+              "size": 36,
+              "owner": null,
+              "content_hash": "615cb33331b920ff4a48af1d32e8720a934b83d5ae42d4323f0f611ff4826633"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 3,
+        "replica_id": "019741f7-cb80-75ca-baa0-629c2891314b"
+      },
+      "deps": [
+        {
+          "counter": 2,
+          "replica_id": "019741f7-cb80-75ca-baa0-629c2891314b"
+        }
+      ],
+      "cursor": [],
+      "mutation": {
+        "New": {
+          "key": "random_file.txt",
+          "value": {
+            "File": {
+              "name": "src/resources/test_watcher/random_file.txt",
+              "path": "src/resources/test_watcher/random_file.txt",
+              "is_directory": true,
+              "accessed": 1749151050,
+              "modified": 1746210795,
+              "created": 1746210795,
+              "permissions": 33204,
+              "size": 36,
+              "owner": null,
+              "content_hash": "615cb33331b920ff4a48af1d32e8720a934b83d5ae42d4323f0f611ff4826633"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

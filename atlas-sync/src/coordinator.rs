@@ -154,15 +154,14 @@ pub mod coordinator {
             while let Some(cmd) = rx.recv().await {
                 match cmd {
                     IndexCmd::LocalOp { mutation, cur } => {
-                        let op = index.make_op(cur, mutation);
-                        index.record_apply(op.clone());
+                        let op = index.apply_local_op(&cur, mutation);
                         let _ = index.save_to_disk(Path::new(WATCHED_PATH.get().unwrap()));
                         let _ = broadcast_tx.send(op);
                     }
                     IndexCmd::RemoteOp { mutation, cur } => {
-                        let op = index.make_op(cur, mutation);
-                        index.record_apply(op.clone());
-                        let _ = broadcast_tx.send(op);
+                        // let op = index.make_op(cur, mutation);
+                        // index.record_apply(op.clone());
+                        // let _ = broadcast_tx.send(op);
                     }
                 }
             }
