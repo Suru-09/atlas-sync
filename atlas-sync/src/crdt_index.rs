@@ -206,7 +206,7 @@ pub mod crdt_index {
         pub fn save_to_disk(&self) -> std::io::Result<()> {
             let path = Path::new(&self.root_path);
             error!("Index: {:?}", self.root);
-            let json = serde_json::to_vec_pretty(&self.root)
+            let json = serde_json::to_vec_pretty(&self)
                 .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
             error!("Writing to disk to path: {:?}", path);
             std::fs::write(path, json)

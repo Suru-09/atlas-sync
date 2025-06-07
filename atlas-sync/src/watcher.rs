@@ -38,21 +38,21 @@ pub mod watcher {
                           }
                           EventKind::Create(create_kind) => {
                               if let Some(new_cmd) = extract_new_cmd(&event.paths, &create_kind) {
-                                  //info!("Sending new cmd: {:?}", new_cmd);
+                                  info!("Sending new cmd: {:?}", new_cmd);
                                   let _ = index_tx.send(new_cmd);
                               }
                           }
                           EventKind::Modify(modify_kind) => {
                               if let Some(update_cmd) = extract_update_cmd(&event.paths, &modify_kind)
                               {
-                                  //info!("Sending EDIT cmd: {:?}", update_cmd);
+                                  info!("Sending EDIT cmd: {:?}", update_cmd);
                                   let _ = index_tx.send(update_cmd);
                               }
                           }
                           EventKind::Remove(remove_kind) => {
                               if let Some(delete_cmd) = extract_remove_op(&event.paths, &remove_kind)
                               {
-                                  //info!("Sending DELETE cmd: {:?}", delete_cmd);
+                                  info!("Sending DELETE cmd: {:?}", delete_cmd);
                                   let _ = index_tx.send(delete_cmd);
                               }
                           }

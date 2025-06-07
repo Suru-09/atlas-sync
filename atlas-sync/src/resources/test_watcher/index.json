@@ -1,114 +1,569 @@
 {
-  "test_watcher": {
-    ".DS_Store": {
+  "replica_id": "01974c64-4850-7093-9113-782a80dfada0",
+  "root": {
+    "test_watcher": {
+      ".DS_Store": {
+        "metadata": {
+          "name": ".DS_Store",
+          "path": "test_watcher/.DS_Store",
+          "is_directory": true,
+          "accessed": 1749297073,
+          "modified": 1749296742,
+          "created": 1749288008,
+          "permissions": 33188,
+          "size": 6148,
+          "owner": null,
+          "content_hash": "c666d97f6365cb8407e01d6d546e2d9c6165973b874511bdf3a08eb68bcf33bc"
+        }
+      },
       "metadata": {
-        "name": ".DS_Store",
-        "path": "test_watcher/.DS_Store",
+        "name": "test_watcher",
+        "path": "test_watcher",
         "is_directory": true,
-        "accessed": 1749297073,
-        "modified": 1749296742,
-        "created": 1749288008,
-        "permissions": 33188,
-        "size": 6148,
-        "owner": null,
-        "content_hash": "c666d97f6365cb8407e01d6d546e2d9c6165973b874511bdf3a08eb68bcf33bc"
-      }
-    },
-    "amogus": {
-      "metadata": {
-        "name": "amogus",
-        "path": "test_watcher/amogus",
-        "is_directory": true,
-        "accessed": 1749297190,
-        "modified": 1749297190,
-        "created": 1749297190,
-        "permissions": 33188,
-        "size": 0,
-        "owner": null,
-        "content_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-      }
-    },
-    "metadata": {
-      "name": "test_watcher",
-      "path": "test_watcher",
-      "is_directory": true,
-      "accessed": 1749331338,
-      "modified": 1749331314,
-      "created": 1732878177,
-      "permissions": 16877,
-      "size": 224,
-      "owner": null,
-      "content_hash": null
-    },
-    "new_folder": {
-      "metadata": {
-        "name": "new_folder",
-        "path": "test_watcher/new_folder",
-        "is_directory": true,
-        "accessed": 1749331133,
-        "modified": 1749331133,
-        "created": 1749331091,
+        "accessed": 1749333235,
+        "modified": 1749333234,
+        "created": 1732878177,
         "permissions": 16877,
-        "size": 128,
+        "size": 224,
         "owner": null,
         "content_hash": null
       },
-      "wtf": {
+      "my_fiiile": {
         "metadata": {
-          "name": "wtf",
-          "path": "test_watcher/new_folder/wtf",
+          "name": "my_fiiile",
+          "path": "test_watcher/my_fiiile",
           "is_directory": true,
-          "accessed": 1749331131,
-          "modified": 1749331131,
-          "created": 1749331131,
+          "accessed": 1749331839,
+          "modified": 1749331839,
+          "created": 1749331839,
           "permissions": 33188,
           "size": 0,
           "owner": null,
           "content_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
         }
       },
-      "wtf2": {
+      "myy_folder": {
         "metadata": {
-          "name": "wtf2",
-          "path": "test_watcher/new_folder/wtf2",
+          "name": "myy_folder",
+          "path": "test_watcher/myy_folder",
           "is_directory": true,
-          "accessed": 1749331133,
-          "modified": 1749331133,
-          "created": 1749331133,
-          "permissions": 33188,
-          "size": 0,
+          "accessed": 1749332515,
+          "modified": 1749332514,
+          "created": 1749332391,
+          "permissions": 16877,
+          "size": 96,
           "owner": null,
-          "content_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          "content_hash": null
+        },
+        "other_folder": {
+          "metadata": {
+            "name": "other_folder",
+            "path": "test_watcher/myy_folder/other_folder",
+            "is_directory": true,
+            "accessed": 1749333083,
+            "modified": 1749333083,
+            "created": 1749332433,
+            "permissions": 16877,
+            "size": 64,
+            "owner": null,
+            "content_hash": null
+          },
+          "wtf": "Tombstone"
+        }
+      },
+      "random_file.txt": {
+        "metadata": {
+          "name": "random_file.txt",
+          "path": "test_watcher/random_file.txt",
+          "is_directory": true,
+          "accessed": 1749285411,
+          "modified": 1749285409,
+          "created": 1749285409,
+          "permissions": 33188,
+          "size": 36,
+          "owner": null,
+          "content_hash": "615cb33331b920ff4a48af1d32e8720a934b83d5ae42d4323f0f611ff4826633"
+        }
+      },
+      "test": {
+        "metadata": {
+          "name": "test",
+          "path": "test_watcher/test",
+          "is_directory": true,
+          "accessed": 1749302558,
+          "modified": 1749302556,
+          "created": 1749302531,
+          "permissions": 33188,
+          "size": 18,
+          "owner": null,
+          "content_hash": "cdbadd0147ab09cab7ff4abd5204946ca6494cad4cbd1458364397dae39dbfb6"
+        }
+      }
+    }
+  },
+  "root_path": "src/resources/test_watcher/index.json",
+  "clock": 13,
+  "vv": {
+    "01974c64-4850-7093-9113-782a80dfada0": 13
+  },
+  "applied": [
+    {
+      "counter": 6,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 4,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 7,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 5,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 1,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 9,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 8,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 12,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 13,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 2,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 3,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    }
+  ],
+  "op_log": [
+    {
+      "id": {
+        "counter": 1,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [],
+      "cursor": [
+        "test_watcher"
+      ],
+      "mutation": {
+        "New": {
+          "key": "test_watcher",
+          "value": {
+            "name": "test_watcher",
+            "path": "test_watcher",
+            "is_directory": true,
+            "accessed": 1749333235,
+            "modified": 1749333234,
+            "created": 1732878177,
+            "permissions": 16877,
+            "size": 224,
+            "owner": null,
+            "content_hash": null
+          }
         }
       }
     },
-    "random_file.txt": {
-      "metadata": {
-        "name": "random_file.txt",
-        "path": "test_watcher/random_file.txt",
-        "is_directory": true,
-        "accessed": 1749285411,
-        "modified": 1749285409,
-        "created": 1749285409,
-        "permissions": 33188,
-        "size": 36,
-        "owner": null,
-        "content_hash": "615cb33331b920ff4a48af1d32e8720a934b83d5ae42d4323f0f611ff4826633"
+    {
+      "id": {
+        "counter": 2,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 1,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        ".DS_Store"
+      ],
+      "mutation": {
+        "New": {
+          "key": ".DS_Store",
+          "value": {
+            "name": ".DS_Store",
+            "path": "test_watcher/.DS_Store",
+            "is_directory": true,
+            "accessed": 1749297073,
+            "modified": 1749296742,
+            "created": 1749288008,
+            "permissions": 33188,
+            "size": 6148,
+            "owner": null,
+            "content_hash": "c666d97f6365cb8407e01d6d546e2d9c6165973b874511bdf3a08eb68bcf33bc"
+          }
+        }
       }
     },
-    "test": {
-      "metadata": {
-        "name": "test",
-        "path": "test_watcher/test",
-        "is_directory": true,
-        "accessed": 1749302558,
-        "modified": 1749302556,
-        "created": 1749302531,
-        "permissions": 33188,
-        "size": 18,
-        "owner": null,
-        "content_hash": "cdbadd0147ab09cab7ff4abd5204946ca6494cad4cbd1458364397dae39dbfb6"
+    {
+      "id": {
+        "counter": 3,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 2,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "test"
+      ],
+      "mutation": {
+        "New": {
+          "key": "test",
+          "value": {
+            "name": "test",
+            "path": "test_watcher/test",
+            "is_directory": true,
+            "accessed": 1749302558,
+            "modified": 1749302556,
+            "created": 1749302531,
+            "permissions": 33188,
+            "size": 18,
+            "owner": null,
+            "content_hash": "cdbadd0147ab09cab7ff4abd5204946ca6494cad4cbd1458364397dae39dbfb6"
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 4,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 3,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "my_fiiile"
+      ],
+      "mutation": {
+        "New": {
+          "key": "my_fiiile",
+          "value": {
+            "name": "my_fiiile",
+            "path": "test_watcher/my_fiiile",
+            "is_directory": true,
+            "accessed": 1749331839,
+            "modified": 1749331839,
+            "created": 1749331839,
+            "permissions": 33188,
+            "size": 0,
+            "owner": null,
+            "content_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 5,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 4,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "myy_folder"
+      ],
+      "mutation": {
+        "New": {
+          "key": "myy_folder",
+          "value": {
+            "name": "myy_folder",
+            "path": "test_watcher/myy_folder",
+            "is_directory": true,
+            "accessed": 1749332515,
+            "modified": 1749332514,
+            "created": 1749332391,
+            "permissions": 16877,
+            "size": 96,
+            "owner": null,
+            "content_hash": null
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 6,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 5,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "myy_folder",
+        "other_folder"
+      ],
+      "mutation": {
+        "New": {
+          "key": "other_folder",
+          "value": {
+            "name": "other_folder",
+            "path": "test_watcher/myy_folder/other_folder",
+            "is_directory": true,
+            "accessed": 1749333083,
+            "modified": 1749333083,
+            "created": 1749332433,
+            "permissions": 16877,
+            "size": 64,
+            "owner": null,
+            "content_hash": null
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 7,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 6,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "random_file.txt"
+      ],
+      "mutation": {
+        "New": {
+          "key": "random_file.txt",
+          "value": {
+            "name": "random_file.txt",
+            "path": "test_watcher/random_file.txt",
+            "is_directory": true,
+            "accessed": 1749285411,
+            "modified": 1749285409,
+            "created": 1749285409,
+            "permissions": 33188,
+            "size": 36,
+            "owner": null,
+            "content_hash": "615cb33331b920ff4a48af1d32e8720a934b83d5ae42d4323f0f611ff4826633"
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 8,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 7,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "myy_folder",
+        "other_folder",
+        "wtf"
+      ],
+      "mutation": {
+        "New": {
+          "key": "wtf",
+          "value": {
+            "name": "test_watcher/myy_folder/other_folder/wtf",
+            "path": "test_watcher/myy_folder/other_folder/wtf",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": null
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 9,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 8,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "myy_folder",
+        "other_folder",
+        "wtf"
+      ],
+      "mutation": {
+        "New": {
+          "key": "wtf",
+          "value": {
+            "name": "test_watcher/myy_folder/other_folder/wtf",
+            "path": "test_watcher/myy_folder/other_folder/wtf",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": null
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 10,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 9,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "myy_folder",
+        "other_folder",
+        "wtf"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "wtf",
+          "value": {
+            "name": "placeholder",
+            "path": "placeholder",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": null
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 11,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 10,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "myy_folder",
+        "other_folder",
+        "wtf"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "wtf",
+          "value": {
+            "name": "placeholder",
+            "path": "placeholder",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": null
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 12,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 11,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "myy_folder",
+        "other_folder",
+        "wtf"
+      ],
+      "mutation": {
+        "Delete": {
+          "key": "wtf"
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 13,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 12,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "myy_folder",
+        "other_folder",
+        "wtf"
+      ],
+      "mutation": {
+        "Delete": {
+          "key": "wtf"
+        }
       }
     }
-  }
+  ]
 }

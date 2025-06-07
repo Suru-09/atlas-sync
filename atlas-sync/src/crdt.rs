@@ -1,7 +1,7 @@
 pub mod crdt {
     use crate::fswrapper::fswrapper::EntryMeta;
     use serde::{Deserialize, Serialize};
-    use std::collections::{BTreeMap, HashMap, HashSet};
+    use std::collections::{btree_map, BTreeMap, HashMap, HashSet};
     use uuid::Uuid;
     use log::{error, info};
 
@@ -68,11 +68,12 @@ pub mod crdt {
     }
 
     #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-    #[serde(untagged)] // do not introduce Map, List, etc. in serialization
     pub enum JsonNode {
-        Map(BTreeMap<String, JsonNode>),
-        Entry(EntryMeta),
         Tombstone,
+        #[serde(untagged)] // do not serialize enum name
+        Map(BTreeMap<String, JsonNode>),
+        #[serde(untagged)] // do not serialize enum name
+        Entry(EntryMeta),
     }
 
     impl JsonNode {
@@ -86,9 +87,9 @@ pub mod crdt {
             applied_ops: &mut HashSet<LamportTimestamp>,
         ) -> bool {
 
-            if !op.deps.is_subset(applied_ops) {
-                 return false;
-            }
+            // if !op.deps.is_subset(applied_ops) {
+            //      return false;
+            // }
 
             let mut target = self;
                 for segment in &op.cursor {
@@ -113,13 +114,8 @@ pub mod crdt {
                        }
                        _ => return false,
                    },
-                   Mutation::Delete { key } => match target {
-                       JsonNode::Map(map) => {
-                           if let Some(entry) = map.get_mut(key) {
-                               *entry = JsonNode::Tombstone;
-                           }
-                       }
-                       _ => return false,
+                   Mutation::Delete { key } => {
+                     *target = JsonNode::Tombstone;
                    },
                    Mutation::Edit { key, value } => match target {
                        JsonNode::Map(map) => {
