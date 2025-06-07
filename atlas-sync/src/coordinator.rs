@@ -145,8 +145,13 @@ pub mod coordinator {
 
     pub fn build_index(broadcast_tx: UnboundedSender<Operation>) -> UnboundedSender<IndexCmd> {
         let index_uuid = create_new_uuid();
+        let watched_path = WATCHED_PATH.get().unwrap().to_owned();
+        let index_name = INDEX_NAME.as_str();
+        let index_path_str = watched_path + index_name;
+        let index_path = Path::new(&index_path_str);
+        info!("CRDT Index path: {:?}", index_path);
         let index =
-            CRDTIndex::load_or_init(Path::new(&INDEX_NAME.to_string()), index_uuid).unwrap();
+            CRDTIndex::load_or_init(index_uuid, index_path_str).unwrap();
 
         let (tx, mut rx) = mpsc::unbounded_channel();
         tokio::spawn(async move {
@@ -155,13 +160,13 @@ pub mod coordinator {
                 match cmd {
                     IndexCmd::LocalOp { mutation, cur } => {
                         let op = index.apply_local_op(&cur, mutation);
-                        let _ = index.save_to_disk(Path::new(WATCHED_PATH.get().unwrap()));
+                        let _ = index.save_to_disk();
                         let _ = broadcast_tx.send(op);
                     }
                     IndexCmd::RemoteOp { mutation, cur } => {
-                        // let op = index.make_op(cur, mutation);
-                        // index.record_apply(op.clone());
-                        // let _ = broadcast_tx.send(op);
+                        let op = index.make_op(cur, mutation);
+                        index.record_apply(op.clone());
+                        let _ = broadcast_tx.send(op);
                     }
                 }
             }

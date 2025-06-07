@@ -5,14 +5,15 @@ pub mod crdt_index {
     use serde::{Deserialize, Serialize};
     use std::collections::HashSet;
     use std::path::Path;
-    use tokio::sync::{mpsc, oneshot};
     use uuid::Uuid;
     use walkdir::WalkDir;
+    use log::{trace, info, error};
 
     #[derive(Clone, Debug, Serialize, Deserialize)]
     pub struct CRDTIndex {
         pub replica_id: Uuid,
         root: JsonNode,
+        root_path: String,
         clock: u64,
         vv: VersionVector,
         applied: HashSet<LamportTimestamp>,
@@ -20,10 +21,11 @@ pub mod crdt_index {
     }
 
     impl CRDTIndex {
-        pub fn new(replica_id: Uuid) -> Self {
+        pub fn new(replica_id: Uuid, root_path: String) -> Self {
             Self {
                 replica_id,
                 root: JsonNode::new_map(),
+                root_path,
                 clock: 0,
                 vv: VersionVector::default(),
                 applied: HashSet::new(),
@@ -86,8 +88,6 @@ pub mod crdt_index {
                 mutation: Mutation::New { key, value },
             };
             self.record_apply(op)
-
-            self.root.
         }
 
         pub fn edit(&mut self, cursor: &[String], key: String, value: JsonNode) -> Operation {
@@ -148,7 +148,8 @@ pub mod crdt_index {
             op
         }
 
-        pub fn load_or_init(path: &Path, replica_id: Uuid) -> std::io::Result<Self> {
+        pub fn load_or_init(replica_id: Uuid, root_path: String) -> std::io::Result<Self> {
+            let path = Path::new(&root_path);
             if path.exists() {
                 let bytes = std::fs::read(path)?;
                 let mut idx: CRDTIndex = serde_json::from_slice(&bytes)
@@ -162,7 +163,7 @@ pub mod crdt_index {
             }
 
             /* ---------- Cold start: build from filesystem ------------------ */
-            let mut idx = CRDTIndex::new(replica_id);
+            let mut idx = CRDTIndex::new(replica_id, root_path.clone());
 
             let root = Path::new(WATCHED_PATH.get().unwrap());
 
@@ -190,13 +191,15 @@ pub mod crdt_index {
                 idx.op_log.push(op);
             }
 
-            let _ = idx.save_to_disk(&path);
+            let _ = idx.save_to_disk();
             Ok(idx)
         }
 
-        pub fn save_to_disk(&self, path: &Path) -> std::io::Result<()> {
+        pub fn save_to_disk(&self) -> std::io::Result<()> {
+            let path = Path::new(&self.root_path);
             let json = serde_json::to_vec_pretty(self)
                 .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+            error!("Writing to disk to path: {:?}", path);
             std::fs::write(path, json)
         }
     }

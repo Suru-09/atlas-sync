@@ -1,0 +1,413 @@
+{
+  "replica_id": "019749c5-df50-76ba-8dd6-e49a062e404e",
+  "root": {
+    "Map": {
+      ".DS_Store": {
+        "File": {
+          "name": "src/resources/test_watcher/.DS_Store",
+          "path": "src/resources/test_watcher/.DS_Store",
+          "is_directory": true,
+          "accessed": 1749288147,
+          "modified": 1749288008,
+          "created": 1749288008,
+          "permissions": 33188,
+          "size": 6148,
+          "owner": null,
+          "content_hash": "7e2813f7c14d3d822c344df71c567c2d8a97c18050eaf0446a3ba9146ef47cee"
+        }
+      },
+      "amogus25": {
+        "File": {
+          "name": "src/resources/test_watcher/amogus25",
+          "path": "src/resources/test_watcher/amogus25",
+          "is_directory": true,
+          "accessed": 1749288642,
+          "modified": 1749288571,
+          "created": 1749287397,
+          "permissions": 33188,
+          "size": 19,
+          "owner": null,
+          "content_hash": "96a8d7c7573fd403f0a0d69334afdc528ae9bc63580ff1dcb66e6d124488ef2e"
+        }
+      },
+      "random_directory": {
+        "Map": {
+          "nested_file.txt": {
+            "File": {
+              "name": "src/resources/test_watcher/random_directory/nested_file.txt",
+              "path": "src/resources/test_watcher/random_directory/nested_file.txt",
+              "is_directory": true,
+              "accessed": 1735639194,
+              "modified": 1732915568,
+              "created": 1732878199,
+              "permissions": 33188,
+              "size": 27,
+              "owner": null,
+              "content_hash": "697c1d8dc8c06b27e653b3b20aeace65a984bfa72f5e4509aee1b8f0d96bfe8c"
+            }
+          }
+        }
+      },
+      "random_file.txt": {
+        "File": {
+          "name": "src/resources/test_watcher/random_file.txt",
+          "path": "src/resources/test_watcher/random_file.txt",
+          "is_directory": true,
+          "accessed": 1749285411,
+          "modified": 1749285409,
+          "created": 1749285409,
+          "permissions": 33188,
+          "size": 36,
+          "owner": null,
+          "content_hash": "615cb33331b920ff4a48af1d32e8720a934b83d5ae42d4323f0f611ff4826633"
+        }
+      },
+      "src": {
+        "Map": {
+          "resources": {
+            "Map": {
+              "test_watcher": {
+                "Map": {
+                  "amogus25": {
+                    "Map": {
+                      "amogus25": "Tombstone"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "root_path": "src/resources/test_watcher/index.json",
+  "clock": 6,
+  "vv": {
+    "019749c5-df50-76ba-8dd6-e49a062e404e": 6
+  },
+  "applied": [
+    {
+      "counter": 1,
+      "replica_id": "019749c5-df50-76ba-8dd6-e49a062e404e"
+    },
+    {
+      "counter": 5,
+      "replica_id": "019749c5-df50-76ba-8dd6-e49a062e404e"
+    },
+    {
+      "counter": 4,
+      "replica_id": "019749c5-df50-76ba-8dd6-e49a062e404e"
+    },
+    {
+      "counter": 2,
+      "replica_id": "019749c5-df50-76ba-8dd6-e49a062e404e"
+    },
+    {
+      "counter": 6,
+      "replica_id": "019749c5-df50-76ba-8dd6-e49a062e404e"
+    },
+    {
+      "counter": 3,
+      "replica_id": "019749c5-df50-76ba-8dd6-e49a062e404e"
+    }
+  ],
+  "op_log": [
+    {
+      "id": {
+        "counter": 1,
+        "replica_id": "019749c5-df50-76ba-8dd6-e49a062e404e"
+      },
+      "deps": [],
+      "cursor": [],
+      "mutation": {
+        "New": {
+          "key": ".DS_Store",
+          "value": {
+            "File": {
+              "name": "src/resources/test_watcher/.DS_Store",
+              "path": "src/resources/test_watcher/.DS_Store",
+              "is_directory": true,
+              "accessed": 1749288147,
+              "modified": 1749288008,
+              "created": 1749288008,
+              "permissions": 33188,
+              "size": 6148,
+              "owner": null,
+              "content_hash": "7e2813f7c14d3d822c344df71c567c2d8a97c18050eaf0446a3ba9146ef47cee"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 1,
+        "replica_id": "019749c5-df50-76ba-8dd6-e49a062e404e"
+      },
+      "deps": [],
+      "cursor": [],
+      "mutation": {
+        "New": {
+          "key": ".DS_Store",
+          "value": {
+            "File": {
+              "name": "src/resources/test_watcher/.DS_Store",
+              "path": "src/resources/test_watcher/.DS_Store",
+              "is_directory": true,
+              "accessed": 1749288147,
+              "modified": 1749288008,
+              "created": 1749288008,
+              "permissions": 33188,
+              "size": 6148,
+              "owner": null,
+              "content_hash": "7e2813f7c14d3d822c344df71c567c2d8a97c18050eaf0446a3ba9146ef47cee"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 2,
+        "replica_id": "019749c5-df50-76ba-8dd6-e49a062e404e"
+      },
+      "deps": [
+        {
+          "counter": 1,
+          "replica_id": "019749c5-df50-76ba-8dd6-e49a062e404e"
+        }
+      ],
+      "cursor": [
+        "random_directory"
+      ],
+      "mutation": {
+        "New": {
+          "key": "nested_file.txt",
+          "value": {
+            "File": {
+              "name": "src/resources/test_watcher/random_directory/nested_file.txt",
+              "path": "src/resources/test_watcher/random_directory/nested_file.txt",
+              "is_directory": true,
+              "accessed": 1735639194,
+              "modified": 1732915568,
+              "created": 1732878199,
+              "permissions": 33188,
+              "size": 27,
+              "owner": null,
+              "content_hash": "697c1d8dc8c06b27e653b3b20aeace65a984bfa72f5e4509aee1b8f0d96bfe8c"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 2,
+        "replica_id": "019749c5-df50-76ba-8dd6-e49a062e404e"
+      },
+      "deps": [
+        {
+          "counter": 1,
+          "replica_id": "019749c5-df50-76ba-8dd6-e49a062e404e"
+        }
+      ],
+      "cursor": [
+        "random_directory"
+      ],
+      "mutation": {
+        "New": {
+          "key": "nested_file.txt",
+          "value": {
+            "File": {
+              "name": "src/resources/test_watcher/random_directory/nested_file.txt",
+              "path": "src/resources/test_watcher/random_directory/nested_file.txt",
+              "is_directory": true,
+              "accessed": 1735639194,
+              "modified": 1732915568,
+              "created": 1732878199,
+              "permissions": 33188,
+              "size": 27,
+              "owner": null,
+              "content_hash": "697c1d8dc8c06b27e653b3b20aeace65a984bfa72f5e4509aee1b8f0d96bfe8c"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 3,
+        "replica_id": "019749c5-df50-76ba-8dd6-e49a062e404e"
+      },
+      "deps": [
+        {
+          "counter": 2,
+          "replica_id": "019749c5-df50-76ba-8dd6-e49a062e404e"
+        }
+      ],
+      "cursor": [],
+      "mutation": {
+        "New": {
+          "key": "amogus25",
+          "value": {
+            "File": {
+              "name": "src/resources/test_watcher/amogus25",
+              "path": "src/resources/test_watcher/amogus25",
+              "is_directory": true,
+              "accessed": 1749288642,
+              "modified": 1749288571,
+              "created": 1749287397,
+              "permissions": 33188,
+              "size": 19,
+              "owner": null,
+              "content_hash": "96a8d7c7573fd403f0a0d69334afdc528ae9bc63580ff1dcb66e6d124488ef2e"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 3,
+        "replica_id": "019749c5-df50-76ba-8dd6-e49a062e404e"
+      },
+      "deps": [
+        {
+          "counter": 2,
+          "replica_id": "019749c5-df50-76ba-8dd6-e49a062e404e"
+        }
+      ],
+      "cursor": [],
+      "mutation": {
+        "New": {
+          "key": "amogus25",
+          "value": {
+            "File": {
+              "name": "src/resources/test_watcher/amogus25",
+              "path": "src/resources/test_watcher/amogus25",
+              "is_directory": true,
+              "accessed": 1749288642,
+              "modified": 1749288571,
+              "created": 1749287397,
+              "permissions": 33188,
+              "size": 19,
+              "owner": null,
+              "content_hash": "96a8d7c7573fd403f0a0d69334afdc528ae9bc63580ff1dcb66e6d124488ef2e"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 4,
+        "replica_id": "019749c5-df50-76ba-8dd6-e49a062e404e"
+      },
+      "deps": [
+        {
+          "counter": 3,
+          "replica_id": "019749c5-df50-76ba-8dd6-e49a062e404e"
+        }
+      ],
+      "cursor": [],
+      "mutation": {
+        "New": {
+          "key": "random_file.txt",
+          "value": {
+            "File": {
+              "name": "src/resources/test_watcher/random_file.txt",
+              "path": "src/resources/test_watcher/random_file.txt",
+              "is_directory": true,
+              "accessed": 1749285411,
+              "modified": 1749285409,
+              "created": 1749285409,
+              "permissions": 33188,
+              "size": 36,
+              "owner": null,
+              "content_hash": "615cb33331b920ff4a48af1d32e8720a934b83d5ae42d4323f0f611ff4826633"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 4,
+        "replica_id": "019749c5-df50-76ba-8dd6-e49a062e404e"
+      },
+      "deps": [
+        {
+          "counter": 3,
+          "replica_id": "019749c5-df50-76ba-8dd6-e49a062e404e"
+        }
+      ],
+      "cursor": [],
+      "mutation": {
+        "New": {
+          "key": "random_file.txt",
+          "value": {
+            "File": {
+              "name": "src/resources/test_watcher/random_file.txt",
+              "path": "src/resources/test_watcher/random_file.txt",
+              "is_directory": true,
+              "accessed": 1749285411,
+              "modified": 1749285409,
+              "created": 1749285409,
+              "permissions": 33188,
+              "size": 36,
+              "owner": null,
+              "content_hash": "615cb33331b920ff4a48af1d32e8720a934b83d5ae42d4323f0f611ff4826633"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 5,
+        "replica_id": "019749c5-df50-76ba-8dd6-e49a062e404e"
+      },
+      "deps": [
+        {
+          "counter": 4,
+          "replica_id": "019749c5-df50-76ba-8dd6-e49a062e404e"
+        }
+      ],
+      "cursor": [
+        "src",
+        "resources",
+        "test_watcher",
+        "amogus25"
+      ],
+      "mutation": {
+        "Delete": {
+          "key": "amogus25"
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 6,
+        "replica_id": "019749c5-df50-76ba-8dd6-e49a062e404e"
+      },
+      "deps": [
+        {
+          "counter": 5,
+          "replica_id": "019749c5-df50-76ba-8dd6-e49a062e404e"
+        }
+      ],
+      "cursor": [
+        "src",
+        "resources",
+        "test_watcher",
+        "amogus25"
+      ],
+      "mutation": {
+        "Delete": {
+          "key": "amogus25"
+        }
+      }
+    }
+  ]
+}

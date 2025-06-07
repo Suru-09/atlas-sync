@@ -3,6 +3,7 @@ pub mod crdt {
     use serde::{Deserialize, Serialize};
     use std::collections::{BTreeMap, HashMap, HashSet};
     use uuid::Uuid;
+    use log::info;
 
     #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
     pub struct LamportTimestamp {
@@ -88,12 +89,18 @@ pub mod crdt {
             op: &Operation,
             applied_ops: &mut HashSet<LamportTimestamp>,
         ) -> bool {
-            if !op.deps.is_subset(applied_ops) {
-                return false;
-            }
+
+            info!("Applying op: {:?} on json root haing applied ops: {:?}", op, applied_ops);
+
+            // if !op.deps.is_subset(applied_ops) {
+            //     return false;
+            // }
+
+            info!("Am I here?");
 
             let mut target = self;
             for segment in &op.cursor {
+                info!("Target: {:?}", target);
                 match target {
                     JsonNode::Map(map) => {
                         target = map.entry(segment.clone()).or_insert(JsonNode::new_map());
