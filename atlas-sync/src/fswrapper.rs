@@ -7,7 +7,7 @@ pub mod fswrapper {
     use std::os::unix::fs::{MetadataExt, PermissionsExt};
     use std::path::{Path, Component, PathBuf};
     use std::time::UNIX_EPOCH;
-    use std::{fs, io};
+    use std::{default, fs, io};
     use once_cell::sync::{Lazy, OnceCell};
 
     pub static INDEX_NAME: Lazy<String> = Lazy::new(|| String::from("/index.json"));
@@ -16,8 +16,8 @@ pub mod fswrapper {
     #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
     pub struct LogicalTimestamp(pub u64);
 
-    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-    pub struct FileMeta {
+    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
+    pub struct EntryMeta {
         pub name: String,
         pub path: String,
         pub is_directory: bool,
@@ -111,7 +111,7 @@ pub mod fswrapper {
         }
     }
 
-    impl FileMeta {
+    impl EntryMeta {
         pub fn from_path(path: &Path) -> std::io::Result<Self> {
             if !path.exists() {
                 return Err(std::io::Error::new(
@@ -141,7 +141,7 @@ pub mod fswrapper {
             };
 
             if path.is_dir() {
-                return Ok(FileMeta {
+                return Ok(EntryMeta {
                     name,
                     path: compute_file_relative_path(path).to_str().unwrap().to_string(),
                     is_directory: true,
@@ -159,7 +159,7 @@ pub mod fswrapper {
                 hasher.update(&content);
                 let checksum = format!("{:x}", hasher.finalize());
 
-                return Ok(FileMeta {
+                return Ok(EntryMeta {
                     name,
                     path: compute_file_relative_path(path).to_str().unwrap().to_string(),
                     is_directory: true,

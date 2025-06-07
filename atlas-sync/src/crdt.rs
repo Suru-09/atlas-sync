@@ -1,9 +1,9 @@
 pub mod crdt {
-    use crate::fswrapper::fswrapper::FileMeta;
+    use crate::fswrapper::fswrapper::EntryMeta;
     use serde::{Deserialize, Serialize};
     use std::collections::{BTreeMap, HashMap, HashSet};
     use uuid::Uuid;
-    use log::info;
+    use log::{error, info};
 
     #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
     pub struct LamportTimestamp {
@@ -71,18 +71,13 @@ pub mod crdt {
     #[serde(untagged)] // do not introduce Map, List, etc. in serialization
     pub enum JsonNode {
         Map(BTreeMap<String, JsonNode>),
-        List(Vec<JsonNode>),
-        File(FileMeta),
+        Entry(EntryMeta),
         Tombstone,
     }
 
     impl JsonNode {
         pub fn new_map() -> Self {
             JsonNode::Map(BTreeMap::new())
-        }
-
-        pub fn new_list() -> Self {
-            JsonNode::List(Vec::new())
         }
 
         pub fn apply(
@@ -96,60 +91,66 @@ pub mod crdt {
             }
 
             let mut target = self;
-            for segment in &op.cursor {
-                match target {
-                    JsonNode::Map(map) => {
-                        target = map.entry(segment.clone()).or_insert(JsonNode::new_map());
+                for segment in &op.cursor {
+                    match target {
+                        JsonNode::Map(map) => {
+                            target = map.entry(segment.clone()).or_insert(JsonNode::new_map());
+                        }
+                        _ => return false,
                     }
-                    _ => return false,
                 }
-            }
+
+            //error!("NEWLY_CREATED: {} and target: {:?}", newly_created, target);
 
             match &op.mutation {
-                Mutation::New { key, value } => match target {
-                    JsonNode::Map(map) => {
-                        map.insert(key.clone(), value.clone());
-                    }
-                    _ => return false,
-                },
-                Mutation::Delete { key } => match target {
-                    JsonNode::Map(map) => {
-                        map.insert(key.clone(), JsonNode::Tombstone);
-                    }
-                    _ => return false,
-                },
-                Mutation::Edit { key, value } => match target {
-                    JsonNode::Map(map) => {
-                        if map.contains_key(key) && !matches!(map[key], JsonNode::Tombstone) {
-                            map.insert(key.clone(), value.clone());
-                        } else {
-                            return false;
-                        }
-                    }
-                    _ => return false,
-                },
-            }
+                   Mutation::New { key, value } => match target {
+                       JsonNode::Map(map) => {
+                         if let JsonNode::Entry(_) = value {
+                             map.insert(String::from("metadata"), value.clone());
+                         } else {
+                           map.insert(key.clone(), value.clone());
+                         }
+                       }
+                       _ => return false,
+                   },
+                   Mutation::Delete { key } => match target {
+                       JsonNode::Map(map) => {
+                           if let Some(entry) = map.get_mut(key) {
+                               *entry = JsonNode::Tombstone;
+                           }
+                       }
+                       _ => return false,
+                   },
+                   Mutation::Edit { key, value } => match target {
+                       JsonNode::Map(map) => {
+                           if let Some(entry) = map.get_mut(key) {
+                               if !matches!(entry, JsonNode::Tombstone) {
+                                   *entry = value.clone();
+                               } else {
+                                   return false;
+                               }
+                           } else {
+                               return false;
+                           }
+                       }
+                       _ => return false,
+                   },
+               }
 
             applied_ops.insert(op.id.clone());
             true
         }
 
         pub fn compress(&mut self) {
-            match self {
-                JsonNode::Map(map) => {
-                    map.retain(|_, v| !matches!(v, JsonNode::Tombstone));
-                    for node in map.values_mut() {
-                        node.compress();
-                    }
-                }
-                JsonNode::List(list) => {
-                    list.retain(|v| !matches!(v, JsonNode::Tombstone));
-                    for node in list {
-                        node.compress();
-                    }
-                }
-                _ => {}
-            }
+            // match self {
+            //     JsonNode::Map(map) => {
+            //         map.retain(|_, v| !matches!(v, JsonNode::Tombstone));
+            //         for node in map.values_mut() {
+            //             node.compress();
+            //         }
+            //     }
+            //     _ => {}
+            // }
         }
     }
 

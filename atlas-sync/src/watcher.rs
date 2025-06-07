@@ -1,7 +1,7 @@
 pub mod watcher {
     use crate::crdt::crdt::{JsonNode, Mutation};
     use crate::crdt_index::crdt_index::IndexCmd;
-    use crate::fswrapper::fswrapper::{compute_file_relative_path, last_name, path_to_vec, relative_intersection, FileMeta};
+    use crate::fswrapper::fswrapper::{compute_file_relative_path, last_name, path_to_vec, relative_intersection, EntryMeta};
     use crate::fswrapper::fswrapper::{INDEX_NAME, WATCHED_PATH};
     use log::{error, info};
     use notify::event::{CreateKind, DataChange, MetadataKind, ModifyKind, RemoveKind, RenameMode};
@@ -79,7 +79,7 @@ pub mod watcher {
                 None
             }
             CreateKind::File => {
-                let file_metadata = FileMeta {
+                let file_metadata = EntryMeta {
                     name: path.to_str().unwrap().to_string(),
                     path: path.to_str().unwrap().to_string(),
                     is_directory: false,
@@ -95,12 +95,14 @@ pub mod watcher {
                     cur: path_to_vec(&path),
                     mutation: Mutation::New {
                         key: last_name(&path).unwrap(),
-                        value: JsonNode::File(file_metadata),
+                        value: JsonNode::Entry(
+                          file_metadata
+                        ),
                     },
                 })
             }
             CreateKind::Folder => {
-                let file_metadata = FileMeta {
+                let file_metadata = EntryMeta {
                     name: path.to_str().unwrap().to_string(),
                     path: path.to_str().unwrap().to_string(),
                     is_directory: true,
@@ -116,7 +118,9 @@ pub mod watcher {
                     cur: path_to_vec(&path),
                     mutation: Mutation::New {
                         key: last_name(&path).unwrap(),
-                        value: JsonNode::File(file_metadata),
+                        value: JsonNode::Entry(
+                          file_metadata
+                        ),
                     },
                 })
             }
@@ -155,7 +159,7 @@ pub mod watcher {
             panic!("Should be some logical value...");
         }
 
-        let mut file_metadata = FileMeta {
+        let mut file_metadata = EntryMeta {
             name: String::from("placeholder"),
             path: String::from("placeholder"),
             is_directory: false,
@@ -198,7 +202,9 @@ pub mod watcher {
                     cur: path_to_vec(&path),
                     mutation: Mutation::Edit {
                         key: last_name(&path).unwrap(),
-                        value: JsonNode::File(file_metadata),
+                        value: JsonNode::Entry(
+                          file_metadata
+                        ),
                     },
                 })
             }
@@ -226,7 +232,9 @@ pub mod watcher {
                     cur: path_to_vec(&path),
                     mutation: Mutation::Edit {
                         key: last_name(&path).unwrap(),
-                        value: JsonNode::File(file_metadata),
+                        value: JsonNode::Entry(
+                          file_metadata
+                        ),
                     },
                 })
             }
@@ -248,7 +256,9 @@ pub mod watcher {
                     cur: path_to_vec(&path),
                     mutation: Mutation::Edit {
                         key: last_name(&path).unwrap(),
-                        value: JsonNode::File(file_metadata),
+                        value: JsonNode::Entry(
+                          file_metadata
+                        ),
                     },
                 })
             }

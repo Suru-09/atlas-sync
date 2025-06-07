@@ -1,6 +1,6 @@
 pub mod crdt_index {
     use crate::crdt::crdt::{JsonNode, LamportTimestamp, Mutation, Operation, VersionVector};
-    use crate::fswrapper::fswrapper::{FileBlob, FileMeta};
+    use crate::fswrapper::fswrapper::{compute_file_relative_path, FileBlob, EntryMeta};
     use crate::fswrapper::fswrapper::{INDEX_NAME, WATCHED_PATH};
     use serde::{Deserialize, Serialize};
     use std::collections::HashSet;
@@ -164,10 +164,11 @@ pub mod crdt_index {
 
             /* ---------- Cold start: build from filesystem ------------------ */
             let mut idx = CRDTIndex::new(replica_id, root_path.clone());
-            println!("Path: {:?}", path);
             let mut components = path.components();
             components.next_back(); // remove the last component
             let watched_path = components.as_path();
+
+            println!("Path: {:?}", path);
             println!("Watched path: {:?}", watched_path);
 
             for entry in WalkDir::new(watched_path)
@@ -175,26 +176,27 @@ pub mod crdt_index {
                 .filter_map(Result::ok)
                 .filter(|e| e.file_type().is_file() || e.file_type().is_dir())
             {
-                let rel = entry.path().strip_prefix("src/resources").unwrap();
+                let rel = compute_file_relative_path(entry.path());
                 let cursor: Vec<String> = rel
                     .components()
                     .map(|c| String::from(c.as_os_str().to_str().unwrap()))
                     .collect();
 
-                //error!("Entry path: {:?}, prefix remove: {:?}",
-                  //entry.path(), rel);
-                //info!("Cursor: {:?}", cursor);
+                // error!("Entry path: {:?}, prefix remove: {:?}",
+                //   entry.path(), rel);
+                // info!("Cursor: {:?}", cursor);
 
                 let key = entry.file_name().to_string_lossy().to_string();
-                let meta = FileMeta::from_path(entry.path())?;
+                let meta = EntryMeta::from_path(entry.path())?;
                 let mutation = Mutation::New {
                     key: key.clone(),
-                    value: JsonNode::File(meta.clone()),
+                    value: JsonNode::Entry(
+                      meta
+                    ),
                 };
 
                 let op = idx.make_op(cursor, mutation);
                 idx.record_apply(op.clone());
-                idx.op_log.push(op);
             }
 
             let _ = idx.save_to_disk();
@@ -203,7 +205,8 @@ pub mod crdt_index {
 
         pub fn save_to_disk(&self) -> std::io::Result<()> {
             let path = Path::new(&self.root_path);
-            let json = serde_json::to_vec_pretty(self)
+            error!("Index: {:?}", self.root);
+            let json = serde_json::to_vec_pretty(&self.root)
                 .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
             error!("Writing to disk to path: {:?}", path);
             std::fs::write(path, json)
