@@ -9,15 +9,14 @@ pub mod p2p_network {
         NetworkBehaviour, PeerId,
     };
     use log::{debug, error, info};
-    use once_cell::sync::{Lazy, OnceCell};
+    use once_cell::sync::Lazy;
     use serde::{Deserialize, Serialize};
     use std::path::Path;
+    use crate::fswrapper::fswrapper::{INDEX_NAME, WATCHED_PATH};
 
     pub static KEYS: Lazy<identity::Keypair> = Lazy::new(|| identity::Keypair::generate_ed25519());
     pub static PEER_ID: Lazy<PeerId> = Lazy::new(|| PeerId::from(KEYS.public()));
     pub static TOPIC: Lazy<Topic> = Lazy::new(|| Topic::new("FILE_SHARING"));
-    pub static INDEX_NAME: Lazy<String> = Lazy::new(|| String::from("/index.json"));
-    pub static WATCHED_PATH: OnceCell<String> = OnceCell::new();
 
     #[derive(NetworkBehaviour)]
     pub struct AtlasSyncBehavior {

@@ -1,18 +1,18 @@
 pub mod watcher {
-    use crate::crdt::crdt::{JsonNode, Mutation, Operation};
+    use crate::crdt::crdt::{JsonNode, Mutation};
     use crate::crdt_index::crdt_index::IndexCmd;
-    use crate::fswrapper::fswrapper::FileMeta;
-    use crate::p2p_network::p2p_network::WATCHED_PATH;
+    use crate::fswrapper::fswrapper::{compute_file_relative_path, last_name, path_to_vec, relative_intersection, FileMeta};
+    use crate::fswrapper::fswrapper::{INDEX_NAME, WATCHED_PATH};
     use log::{error, info};
     use notify::event::{CreateKind, DataChange, MetadataKind, ModifyKind, RemoveKind, RenameMode};
     use notify::{
         Event, EventKind, RecommendedWatcher, RecursiveMode, Result as NotifyResult, Watcher,
     };
-    use std::path::{Component, Path, PathBuf};
+    use std::path::{ Path, PathBuf};
     use std::sync::mpsc::channel;
     use std::thread;
     use std::time::{SystemTime, UNIX_EPOCH};
-    use tokio::sync::mpsc::{self, UnboundedSender};
+    use tokio::sync::mpsc::{UnboundedSender};
 
     pub fn watch_path(path: &Path, index_tx: UnboundedSender<IndexCmd>) -> NotifyResult<()> {
         let path = path.to_path_buf();
@@ -69,46 +69,9 @@ pub mod watcher {
         Ok(())
     }
 
-    fn relative_intersection(full_path: &Path, sub_path: &Path) -> Option<PathBuf> {
-        let full_components: Vec<_> = full_path.components().collect();
-        let sub_components: Vec<_> = sub_path.components().collect();
-
-        full_components
-            .windows(sub_components.len())
-            .position(|window| window == sub_components.as_slice())
-            .map(|index| full_components[index..].iter().collect())
-    }
-
-    pub fn path_to_vec(path: &Path) -> Vec<String> {
-        path.components()
-            .filter_map(|c| match c {
-                Component::RootDir => None,
-                Component::Prefix(p) => Some(p.as_os_str().to_string_lossy().into_owned()),
-                Component::Normal(s) => Some(s.to_string_lossy().into_owned()),
-                Component::CurDir | Component::ParentDir => None,
-            })
-            .collect()
-    }
-
-    pub fn last_name(path: &Path) -> Option<String> {
-        if let Some(os) = path.file_name() {
-            return Some(os.to_string_lossy().into_owned());
-        }
-
-        path.components().rev().find_map(|c| match c {
-            Component::Normal(os) => Some(os.to_string_lossy().into_owned()),
-            _ => None,
-        })
-    }
-
     fn extract_new_cmd(paths: &Vec<PathBuf>, create_kind: &CreateKind) -> Option<IndexCmd> {
         assert!(paths.len() == 1); // why would I have multiple paths on a create operation?
-
-        let path = relative_intersection(
-            &paths.first().unwrap().clone(),
-            &Path::new(WATCHED_PATH.get().unwrap()),
-        )
-        .unwrap();
+        let path = compute_file_relative_path(paths.first().unwrap());
 
         match create_kind {
             CreateKind::Any | CreateKind::Other => {
@@ -162,11 +125,7 @@ pub mod watcher {
 
     fn extract_remove_op(paths: &Vec<PathBuf>, remove_kind: &RemoveKind) -> Option<IndexCmd> {
         assert!(paths.len() == 1); // why would I have multiple paths on a create operation?
-        let path = relative_intersection(
-            &paths.first().unwrap().clone(),
-            &Path::new(WATCHED_PATH.get().unwrap()),
-        )
-        .unwrap();
+        let path = compute_file_relative_path(paths.first().unwrap());
 
         match remove_kind {
             RemoveKind::Any | RemoveKind::Other => {
@@ -213,21 +172,13 @@ pub mod watcher {
         match modify_kind {
             ModifyKind::Any | ModifyKind::Other => {
                 assert!(paths.len() == 1);
-                path = relative_intersection(
-                    &paths.first().unwrap().clone(),
-                    &Path::new(WATCHED_PATH.get().unwrap()),
-                )
-                .unwrap();
+                path = compute_file_relative_path(paths.first().unwrap());
                 error!("Why am I receiving Other/Any on update operation? update_kind: {:?} with path: {:?}", modify_kind, path);
                 None
             }
             ModifyKind::Data(data_change) => {
                 assert!(paths.len() == 1);
-                path = relative_intersection(
-                    &paths.first().unwrap().clone(),
-                    &Path::new(WATCHED_PATH.get().unwrap()),
-                )
-                .unwrap();
+                path = compute_file_relative_path(paths.first().unwrap());
 
                 file_metadata.name = last_name(&path).unwrap();
                 file_metadata.path = path.to_str().unwrap().to_string();
@@ -253,11 +204,7 @@ pub mod watcher {
             }
             ModifyKind::Metadata(metadata_kind) => {
                 assert!(paths.len() == 1);
-                path = relative_intersection(
-                    &paths.first().unwrap().clone(),
-                    &Path::new(WATCHED_PATH.get().unwrap()),
-                )
-                .unwrap();
+                path = compute_file_relative_path(paths.first().unwrap());
                 match metadata_kind {
                     MetadataKind::Ownership => {
                         file_metadata.owner = Some(String::from("Suru"));
@@ -286,11 +233,7 @@ pub mod watcher {
             ModifyKind::Name(name) => {
                 path = match name {
                     RenameMode::Both => {
-                        let tmp_path = relative_intersection(
-                            &paths.get(1).unwrap().clone(),
-                            &Path::new(WATCHED_PATH.get().unwrap()),
-                        )
-                        .unwrap();
+                        let tmp_path = compute_file_relative_path(paths.first().unwrap());
                         let name = tmp_path
                             .file_name()
                             .map(|os_str| os_str.to_string_lossy().to_string());
@@ -299,11 +242,7 @@ pub mod watcher {
                         }
                         tmp_path
                     }
-                    _ => relative_intersection(
-                        &paths.first().unwrap().clone(),
-                        &Path::new(WATCHED_PATH.get().unwrap()),
-                    )
-                    .unwrap(),
+                    _ => compute_file_relative_path(paths.first().unwrap()),
                 };
                 Some(IndexCmd::LocalOp {
                     cur: path_to_vec(&path),

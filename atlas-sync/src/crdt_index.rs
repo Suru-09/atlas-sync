@@ -1,10 +1,10 @@
 pub mod crdt_index {
     use crate::crdt::crdt::{JsonNode, LamportTimestamp, Mutation, Operation, VersionVector};
     use crate::fswrapper::fswrapper::{FileBlob, FileMeta};
-    use crate::p2p_network::p2p_network::WATCHED_PATH;
+    use crate::fswrapper::fswrapper::{INDEX_NAME, WATCHED_PATH};
     use serde::{Deserialize, Serialize};
     use std::collections::HashSet;
-    use std::path::Path;
+    use std::path::{Path, PathBuf};
     use uuid::Uuid;
     use walkdir::WalkDir;
     use log::{trace, info, error};
@@ -164,26 +164,32 @@ pub mod crdt_index {
 
             /* ---------- Cold start: build from filesystem ------------------ */
             let mut idx = CRDTIndex::new(replica_id, root_path.clone());
+            println!("Path: {:?}", path);
+            let mut components = path.components();
+            components.next_back(); // remove the last component
+            let watched_path = components.as_path();
+            println!("Watched path: {:?}", watched_path);
 
-            let root = Path::new(WATCHED_PATH.get().unwrap());
-
-            for entry in WalkDir::new(root)
+            for entry in WalkDir::new(watched_path)
                 .into_iter()
                 .filter_map(Result::ok)
-                .filter(|e| e.file_type().is_file())
+                .filter(|e| e.file_type().is_file() || e.file_type().is_dir())
             {
-                let rel = entry.path().strip_prefix(root).unwrap();
+                let rel = entry.path().strip_prefix("src/resources").unwrap();
                 let cursor: Vec<String> = rel
-                    .parent()
-                    .map(|p| p.iter().map(|c| c.to_string_lossy().into_owned()).collect())
-                    .unwrap_or_default();
+                    .components()
+                    .map(|c| String::from(c.as_os_str().to_str().unwrap()))
+                    .collect();
+
+                //error!("Entry path: {:?}, prefix remove: {:?}",
+                  //entry.path(), rel);
+                //info!("Cursor: {:?}", cursor);
 
                 let key = entry.file_name().to_string_lossy().to_string();
-
                 let meta = FileMeta::from_path(entry.path())?;
                 let mutation = Mutation::New {
                     key: key.clone(),
-                    value: JsonNode::File(meta),
+                    value: JsonNode::File(meta.clone()),
                 };
 
                 let op = idx.make_op(cursor, mutation);

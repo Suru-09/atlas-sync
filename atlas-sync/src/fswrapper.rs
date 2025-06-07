@@ -2,11 +2,16 @@ pub mod fswrapper {
     use log::error;
     use serde::{Deserialize, Serialize};
     use sha2::{Digest, Sha256};
+    use core::panic::PanicInfo;
     use std::io::Write;
     use std::os::unix::fs::{MetadataExt, PermissionsExt};
-    use std::path::Path;
+    use std::path::{Path, Component, PathBuf};
     use std::time::UNIX_EPOCH;
     use std::{fs, io};
+    use once_cell::sync::{Lazy, OnceCell};
+
+    pub static INDEX_NAME: Lazy<String> = Lazy::new(|| String::from("/index.json"));
+    pub static WATCHED_PATH: OnceCell<String> = OnceCell::new();
 
     #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
     pub struct LogicalTimestamp(pub u64);
@@ -115,7 +120,7 @@ pub mod fswrapper {
                 ));
             }
 
-            let name = path.to_string_lossy().into_owned();
+            let name = last_name(path).unwrap_or(String::from("empty_name"));
             let metadata = fs::metadata(&path)?;
             let last_accesed = if let Ok(access_time) = metadata.accessed() {
                 Some(access_time.duration_since(UNIX_EPOCH).unwrap().as_secs())
@@ -138,7 +143,7 @@ pub mod fswrapper {
             if path.is_dir() {
                 return Ok(FileMeta {
                     name,
-                    path: path.to_str().unwrap().to_string(),
+                    path: compute_file_relative_path(path).to_str().unwrap().to_string(),
                     is_directory: true,
                     accessed: last_accesed,
                     modified: last_modified,
@@ -156,7 +161,7 @@ pub mod fswrapper {
 
                 return Ok(FileMeta {
                     name,
-                    path: path.to_str().unwrap().to_string(),
+                    path: compute_file_relative_path(path).to_str().unwrap().to_string(),
                     is_directory: true,
                     accessed: last_accesed,
                     modified: last_modified,
@@ -170,5 +175,57 @@ pub mod fswrapper {
 
             Err(std::io::Error::new(std::io::ErrorKind::Other, "HMM.."))
         }
+    }
+
+    ///
+    /// # Arguments
+    ///
+    /// * 'full_path' -
+    /// * 'sub_path' -
+    ///
+    /// # Examples
+    pub fn relative_intersection(full_path: &Path, sub_path: &Path) -> Option<PathBuf> {
+        let full_components: Vec<_> = full_path.components().collect();
+        let sub_components: Vec<_> = sub_path.components().collect();
+
+        full_components
+            .windows(sub_components.len())
+            .position(|window| window == sub_components.as_slice())
+            .map(|index| full_components[index..].iter().collect())
+    }
+
+    pub fn path_to_vec(path: &Path) -> Vec<String> {
+        path.components()
+            .filter_map(|c| match c {
+                Component::RootDir => None,
+                Component::Prefix(p) => Some(p.as_os_str().to_string_lossy().into_owned()),
+                Component::Normal(s) => Some(s.to_string_lossy().into_owned()),
+                Component::CurDir | Component::ParentDir => None,
+            })
+            .collect()
+    }
+
+    pub fn last_name(path: &Path) -> Option<String> {
+        if let Some(os) = path.file_name() {
+            return Some(os.to_string_lossy().into_owned());
+        }
+
+        path.components().rev().find_map(|c| match c {
+            Component::Normal(os) => Some(os.to_string_lossy().into_owned()),
+            _ => None,
+        })
+    }
+
+    pub fn compute_file_relative_path(abs_path: &Path) -> PathBuf {
+      let last_name_watched = last_name(&Path::new(WATCHED_PATH.get().unwrap())).unwrap();
+      relative_intersection(
+          abs_path,
+          &Path::new(&last_name_watched)
+      ).unwrap()
+    }
+
+    pub fn compute_file_absolute_path(relative_path: &Path) -> PathBuf {
+      let watched_path = &Path::new(WATCHED_PATH.get().unwrap());
+      watched_path.join(relative_path)
     }
 }

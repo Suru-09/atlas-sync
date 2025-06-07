@@ -68,6 +68,7 @@ pub mod crdt {
     }
 
     #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+    #[serde(untagged)] // do not introduce Map, List, etc. in serialization
     pub enum JsonNode {
         Map(BTreeMap<String, JsonNode>),
         List(Vec<JsonNode>),
@@ -90,17 +91,12 @@ pub mod crdt {
             applied_ops: &mut HashSet<LamportTimestamp>,
         ) -> bool {
 
-            info!("Applying op: {:?} on json root haing applied ops: {:?}", op, applied_ops);
-
-            // if !op.deps.is_subset(applied_ops) {
-            //     return false;
-            // }
-
-            info!("Am I here?");
+            if !op.deps.is_subset(applied_ops) {
+                 return false;
+            }
 
             let mut target = self;
             for segment in &op.cursor {
-                info!("Target: {:?}", target);
                 match target {
                     JsonNode::Map(map) => {
                         target = map.entry(segment.clone()).or_insert(JsonNode::new_map());
@@ -159,8 +155,5 @@ pub mod crdt {
 
     #[cfg(test)]
     mod tests {
-        use super::*;
-        use crate::uuid_wrapper::uuid_wrapper::create_new_uuid;
-        use uuid::{uuid, Uuid};
     }
 }

@@ -1,4 +1,5 @@
 pub mod coordinator {
+    use crate::fswrapper::fswrapper::{INDEX_NAME, WATCHED_PATH};
     use crate::args_parser::args_parser::Args;
     use crate::crdt::crdt::{Mutation, Operation};
     use crate::crdt_index::crdt_index::{CRDTIndex, IndexCmd};
@@ -165,7 +166,7 @@ pub mod coordinator {
                     }
                     IndexCmd::RemoteOp { mutation, cur } => {
                         let op = index.make_op(cur, mutation);
-                        index.record_apply(op.clone());
+                        let _ = index.apply_remote(&op);
                         let _ = broadcast_tx.send(op);
                     }
                 }
