@@ -114,7 +114,7 @@ pub mod crdt {
                        }
                        _ => return false,
                    },
-                   Mutation::Delete { key } => {
+                   Mutation::Delete{ .. } => {
                      *target = JsonNode::Tombstone;
                    },
                    Mutation::Edit { key, value } => match target {
