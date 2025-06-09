@@ -32,9 +32,11 @@ pub mod p2p_network {
 
     impl NetworkBehaviourEventProcess<FloodsubEvent> for AtlasSyncBehavior {
         fn inject_event(&mut self, event: FloodsubEvent) {
+          info!("Am i here anyways?2");
             match event {
                 FloodsubEvent::Message(msg) => {
                     if let Ok(parsed) = serde_json::from_slice::<Operation>(&msg.data) {
+                      info!("Am i here anyways?");
                         match parsed.mutation {
                             Mutation::New { key, value } => {
                                 info!(
@@ -75,6 +77,7 @@ pub mod p2p_network {
                                 }
                             }
                             PeerConnectionEvent::SyncFile((target_peer, file_blob)) => {
+                                info!("Sync file event!");
                                 if PEER_ID.to_string() == target_peer {
                                     let _ = file_blob.write_to_disk(&base_path);
                                 }

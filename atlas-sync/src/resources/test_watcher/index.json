@@ -12,7 +12,7 @@
           "created": 1749288008,
           "permissions": 33188,
           "size": 6148,
-          "owner": null,
+          "owner": "Dragos",
           "content_hash": "c666d97f6365cb8407e01d6d546e2d9c6165973b874511bdf3a08eb68bcf33bc"
         }
       },
@@ -102,45 +102,13 @@
     }
   },
   "root_path": "src/resources/test_watcher/index.json",
-  "clock": 13,
+  "clock": 35,
   "vv": {
-    "01974c64-4850-7093-9113-782a80dfada0": 13
+    "01974c64-4850-7093-9113-782a80dfada0": 35
   },
   "applied": [
     {
-      "counter": 6,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 4,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 7,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
       "counter": 5,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 1,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 9,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 8,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 12,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 13,
       "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
     },
     {
@@ -148,7 +116,119 @@
       "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
     },
     {
+      "counter": 4,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 9,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 11,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 6,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 8,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
       "counter": 3,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 15,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 7,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 29,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 16,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 13,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 24,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 17,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 31,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 12,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 28,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 27,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 18,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 23,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 1,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 26,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 19,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 21,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 20,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 14,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 22,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 10,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 25,
+      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+    },
+    {
+      "counter": 30,
       "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
     }
   ],
@@ -562,6 +642,732 @@
       "mutation": {
         "Delete": {
           "key": "wtf"
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 14,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 13,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "my_fiiile"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "my_fiiile",
+          "value": {
+            "name": "placeholder",
+            "path": "placeholder",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": null
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 15,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 14,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "my_fiiile"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "my_fiiile",
+          "value": {
+            "name": "placeholder",
+            "path": "placeholder",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": null
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 16,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 15,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "my_fiiile"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "my_fiiile",
+          "value": {
+            "name": "placeholder",
+            "path": "placeholder",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": null
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 17,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 16,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "my_fiiile"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "my_fiiile",
+          "value": {
+            "name": "placeholder",
+            "path": "placeholder",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": null
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 18,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 17,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "my_fiiile"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "my_fiiile",
+          "value": {
+            "name": "my_fiiile",
+            "path": "test_watcher/my_fiiile",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": "Content change"
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 19,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 18,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "my_fiiile"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "my_fiiile",
+          "value": {
+            "name": "my_fiiile",
+            "path": "test_watcher/my_fiiile",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": "Content change"
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 20,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 19,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "my_fiiile"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "my_fiiile",
+          "value": {
+            "name": "placeholder",
+            "path": "placeholder",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": null
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 21,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 20,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "my_fiiile"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "my_fiiile",
+          "value": {
+            "name": "placeholder",
+            "path": "placeholder",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": null
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 22,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 21,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "my_fiiile"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "my_fiiile",
+          "value": {
+            "name": "my_fiiile",
+            "path": "test_watcher/my_fiiile",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": "Content change"
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 23,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 22,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "my_fiiile"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "my_fiiile",
+          "value": {
+            "name": "my_fiiile",
+            "path": "test_watcher/my_fiiile",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": "Content change"
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 24,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 23,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "my_fiiile"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "my_fiiile",
+          "value": {
+            "name": "placeholder",
+            "path": "placeholder",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": null
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 25,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 24,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "my_fiiile"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "my_fiiile",
+          "value": {
+            "name": "placeholder",
+            "path": "placeholder",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": null
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 26,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 25,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "my_fiiile"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "my_fiiile",
+          "value": {
+            "name": "my_fiiile",
+            "path": "test_watcher/my_fiiile",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": "Content change"
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 27,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 26,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "my_fiiile"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "my_fiiile",
+          "value": {
+            "name": "my_fiiile",
+            "path": "test_watcher/my_fiiile",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": "Content change"
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 28,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 27,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "my_fiiile"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "my_fiiile",
+          "value": {
+            "name": "placeholder",
+            "path": "placeholder",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": null
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 29,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 28,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "my_fiiile"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "my_fiiile",
+          "value": {
+            "name": "placeholder",
+            "path": "placeholder",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": null
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 30,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 29,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "my_fiiile"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "my_fiiile",
+          "value": {
+            "name": "my_fiiile",
+            "path": "test_watcher/my_fiiile",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": "Content change"
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 31,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 30,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "my_fiiile"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "my_fiiile",
+          "value": {
+            "name": "my_fiiile",
+            "path": "test_watcher/my_fiiile",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": "Content change"
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 32,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 31,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "my_fiiile"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "my_fiiile",
+          "value": {
+            "name": "placeholder",
+            "path": "placeholder",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": null
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 33,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 32,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "my_fiiile"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "my_fiiile",
+          "value": {
+            "name": "placeholder",
+            "path": "placeholder",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": null
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 34,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 33,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "my_fiiile"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "my_fiiile",
+          "value": {
+            "name": "my_fiiile",
+            "path": "test_watcher/my_fiiile",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": "Content change"
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 35,
+        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      },
+      "deps": [
+        {
+          "counter": 34,
+          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "my_fiiile"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "my_fiiile",
+          "value": {
+            "name": "my_fiiile",
+            "path": "test_watcher/my_fiiile",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": "Content change"
+          }
         }
       }
     }

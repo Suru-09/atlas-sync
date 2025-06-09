@@ -13,13 +13,13 @@ pub mod coordinator {
         mdns::Mdns,
         mplex,
         noise::{Keypair, NoiseConfig, X25519Spec},
-        swarm::{self, Swarm, SwarmBuilder},
+        swarm::{Swarm, SwarmBuilder},
         tcp::TokioTcpConfig,
         Transport,
     };
-    use log::info;
+    use log::{info, trace};
     use std::path::Path;
-    use tokio::sync::mpsc;
+    use tokio::sync::mpsc::{self, UnboundedReceiver};
     use tokio::sync::mpsc::UnboundedSender;
 
     pub async fn start_coordination(args: Args) {
@@ -77,57 +77,51 @@ pub mod coordinator {
         watch_path(Path::new(WATCHED_PATH.get().unwrap()), index_tx)
             .expect("Failed to start file watcher");
 
+        let (peer_ev_sender, mut peer_ev_rcv): (UnboundedSender<PeerConnectionEvent>, UnboundedReceiver<PeerConnectionEvent>) = mpsc::unbounded_channel();
+
         let mut first_time = true;
         loop {
-            let evt = {
-                tokio::select! {
-                    _ = swarm.next() => {
-                        None
-                    },
-                    response = response_rcv.recv() => {
-                        handle_peer_connection(&mut first_time, &args.peer_id, &PEER_ID.to_string(), &mut swarm);
-                        Some(response.expect("Has some data"))
-                    },
-                }
-            };
 
-            if let Some(event) = evt {
-                handle_peer_connection(
-                    &mut first_time,
-                    &args.peer_id,
-                    &PEER_ID.to_string(),
-                    &mut swarm,
-                );
+            if first_time {
+              let _  = peer_ev_sender.send(PeerConnectionEvent::InitialConnection((args.peer_id.to_string(), PEER_ID.to_string())));
+              first_time = false;
+            }
 
-                match event.mutation.clone() {
-                    Mutation::New { key, value } => {
-                        info!("[LOCAL_EVENT] New mutation: {:?}", event.mutation);
+            tokio::select! {
+                _ = swarm.next() => {
+                  info!("Swarm event");
+                },
+                response = response_rcv.recv() => {
+                  info!("Event: {:?}", response);
+                  if let Some(event) = response {
+                    let json_bytes = serde_json::to_vec(&event).unwrap();
+
+                    swarm
+                        .behaviour_mut()
+                        .floodsub
+                        .publish(TOPIC.clone(), json_bytes);
+                  }
+                },
+                peer_rsp = peer_ev_rcv.recv() => {
+                    match peer_rsp {
+                      Some(PeerConnectionEvent::InitialConnection(_)) => {
+                        handle_initial_peer_connection(&args.peer_id, &PEER_ID.to_string(), &mut swarm);
+                      }
+                      _ => {
+                        todo!("");
+                      }
                     }
-                    Mutation::Edit { key, value } => {
-                        info!("[LOCAL_EVENT] EDIT mutation: {:?}", event.mutation);
-                    }
-                    Mutation::Delete { key } => {
-                        info!("[LOCAL_EVENT] DELETED mutation: {:?}", event.mutation);
-                    }
-                }
-
-                let json_bytes = serde_json::to_vec(&event).unwrap();
-
-                swarm
-                    .behaviour_mut()
-                    .floodsub
-                    .publish(TOPIC.clone(), json_bytes);
+                },
             }
         }
     }
 
-    fn handle_peer_connection(
-        first_time: &mut bool,
+    fn handle_initial_peer_connection(
         peer_id: &str,
         local_peer_id: &str,
         swarm: &mut Swarm<AtlasSyncBehavior>,
     ) {
-        if !peer_id.is_empty() && *first_time {
+        if !peer_id.is_empty() {
             let json_bytes = serde_json::to_vec(&PeerConnectionEvent::InitialConnection((
                 peer_id.to_string(),
                 local_peer_id.to_string(),
@@ -140,7 +134,6 @@ pub mod coordinator {
                 .behaviour_mut()
                 .floodsub
                 .publish(TOPIC.clone(), json_bytes);
-            *first_time = false;
         }
     }
 
@@ -162,11 +155,13 @@ pub mod coordinator {
                     IndexCmd::LocalOp { mutation, cur } => {
                         let op = index.apply_local_op(&cur, mutation);
                         let _ = index.save_to_disk();
+                        info!("Broadcasting local operation");
                         let _ = broadcast_tx.send(op);
                     }
                     IndexCmd::RemoteOp { mutation, cur } => {
                         let op = index.make_op(cur, mutation);
                         let _ = index.apply_remote(&op);
+                        info!("Broadcasting remote operation");
                         let _ = broadcast_tx.send(op);
                     }
                 }
