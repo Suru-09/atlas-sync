@@ -1,6 +1,8 @@
 pub mod p2p_network {
     use crate::crdt::crdt::{Mutation, Operation};
+    use crate::crdt_index::crdt_index::IndexCmd;
     use crate::fswrapper::fswrapper::FileBlob;
+    use crate::fswrapper::fswrapper::{INDEX_NAME, WATCHED_PATH};
     use libp2p::{
         floodsub::{Floodsub, FloodsubEvent, Topic},
         identity,
@@ -12,7 +14,7 @@ pub mod p2p_network {
     use once_cell::sync::Lazy;
     use serde::{Deserialize, Serialize};
     use std::path::Path;
-    use crate::fswrapper::fswrapper::{INDEX_NAME, WATCHED_PATH};
+    use tokio::sync::mpsc::UnboundedSender;
 
     pub static KEYS: Lazy<identity::Keypair> = Lazy::new(|| identity::Keypair::generate_ed25519());
     pub static PEER_ID: Lazy<PeerId> = Lazy::new(|| PeerId::from(KEYS.public()));
@@ -22,6 +24,9 @@ pub mod p2p_network {
     pub struct AtlasSyncBehavior {
         pub floodsub: Floodsub,
         pub mdns: Mdns,
+        // tx for Index actions
+        #[behaviour(ignore)]
+        pub index_tx: UnboundedSender<IndexCmd>,
     }
 
     #[derive(Debug, Serialize, Deserialize)]
@@ -32,26 +37,45 @@ pub mod p2p_network {
 
     impl NetworkBehaviourEventProcess<FloodsubEvent> for AtlasSyncBehavior {
         fn inject_event(&mut self, event: FloodsubEvent) {
-          info!("Am i here anyways?2");
             match event {
                 FloodsubEvent::Message(msg) => {
                     if let Ok(parsed) = serde_json::from_slice::<Operation>(&msg.data) {
-                      info!("Am i here anyways?");
                         match parsed.mutation {
                             Mutation::New { key, value } => {
                                 info!(
                                     "[REMOTE_EVENT] New mutation with key: {:?} and value: {:?}",
                                     key, value
                                 );
+                                let cmd = IndexCmd::RemoteOp {
+                                    mutation: Mutation::New {
+                                        key: key.clone(),
+                                        value: value,
+                                    },
+                                    cur: vec![key],
+                                };
+                                let _ = self.index_tx.send(cmd);
                             }
                             Mutation::Edit { key, value } => {
                                 info!(
                                     "[REMOTE_EVENT] EDIT mutation with key: {:?} and value: {:?}",
                                     key, value
                                 );
+                                let cmd = IndexCmd::RemoteOp {
+                                    mutation: Mutation::Edit {
+                                        key: key.clone(),
+                                        value: value,
+                                    },
+                                    cur: vec![key],
+                                };
+                                let _ = self.index_tx.send(cmd);
                             }
                             Mutation::Delete { key } => {
                                 info!("[REMOTE_EVENT] DELETE mutation with key: {:?}.", key);
+                                let cmd = IndexCmd::RemoteOp {
+                                    mutation: Mutation::Delete { key: key.clone() },
+                                    cur: vec![key],
+                                };
+                                let _ = self.index_tx.send(cmd);
                             }
                         }
                     } else if let Ok(parsed) =
@@ -109,13 +133,13 @@ pub mod p2p_network {
                 MdnsEvent::Discovered(discovered_list) => {
                     for (peer, _addr) in discovered_list {
                         self.floodsub.add_node_to_partial_view(peer);
-                        info!("Peer: {} has been discovered!", peer);
+                        debug!("Peer: {} has been discovered!", peer);
                     }
                 }
                 MdnsEvent::Expired(expired_list) => {
                     for (peer, _addr) in expired_list {
                         if !self.mdns.has_node(&peer) {
-                            info!("Peer: {} has expired!", peer);
+                            debug!("Peer: {} has expired!", peer);
                             self.floodsub.remove_node_from_partial_view(&peer);
                         }
                     }

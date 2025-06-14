@@ -1,5 +1,5 @@
 {
-  "replica_id": "01974c64-4850-7093-9113-782a80dfada0",
+  "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42",
   "root": {
     "test_watcher": {
       ".DS_Store": {
@@ -7,24 +7,66 @@
           "name": ".DS_Store",
           "path": "test_watcher/.DS_Store",
           "is_directory": true,
-          "accessed": 1749297073,
-          "modified": 1749296742,
-          "created": 1749288008,
-          "permissions": 33188,
+          "accessed": 1749906006,
+          "modified": 1749484361,
+          "created": 1749484361,
+          "permissions": 33204,
           "size": 6148,
-          "owner": "Dragos",
+          "owner": null,
           "content_hash": "c666d97f6365cb8407e01d6d546e2d9c6165973b874511bdf3a08eb68bcf33bc"
+        }
+      },
+      ".goutputstream-UATU72": {
+        "metadata": {
+          "name": "test_watcher/.goutputstream-UATU72",
+          "path": "test_watcher/.goutputstream-UATU72",
+          "is_directory": false,
+          "accessed": null,
+          "modified": null,
+          "created": null,
+          "permissions": null,
+          "size": null,
+          "owner": null,
+          "content_hash": null
+        }
+      },
+      ".goutputstream-ZCIO72": {
+        "metadata": {
+          "name": "test_watcher/.goutputstream-ZCIO72",
+          "path": "test_watcher/.goutputstream-ZCIO72",
+          "is_directory": false,
+          "accessed": null,
+          "modified": null,
+          "created": null,
+          "permissions": null,
+          "size": null,
+          "owner": null,
+          "content_hash": null
+        }
+      },
+      "file8": {
+        "metadata": {
+          "name": "file8",
+          "path": "test_watcher/file8",
+          "is_directory": true,
+          "accessed": 1749930326,
+          "modified": 1749930326,
+          "created": 1749930326,
+          "permissions": 33204,
+          "size": 33,
+          "owner": null,
+          "content_hash": "65eb00c32013f15b513767902cae4838867b47726a93e9f1a4e2c8fa82e1862c"
         }
       },
       "metadata": {
         "name": "test_watcher",
         "path": "test_watcher",
         "is_directory": true,
-        "accessed": 1749333235,
-        "modified": 1749333234,
-        "created": 1732878177,
-        "permissions": 16877,
-        "size": 224,
+        "accessed": 1749930459,
+        "modified": 1749930459,
+        "created": 1745950619,
+        "permissions": 16893,
+        "size": 4096,
         "owner": null,
         "content_hash": null
       },
@@ -33,42 +75,13 @@
           "name": "my_fiiile",
           "path": "test_watcher/my_fiiile",
           "is_directory": true,
-          "accessed": 1749331839,
-          "modified": 1749331839,
-          "created": 1749331839,
-          "permissions": 33188,
-          "size": 0,
+          "accessed": 1749906006,
+          "modified": 1749484361,
+          "created": 1749484361,
+          "permissions": 33204,
+          "size": 15,
           "owner": null,
-          "content_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-        }
-      },
-      "myy_folder": {
-        "metadata": {
-          "name": "myy_folder",
-          "path": "test_watcher/myy_folder",
-          "is_directory": true,
-          "accessed": 1749332515,
-          "modified": 1749332514,
-          "created": 1749332391,
-          "permissions": 16877,
-          "size": 96,
-          "owner": null,
-          "content_hash": null
-        },
-        "other_folder": {
-          "metadata": {
-            "name": "other_folder",
-            "path": "test_watcher/myy_folder/other_folder",
-            "is_directory": true,
-            "accessed": 1749333083,
-            "modified": 1749333083,
-            "created": 1749332433,
-            "permissions": 16877,
-            "size": 64,
-            "owner": null,
-            "content_hash": null
-          },
-          "wtf": "Tombstone"
+          "content_hash": "c24ec26fb4e5da900bba91aaa76be4536b0381c0917671d312a31f2f1c5cc135"
         }
       },
       "random_file.txt": {
@@ -76,10 +89,10 @@
           "name": "random_file.txt",
           "path": "test_watcher/random_file.txt",
           "is_directory": true,
-          "accessed": 1749285411,
-          "modified": 1749285409,
-          "created": 1749285409,
-          "permissions": 33188,
+          "accessed": 1749906006,
+          "modified": 1746210795,
+          "created": 1746210795,
+          "permissions": 33204,
           "size": 36,
           "owner": null,
           "content_hash": "615cb33331b920ff4a48af1d32e8720a934b83d5ae42d4323f0f611ff4826633"
@@ -90,153 +103,135 @@
           "name": "test",
           "path": "test_watcher/test",
           "is_directory": true,
-          "accessed": 1749302558,
-          "modified": 1749302556,
-          "created": 1749302531,
-          "permissions": 33188,
+          "accessed": 1749906006,
+          "modified": 1749484361,
+          "created": 1749484361,
+          "permissions": 33204,
           "size": 18,
           "owner": null,
           "content_hash": "cdbadd0147ab09cab7ff4abd5204946ca6494cad4cbd1458364397dae39dbfb6"
+        }
+      },
+      "unamed5": {
+        "metadata": {
+          "name": "unamed5",
+          "path": "test_watcher/unamed5",
+          "is_directory": true,
+          "accessed": 1749906005,
+          "modified": 1746284810,
+          "created": 1746284810,
+          "permissions": 16893,
+          "size": 4096,
+          "owner": null,
+          "content_hash": null
         }
       }
     }
   },
   "root_path": "src/resources/test_watcher/index.json",
-  "clock": 35,
+  "clock": 37,
   "vv": {
-    "01974c64-4850-7093-9113-782a80dfada0": 35
+    "01976ffb-d6e8-79a5-9360-455aef9eed42": 35
   },
   "applied": [
     {
-      "counter": 5,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 2,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 4,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 9,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 11,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 6,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 8,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
       "counter": 3,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 15,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 7,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 29,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
     },
     {
       "counter": 16,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 13,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 24,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 17,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 31,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 12,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 28,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 27,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 18,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 23,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 1,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 26,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 19,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 21,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 20,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 14,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-    },
-    {
-      "counter": 22,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
     },
     {
       "counter": 10,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
     },
     {
-      "counter": 25,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      "counter": 15,
+      "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
     },
     {
-      "counter": 30,
-      "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+      "counter": 20,
+      "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
+    },
+    {
+      "counter": 9,
+      "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
+    },
+    {
+      "counter": 13,
+      "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
+    },
+    {
+      "counter": 17,
+      "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
+    },
+    {
+      "counter": 11,
+      "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
+    },
+    {
+      "counter": 21,
+      "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
+    },
+    {
+      "counter": 19,
+      "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
+    },
+    {
+      "counter": 22,
+      "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
+    },
+    {
+      "counter": 1,
+      "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
+    },
+    {
+      "counter": 2,
+      "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
+    },
+    {
+      "counter": 12,
+      "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
+    },
+    {
+      "counter": 5,
+      "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
+    },
+    {
+      "counter": 4,
+      "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
+    },
+    {
+      "counter": 6,
+      "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
+    },
+    {
+      "counter": 8,
+      "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
+    },
+    {
+      "counter": 18,
+      "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
+    },
+    {
+      "counter": 7,
+      "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
+    },
+    {
+      "counter": 14,
+      "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
+    },
+    {
+      "counter": 23,
+      "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
     }
   ],
   "op_log": [
     {
       "id": {
         "counter": 1,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [],
       "cursor": [
@@ -249,11 +244,11 @@
             "name": "test_watcher",
             "path": "test_watcher",
             "is_directory": true,
-            "accessed": 1749333235,
-            "modified": 1749333234,
-            "created": 1732878177,
-            "permissions": 16877,
-            "size": 224,
+            "accessed": 1749930459,
+            "modified": 1749930459,
+            "created": 1745950619,
+            "permissions": 16893,
+            "size": 4096,
             "owner": null,
             "content_hash": null
           }
@@ -263,32 +258,32 @@
     {
       "id": {
         "counter": 2,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [
         {
           "counter": 1,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
         }
       ],
       "cursor": [
         "test_watcher",
-        ".DS_Store"
+        "file8"
       ],
       "mutation": {
         "New": {
-          "key": ".DS_Store",
+          "key": "file8",
           "value": {
-            "name": ".DS_Store",
-            "path": "test_watcher/.DS_Store",
+            "name": "file8",
+            "path": "test_watcher/file8",
             "is_directory": true,
-            "accessed": 1749297073,
-            "modified": 1749296742,
-            "created": 1749288008,
-            "permissions": 33188,
-            "size": 6148,
+            "accessed": 1749930326,
+            "modified": 1749930326,
+            "created": 1749930326,
+            "permissions": 33204,
+            "size": 33,
             "owner": null,
-            "content_hash": "c666d97f6365cb8407e01d6d546e2d9c6165973b874511bdf3a08eb68bcf33bc"
+            "content_hash": "65eb00c32013f15b513767902cae4838867b47726a93e9f1a4e2c8fa82e1862c"
           }
         }
       }
@@ -296,12 +291,12 @@
     {
       "id": {
         "counter": 3,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [
         {
           "counter": 2,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
         }
       ],
       "cursor": [
@@ -315,10 +310,10 @@
             "name": "test",
             "path": "test_watcher/test",
             "is_directory": true,
-            "accessed": 1749302558,
-            "modified": 1749302556,
-            "created": 1749302531,
-            "permissions": 33188,
+            "accessed": 1749906006,
+            "modified": 1749484361,
+            "created": 1749484361,
+            "permissions": 33204,
             "size": 18,
             "owner": null,
             "content_hash": "cdbadd0147ab09cab7ff4abd5204946ca6494cad4cbd1458364397dae39dbfb6"
@@ -329,12 +324,12 @@
     {
       "id": {
         "counter": 4,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [
         {
           "counter": 3,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
         }
       ],
       "cursor": [
@@ -348,13 +343,13 @@
             "name": "my_fiiile",
             "path": "test_watcher/my_fiiile",
             "is_directory": true,
-            "accessed": 1749331839,
-            "modified": 1749331839,
-            "created": 1749331839,
-            "permissions": 33188,
-            "size": 0,
+            "accessed": 1749906006,
+            "modified": 1749484361,
+            "created": 1749484361,
+            "permissions": 33204,
+            "size": 15,
             "owner": null,
-            "content_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            "content_hash": "c24ec26fb4e5da900bba91aaa76be4536b0381c0917671d312a31f2f1c5cc135"
           }
         }
       }
@@ -362,32 +357,32 @@
     {
       "id": {
         "counter": 5,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [
         {
           "counter": 4,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
         }
       ],
       "cursor": [
         "test_watcher",
-        "myy_folder"
+        ".DS_Store"
       ],
       "mutation": {
         "New": {
-          "key": "myy_folder",
+          "key": ".DS_Store",
           "value": {
-            "name": "myy_folder",
-            "path": "test_watcher/myy_folder",
+            "name": ".DS_Store",
+            "path": "test_watcher/.DS_Store",
             "is_directory": true,
-            "accessed": 1749332515,
-            "modified": 1749332514,
-            "created": 1749332391,
-            "permissions": 16877,
-            "size": 96,
+            "accessed": 1749906006,
+            "modified": 1749484361,
+            "created": 1749484361,
+            "permissions": 33204,
+            "size": 6148,
             "owner": null,
-            "content_hash": null
+            "content_hash": "c666d97f6365cb8407e01d6d546e2d9c6165973b874511bdf3a08eb68bcf33bc"
           }
         }
       }
@@ -395,46 +390,12 @@
     {
       "id": {
         "counter": 6,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [
         {
           "counter": 5,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-        }
-      ],
-      "cursor": [
-        "test_watcher",
-        "myy_folder",
-        "other_folder"
-      ],
-      "mutation": {
-        "New": {
-          "key": "other_folder",
-          "value": {
-            "name": "other_folder",
-            "path": "test_watcher/myy_folder/other_folder",
-            "is_directory": true,
-            "accessed": 1749333083,
-            "modified": 1749333083,
-            "created": 1749332433,
-            "permissions": 16877,
-            "size": 64,
-            "owner": null,
-            "content_hash": null
-          }
-        }
-      }
-    },
-    {
-      "id": {
-        "counter": 7,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-      },
-      "deps": [
-        {
-          "counter": 6,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
         }
       ],
       "cursor": [
@@ -448,10 +409,10 @@
             "name": "random_file.txt",
             "path": "test_watcher/random_file.txt",
             "is_directory": true,
-            "accessed": 1749285411,
-            "modified": 1749285409,
-            "created": 1749285409,
-            "permissions": 33188,
+            "accessed": 1749906006,
+            "modified": 1746210795,
+            "created": 1746210795,
+            "permissions": 33204,
             "size": 36,
             "owner": null,
             "content_hash": "615cb33331b920ff4a48af1d32e8720a934b83d5ae42d4323f0f611ff4826633"
@@ -461,27 +422,58 @@
     },
     {
       "id": {
-        "counter": 8,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "counter": 7,
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [
         {
-          "counter": 7,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+          "counter": 6,
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
         }
       ],
       "cursor": [
         "test_watcher",
-        "myy_folder",
-        "other_folder",
-        "wtf"
+        "unamed5"
       ],
       "mutation": {
         "New": {
-          "key": "wtf",
+          "key": "unamed5",
           "value": {
-            "name": "test_watcher/myy_folder/other_folder/wtf",
-            "path": "test_watcher/myy_folder/other_folder/wtf",
+            "name": "unamed5",
+            "path": "test_watcher/unamed5",
+            "is_directory": true,
+            "accessed": 1749906005,
+            "modified": 1746284810,
+            "created": 1746284810,
+            "permissions": 16893,
+            "size": 4096,
+            "owner": null,
+            "content_hash": null
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 8,
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
+      },
+      "deps": [
+        {
+          "counter": 7,
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        ".goutputstream-UATU72"
+      ],
+      "mutation": {
+        "New": {
+          "key": ".goutputstream-UATU72",
+          "value": {
+            "name": "test_watcher/.goutputstream-UATU72",
+            "path": "test_watcher/.goutputstream-UATU72",
             "is_directory": false,
             "accessed": null,
             "modified": null,
@@ -497,26 +489,24 @@
     {
       "id": {
         "counter": 9,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [
         {
           "counter": 8,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
         }
       ],
       "cursor": [
         "test_watcher",
-        "myy_folder",
-        "other_folder",
-        "wtf"
+        ".goutputstream-UATU72"
       ],
       "mutation": {
         "New": {
-          "key": "wtf",
+          "key": ".goutputstream-UATU72",
           "value": {
-            "name": "test_watcher/myy_folder/other_folder/wtf",
-            "path": "test_watcher/myy_folder/other_folder/wtf",
+            "name": "test_watcher/.goutputstream-UATU72",
+            "path": "test_watcher/.goutputstream-UATU72",
             "is_directory": false,
             "accessed": null,
             "modified": null,
@@ -532,23 +522,21 @@
     {
       "id": {
         "counter": 10,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [
         {
           "counter": 9,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
         }
       ],
       "cursor": [
         "test_watcher",
-        "myy_folder",
-        "other_folder",
-        "wtf"
+        ".goutputstream-UATU72"
       ],
       "mutation": {
         "Edit": {
-          "key": "wtf",
+          "key": ".goutputstream-UATU72",
           "value": {
             "name": "placeholder",
             "path": "placeholder",
@@ -567,23 +555,21 @@
     {
       "id": {
         "counter": 11,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [
         {
           "counter": 10,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
         }
       ],
       "cursor": [
         "test_watcher",
-        "myy_folder",
-        "other_folder",
-        "wtf"
+        ".goutputstream-UATU72"
       ],
       "mutation": {
         "Edit": {
-          "key": "wtf",
+          "key": ".goutputstream-UATU72",
           "value": {
             "name": "placeholder",
             "path": "placeholder",
@@ -602,67 +588,21 @@
     {
       "id": {
         "counter": 12,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [
         {
           "counter": 11,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
         }
       ],
       "cursor": [
         "test_watcher",
-        "myy_folder",
-        "other_folder",
-        "wtf"
-      ],
-      "mutation": {
-        "Delete": {
-          "key": "wtf"
-        }
-      }
-    },
-    {
-      "id": {
-        "counter": 13,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-      },
-      "deps": [
-        {
-          "counter": 12,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-        }
-      ],
-      "cursor": [
-        "test_watcher",
-        "myy_folder",
-        "other_folder",
-        "wtf"
-      ],
-      "mutation": {
-        "Delete": {
-          "key": "wtf"
-        }
-      }
-    },
-    {
-      "id": {
-        "counter": 14,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-      },
-      "deps": [
-        {
-          "counter": 13,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-        }
-      ],
-      "cursor": [
-        "test_watcher",
-        "my_fiiile"
+        ".goutputstream-UATU72"
       ],
       "mutation": {
         "Edit": {
-          "key": "my_fiiile",
+          "key": ".goutputstream-UATU72",
           "value": {
             "name": "placeholder",
             "path": "placeholder",
@@ -674,6 +614,72 @@
             "size": null,
             "owner": null,
             "content_hash": null
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 13,
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
+      },
+      "deps": [
+        {
+          "counter": 12,
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        ".goutputstream-UATU72"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": ".goutputstream-UATU72",
+          "value": {
+            "name": "placeholder",
+            "path": "placeholder",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": null
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 14,
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
+      },
+      "deps": [
+        {
+          "counter": 13,
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        ".goutputstream-UATU72"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": ".goutputstream-UATU72",
+          "value": {
+            "name": ".goutputstream-UATU72",
+            "path": "test_watcher/.goutputstream-UATU72",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": "Data change"
           }
         }
       }
@@ -681,24 +687,24 @@
     {
       "id": {
         "counter": 15,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [
         {
           "counter": 14,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
         }
       ],
       "cursor": [
         "test_watcher",
-        "my_fiiile"
+        ".goutputstream-UATU72"
       ],
       "mutation": {
         "Edit": {
-          "key": "my_fiiile",
+          "key": ".goutputstream-UATU72",
           "value": {
-            "name": "placeholder",
-            "path": "placeholder",
+            "name": ".goutputstream-UATU72",
+            "path": "test_watcher/.goutputstream-UATU72",
             "is_directory": false,
             "accessed": null,
             "modified": null,
@@ -706,7 +712,7 @@
             "permissions": null,
             "size": null,
             "owner": null,
-            "content_hash": null
+            "content_hash": "Data change"
           }
         }
       }
@@ -714,21 +720,21 @@
     {
       "id": {
         "counter": 16,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [
         {
           "counter": 15,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
         }
       ],
       "cursor": [
         "test_watcher",
-        "my_fiiile"
+        ".goutputstream-UATU72"
       ],
       "mutation": {
         "Edit": {
-          "key": "my_fiiile",
+          "key": ".goutputstream-UATU72",
           "value": {
             "name": "placeholder",
             "path": "placeholder",
@@ -747,21 +753,21 @@
     {
       "id": {
         "counter": 17,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [
         {
           "counter": 16,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
         }
       ],
       "cursor": [
         "test_watcher",
-        "my_fiiile"
+        ".goutputstream-UATU72"
       ],
       "mutation": {
         "Edit": {
-          "key": "my_fiiile",
+          "key": ".goutputstream-UATU72",
           "value": {
             "name": "placeholder",
             "path": "placeholder",
@@ -780,24 +786,24 @@
     {
       "id": {
         "counter": 18,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [
         {
           "counter": 17,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
         }
       ],
       "cursor": [
         "test_watcher",
-        "my_fiiile"
+        "file8"
       ],
       "mutation": {
         "Edit": {
-          "key": "my_fiiile",
+          "key": "file8",
           "value": {
-            "name": "my_fiiile",
-            "path": "test_watcher/my_fiiile",
+            "name": "placeholder",
+            "path": "placeholder",
             "is_directory": false,
             "accessed": null,
             "modified": null,
@@ -805,7 +811,7 @@
             "permissions": null,
             "size": null,
             "owner": null,
-            "content_hash": "Content change"
+            "content_hash": null
           }
         }
       }
@@ -813,24 +819,24 @@
     {
       "id": {
         "counter": 19,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [
         {
           "counter": 18,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
         }
       ],
       "cursor": [
         "test_watcher",
-        "my_fiiile"
+        "file8"
       ],
       "mutation": {
         "Edit": {
-          "key": "my_fiiile",
+          "key": "file8",
           "value": {
-            "name": "my_fiiile",
-            "path": "test_watcher/my_fiiile",
+            "name": "placeholder",
+            "path": "placeholder",
             "is_directory": false,
             "accessed": null,
             "modified": null,
@@ -838,7 +844,7 @@
             "permissions": null,
             "size": null,
             "owner": null,
-            "content_hash": "Content change"
+            "content_hash": null
           }
         }
       }
@@ -846,23 +852,23 @@
     {
       "id": {
         "counter": 20,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [
         {
           "counter": 19,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
         }
       ],
       "cursor": [
         "test_watcher",
-        "my_fiiile"
+        ".goutputstream-UATU72"
       ],
       "mutation": {
         "Edit": {
-          "key": "my_fiiile",
+          "key": ".goutputstream-UATU72",
           "value": {
-            "name": "placeholder",
+            "name": ".goutputstream-UATU72",
             "path": "placeholder",
             "is_directory": false,
             "accessed": null,
@@ -879,23 +885,23 @@
     {
       "id": {
         "counter": 21,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [
         {
           "counter": 20,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
         }
       ],
       "cursor": [
         "test_watcher",
-        "my_fiiile"
+        ".goutputstream-UATU72"
       ],
       "mutation": {
         "Edit": {
-          "key": "my_fiiile",
+          "key": ".goutputstream-UATU72",
           "value": {
-            "name": "placeholder",
+            "name": ".goutputstream-UATU72",
             "path": "placeholder",
             "is_directory": false,
             "accessed": null,
@@ -912,24 +918,24 @@
     {
       "id": {
         "counter": 22,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [
         {
           "counter": 21,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
         }
       ],
       "cursor": [
         "test_watcher",
-        "my_fiiile"
+        ".goutputstream-ZCIO72"
       ],
       "mutation": {
-        "Edit": {
-          "key": "my_fiiile",
+        "New": {
+          "key": ".goutputstream-ZCIO72",
           "value": {
-            "name": "my_fiiile",
-            "path": "test_watcher/my_fiiile",
+            "name": "test_watcher/.goutputstream-ZCIO72",
+            "path": "test_watcher/.goutputstream-ZCIO72",
             "is_directory": false,
             "accessed": null,
             "modified": null,
@@ -937,7 +943,7 @@
             "permissions": null,
             "size": null,
             "owner": null,
-            "content_hash": "Content change"
+            "content_hash": null
           }
         }
       }
@@ -945,24 +951,24 @@
     {
       "id": {
         "counter": 23,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [
         {
           "counter": 22,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
         }
       ],
       "cursor": [
         "test_watcher",
-        "my_fiiile"
+        ".goutputstream-ZCIO72"
       ],
       "mutation": {
-        "Edit": {
-          "key": "my_fiiile",
+        "New": {
+          "key": ".goutputstream-ZCIO72",
           "value": {
-            "name": "my_fiiile",
-            "path": "test_watcher/my_fiiile",
+            "name": "test_watcher/.goutputstream-ZCIO72",
+            "path": "test_watcher/.goutputstream-ZCIO72",
             "is_directory": false,
             "accessed": null,
             "modified": null,
@@ -970,7 +976,7 @@
             "permissions": null,
             "size": null,
             "owner": null,
-            "content_hash": "Content change"
+            "content_hash": null
           }
         }
       }
@@ -978,21 +984,21 @@
     {
       "id": {
         "counter": 24,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [
         {
           "counter": 23,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
         }
       ],
       "cursor": [
         "test_watcher",
-        "my_fiiile"
+        ".goutputstream-ZCIO72"
       ],
       "mutation": {
         "Edit": {
-          "key": "my_fiiile",
+          "key": ".goutputstream-ZCIO72",
           "value": {
             "name": "placeholder",
             "path": "placeholder",
@@ -1011,21 +1017,21 @@
     {
       "id": {
         "counter": 25,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [
         {
           "counter": 24,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
         }
       ],
       "cursor": [
         "test_watcher",
-        "my_fiiile"
+        ".goutputstream-ZCIO72"
       ],
       "mutation": {
         "Edit": {
-          "key": "my_fiiile",
+          "key": ".goutputstream-ZCIO72",
           "value": {
             "name": "placeholder",
             "path": "placeholder",
@@ -1044,24 +1050,24 @@
     {
       "id": {
         "counter": 26,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [
         {
           "counter": 25,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
         }
       ],
       "cursor": [
         "test_watcher",
-        "my_fiiile"
+        ".goutputstream-ZCIO72"
       ],
       "mutation": {
         "Edit": {
-          "key": "my_fiiile",
+          "key": ".goutputstream-ZCIO72",
           "value": {
-            "name": "my_fiiile",
-            "path": "test_watcher/my_fiiile",
+            "name": "placeholder",
+            "path": "placeholder",
             "is_directory": false,
             "accessed": null,
             "modified": null,
@@ -1069,7 +1075,7 @@
             "permissions": null,
             "size": null,
             "owner": null,
-            "content_hash": "Content change"
+            "content_hash": null
           }
         }
       }
@@ -1077,24 +1083,24 @@
     {
       "id": {
         "counter": 27,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [
         {
           "counter": 26,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
         }
       ],
       "cursor": [
         "test_watcher",
-        "my_fiiile"
+        ".goutputstream-ZCIO72"
       ],
       "mutation": {
         "Edit": {
-          "key": "my_fiiile",
+          "key": ".goutputstream-ZCIO72",
           "value": {
-            "name": "my_fiiile",
-            "path": "test_watcher/my_fiiile",
+            "name": "placeholder",
+            "path": "placeholder",
             "is_directory": false,
             "accessed": null,
             "modified": null,
@@ -1102,7 +1108,7 @@
             "permissions": null,
             "size": null,
             "owner": null,
-            "content_hash": "Content change"
+            "content_hash": null
           }
         }
       }
@@ -1110,24 +1116,24 @@
     {
       "id": {
         "counter": 28,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [
         {
           "counter": 27,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
         }
       ],
       "cursor": [
         "test_watcher",
-        "my_fiiile"
+        ".goutputstream-ZCIO72"
       ],
       "mutation": {
         "Edit": {
-          "key": "my_fiiile",
+          "key": ".goutputstream-ZCIO72",
           "value": {
-            "name": "placeholder",
-            "path": "placeholder",
+            "name": ".goutputstream-ZCIO72",
+            "path": "test_watcher/.goutputstream-ZCIO72",
             "is_directory": false,
             "accessed": null,
             "modified": null,
@@ -1135,7 +1141,7 @@
             "permissions": null,
             "size": null,
             "owner": null,
-            "content_hash": null
+            "content_hash": "Data change"
           }
         }
       }
@@ -1143,21 +1149,54 @@
     {
       "id": {
         "counter": 29,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [
         {
           "counter": 28,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
         }
       ],
       "cursor": [
         "test_watcher",
-        "my_fiiile"
+        ".goutputstream-ZCIO72"
       ],
       "mutation": {
         "Edit": {
-          "key": "my_fiiile",
+          "key": ".goutputstream-ZCIO72",
+          "value": {
+            "name": ".goutputstream-ZCIO72",
+            "path": "test_watcher/.goutputstream-ZCIO72",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": "Data change"
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 30,
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
+      },
+      "deps": [
+        {
+          "counter": 29,
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        ".goutputstream-ZCIO72"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": ".goutputstream-ZCIO72",
           "value": {
             "name": "placeholder",
             "path": "placeholder",
@@ -1175,58 +1214,25 @@
     },
     {
       "id": {
-        "counter": 30,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-      },
-      "deps": [
-        {
-          "counter": 29,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
-        }
-      ],
-      "cursor": [
-        "test_watcher",
-        "my_fiiile"
-      ],
-      "mutation": {
-        "Edit": {
-          "key": "my_fiiile",
-          "value": {
-            "name": "my_fiiile",
-            "path": "test_watcher/my_fiiile",
-            "is_directory": false,
-            "accessed": null,
-            "modified": null,
-            "created": null,
-            "permissions": null,
-            "size": null,
-            "owner": null,
-            "content_hash": "Content change"
-          }
-        }
-      }
-    },
-    {
-      "id": {
         "counter": 31,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [
         {
           "counter": 30,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
         }
       ],
       "cursor": [
         "test_watcher",
-        "my_fiiile"
+        ".goutputstream-ZCIO72"
       ],
       "mutation": {
         "Edit": {
-          "key": "my_fiiile",
+          "key": ".goutputstream-ZCIO72",
           "value": {
-            "name": "my_fiiile",
-            "path": "test_watcher/my_fiiile",
+            "name": "placeholder",
+            "path": "placeholder",
             "is_directory": false,
             "accessed": null,
             "modified": null,
@@ -1234,7 +1240,7 @@
             "permissions": null,
             "size": null,
             "owner": null,
-            "content_hash": "Content change"
+            "content_hash": null
           }
         }
       }
@@ -1242,21 +1248,21 @@
     {
       "id": {
         "counter": 32,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [
         {
           "counter": 31,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
         }
       ],
       "cursor": [
         "test_watcher",
-        "my_fiiile"
+        "file8"
       ],
       "mutation": {
         "Edit": {
-          "key": "my_fiiile",
+          "key": "file8",
           "value": {
             "name": "placeholder",
             "path": "placeholder",
@@ -1275,21 +1281,21 @@
     {
       "id": {
         "counter": 33,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [
         {
           "counter": 32,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
         }
       ],
       "cursor": [
         "test_watcher",
-        "my_fiiile"
+        "file8"
       ],
       "mutation": {
         "Edit": {
-          "key": "my_fiiile",
+          "key": "file8",
           "value": {
             "name": "placeholder",
             "path": "placeholder",
@@ -1308,24 +1314,24 @@
     {
       "id": {
         "counter": 34,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [
         {
           "counter": 33,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
         }
       ],
       "cursor": [
         "test_watcher",
-        "my_fiiile"
+        ".goutputstream-ZCIO72"
       ],
       "mutation": {
         "Edit": {
-          "key": "my_fiiile",
+          "key": ".goutputstream-ZCIO72",
           "value": {
-            "name": "my_fiiile",
-            "path": "test_watcher/my_fiiile",
+            "name": ".goutputstream-ZCIO72",
+            "path": "placeholder",
             "is_directory": false,
             "accessed": null,
             "modified": null,
@@ -1333,7 +1339,7 @@
             "permissions": null,
             "size": null,
             "owner": null,
-            "content_hash": "Content change"
+            "content_hash": null
           }
         }
       }
@@ -1341,24 +1347,24 @@
     {
       "id": {
         "counter": 35,
-        "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+        "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
       },
       "deps": [
         {
           "counter": 34,
-          "replica_id": "01974c64-4850-7093-9113-782a80dfada0"
+          "replica_id": "01976ffb-d6e8-79a5-9360-455aef9eed42"
         }
       ],
       "cursor": [
         "test_watcher",
-        "my_fiiile"
+        ".goutputstream-ZCIO72"
       ],
       "mutation": {
         "Edit": {
-          "key": "my_fiiile",
+          "key": ".goutputstream-ZCIO72",
           "value": {
-            "name": "my_fiiile",
-            "path": "test_watcher/my_fiiile",
+            "name": ".goutputstream-ZCIO72",
+            "path": "placeholder",
             "is_directory": false,
             "accessed": null,
             "modified": null,
@@ -1366,7 +1372,7 @@
             "permissions": null,
             "size": null,
             "owner": null,
-            "content_hash": "Content change"
+            "content_hash": null
           }
         }
       }

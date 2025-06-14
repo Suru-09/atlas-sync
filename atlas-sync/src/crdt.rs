@@ -1,9 +1,9 @@
 pub mod crdt {
     use crate::fswrapper::fswrapper::EntryMeta;
+    use log::{error, info};
     use serde::{Deserialize, Serialize};
     use std::collections::{btree_map, BTreeMap, HashMap, HashSet};
     use uuid::Uuid;
-    use log::{error, info};
 
     #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
     pub struct LamportTimestamp {
@@ -86,71 +86,69 @@ pub mod crdt {
             op: &Operation,
             applied_ops: &mut HashSet<LamportTimestamp>,
         ) -> bool {
-
             // if !op.deps.is_subset(applied_ops) {
             //      return false;
             // }
 
             let mut target = self;
-                for segment in &op.cursor {
-                    match target {
-                        JsonNode::Map(map) => {
-                            target = map.entry(segment.clone()).or_insert(JsonNode::new_map());
-                        }
-                        _ => return false,
+            for segment in &op.cursor {
+                match target {
+                    JsonNode::Map(map) => {
+                        target = map.entry(segment.clone()).or_insert(JsonNode::new_map());
                     }
+                    _ => return false,
                 }
+            }
 
             //error!("NEWLY_CREATED: {} and target: {:?}", newly_created, target);
 
             match &op.mutation {
-                   Mutation::New { key, value } => match target {
-                       JsonNode::Map(map) => {
-                         if let JsonNode::Entry(_) = value {
-                             map.insert(String::from("metadata"), value.clone());
-                         } else {
-                           map.insert(key.clone(), value.clone());
-                         }
-                       }
-                       _ => return false,
-                   },
-                   Mutation::Delete{ .. } => {
-                     *target = JsonNode::Tombstone;
-                   },
-                   Mutation::Edit { key, value } => match target {
-                       JsonNode::Map(map) => {
-                           if let Some(entry) = map.get_mut(key) {
-                               if !matches!(entry, JsonNode::Tombstone) {
-                                   *entry = value.clone();
-                               } else {
-                                   return false;
-                               }
-                           } else {
-                               return false;
-                           }
-                       }
-                       _ => return false,
-                   },
-               }
+                Mutation::New { key, value } => match target {
+                    JsonNode::Map(map) => {
+                        if let JsonNode::Entry(_) = value {
+                            map.insert(String::from("metadata"), value.clone());
+                        } else {
+                            map.insert(key.clone(), value.clone());
+                        }
+                    }
+                    _ => return false,
+                },
+                Mutation::Delete { .. } => {
+                    *target = JsonNode::Tombstone;
+                }
+                Mutation::Edit { key, value } => match target {
+                    JsonNode::Map(map) => {
+                        if let Some(entry) = map.get_mut(key) {
+                            if !matches!(entry, JsonNode::Tombstone) {
+                                *entry = value.clone();
+                            } else {
+                                return false;
+                            }
+                        } else {
+                            return false;
+                        }
+                    }
+                    _ => return false,
+                },
+            }
 
             applied_ops.insert(op.id.clone());
             true
         }
 
         pub fn compress(&mut self) {
-            // match self {
-            //     JsonNode::Map(map) => {
-            //         map.retain(|_, v| !matches!(v, JsonNode::Tombstone));
-            //         for node in map.values_mut() {
-            //             node.compress();
-            //         }
-            //     }
-            //     _ => {}
-            // }
+            match self {
+                JsonNode::Map(map) => {
+                    map.retain(|_, v| !matches!(v, JsonNode::Tombstone));
+                    for node in map.values_mut() {
+                        node.compress();
+                    }
+                }
+                _ => {}
+            }
         }
     }
 
     #[cfg(test)]
-    mod tests {
-    }
+    mod tests {}
 }

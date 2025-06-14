@@ -1,13 +1,13 @@
 pub mod crdt_index {
     use crate::crdt::crdt::{JsonNode, LamportTimestamp, Mutation, Operation, VersionVector};
-    use crate::fswrapper::fswrapper::{compute_file_relative_path, FileBlob, EntryMeta};
+    use crate::fswrapper::fswrapper::{compute_file_relative_path, EntryMeta};
     use crate::fswrapper::fswrapper::{INDEX_NAME, WATCHED_PATH};
+    use log::{debug, error, info, trace};
     use serde::{Deserialize, Serialize};
     use std::collections::HashSet;
     use std::path::{Path, PathBuf};
     use uuid::Uuid;
     use walkdir::WalkDir;
-    use log::{trace, info, error};
 
     #[derive(Clone, Debug, Serialize, Deserialize)]
     pub struct CRDTIndex {
@@ -118,6 +118,7 @@ pub mod crdt_index {
 
         pub fn apply_remote(&mut self, op: &Operation) -> bool {
             if self.applied.contains(&op.id) || !op.deps.iter().all(|d| self.applied.contains(d)) {
+                debug!("I am deduplicating op: {:?}", op);
                 return false; // duplicate or out‑of‑causal‑order
             }
             let ok = self.root.apply(op, &mut self.applied);
@@ -190,9 +191,7 @@ pub mod crdt_index {
                 let meta = EntryMeta::from_path(entry.path())?;
                 let mutation = Mutation::New {
                     key: key.clone(),
-                    value: JsonNode::Entry(
-                      meta
-                    ),
+                    value: JsonNode::Entry(meta),
                 };
 
                 let op = idx.make_op(cursor, mutation);
@@ -223,5 +222,158 @@ pub mod crdt_index {
             mutation: Mutation,
             cur: Vec<String>,
         },
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+        use crate::crdt::crdt::{JsonNode, Mutation};
+        use std::time::Instant;
+        use uuid::Uuid;
+
+        fn make_mutation(i: usize, variant: &str) -> Mutation {
+            let key = format!("file_{}", i);
+            let value = JsonNode::Entry(EntryMeta {
+                name: format!("name_{}", i),
+                path: format!("path/to/file_{}", i),
+                is_directory: false,
+                accessed: Some(0),
+                modified: Some(0),
+                created: Some(0),
+                permissions: Some(0o755),
+                size: Some(1234),
+                owner: Some("owner".into()),
+                content_hash: Some(
+                    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef".into(),
+                ),
+            });
+
+            match variant {
+                "new" => Mutation::New { key, value },
+                "edit" => Mutation::Edit { key, value },
+                "delete" => Mutation::Delete { key },
+                _ => panic!("Unknown mutation variant"),
+            }
+        }
+
+        #[test]
+        fn apply_10_local_new() {
+            timed_local_test("new", 10);
+        }
+        #[test]
+        fn apply_100_local_new() {
+            timed_local_test("new", 100);
+        }
+        #[test]
+        fn apply_1000_local_new() {
+            timed_local_test("new", 1000);
+        }
+
+        #[test]
+        fn apply_10_local_edit() {
+            timed_local_test("edit", 10);
+        }
+        #[test]
+        fn apply_100_local_edit() {
+            timed_local_test("edit", 100);
+        }
+        #[test]
+        fn apply_1000_local_edit() {
+            timed_local_test("edit", 1000);
+        }
+
+        #[test]
+        fn apply_10_local_delete() {
+            timed_local_test("delete", 10);
+        }
+        #[test]
+        fn apply_100_local_delete() {
+            timed_local_test("delete", 100);
+        }
+        #[test]
+        fn apply_1000_local_delete() {
+            timed_local_test("delete", 1000);
+        }
+
+        #[test]
+        fn apply_10_remote_new() {
+            timed_remote_test("new", 10);
+        }
+        #[test]
+        fn apply_100_remote_new() {
+            timed_remote_test("new", 100);
+        }
+        #[test]
+        fn apply_1000_remote_new() {
+            timed_remote_test("new", 1000);
+        }
+
+        #[test]
+        fn apply_10_remote_edit() {
+            timed_remote_test("edit", 10);
+        }
+        #[test]
+        fn apply_100_remote_edit() {
+            timed_remote_test("edit", 100);
+        }
+        #[test]
+        fn apply_1000_remote_edit() {
+            timed_remote_test("edit", 1000);
+        }
+
+        #[test]
+        fn apply_10_remote_delete() {
+            timed_remote_test("delete", 10);
+        }
+        #[test]
+        fn apply_100_remote_delete() {
+            timed_remote_test("delete", 100);
+        }
+        #[test]
+        fn apply_1000_remote_delete() {
+            timed_remote_test("delete", 1000);
+        }
+
+        fn timed_local_test(variant: &str, count: usize) {
+            let mut index = CRDTIndex::new(Uuid::new_v4(), "dummy_path.json".to_string());
+            let start = Instant::now();
+            for i in 0..count {
+                let cursor = vec!["root".to_string()];
+                let mutation = make_mutation(i, variant);
+                index.apply_local_op(&cursor, mutation);
+            }
+            let elapsed = start.elapsed().as_micros();
+            println!(
+                "Applied {} local {} ops in {} µs",
+                count,
+                variant.to_uppercase(),
+                elapsed
+            );
+            //assert!(false);
+        }
+
+        fn timed_remote_test(variant: &str, count: usize) {
+            let mut index = CRDTIndex::new(Uuid::new_v4(), "dummy_path.json".to_string());
+            let mut ops = Vec::new();
+            for i in 0..count {
+                let cursor = vec!["root".to_string()];
+                let mutation = make_mutation(i, variant);
+                let op = index.make_op(cursor, mutation);
+                ops.push(op);
+            }
+
+            let start = Instant::now();
+            for op in ops {
+                index.apply_remote(&op);
+            }
+            let elapsed = start.elapsed().as_micros();
+            println!(
+                "Applied {} remote {} ops in {} µs",
+                count,
+                variant.to_uppercase(),
+                elapsed
+            );
+            //assert!(false);
+        }
     }
 }

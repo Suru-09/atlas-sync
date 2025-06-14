@@ -1,8 +1,8 @@
 pub mod coordinator {
-    use crate::fswrapper::fswrapper::{INDEX_NAME, WATCHED_PATH};
     use crate::args_parser::args_parser::Args;
     use crate::crdt::crdt::{Mutation, Operation};
     use crate::crdt_index::crdt_index::{CRDTIndex, IndexCmd};
+    use crate::fswrapper::fswrapper::{INDEX_NAME, WATCHED_PATH};
     use crate::p2p_network::p2p_network::*;
     use crate::uuid_wrapper::uuid_wrapper::create_new_uuid;
     use crate::watcher::watcher::watch_path;
@@ -19,8 +19,8 @@ pub mod coordinator {
     };
     use log::{info, trace};
     use std::path::Path;
-    use tokio::sync::mpsc::{self, UnboundedReceiver};
     use tokio::sync::mpsc::UnboundedSender;
+    use tokio::sync::mpsc::{self, UnboundedReceiver};
 
     pub async fn start_coordination(args: Args) {
         match args.watch_path.is_empty() {
@@ -49,11 +49,14 @@ pub mod coordinator {
             .multiplex(mplex::MplexConfig::new())
             .boxed();
 
+        let index_tx = build_index(response_sender.clone());
+
         let mut behaviour = AtlasSyncBehavior {
             floodsub: Floodsub::new(PEER_ID.clone()),
             mdns: Mdns::new(Default::default())
                 .await
                 .expect("can create mdns"),
+            index_tx: index_tx.clone(),
         };
 
         behaviour.floodsub.subscribe(TOPIC.clone());
@@ -72,27 +75,29 @@ pub mod coordinator {
         )
         .expect("swarm can be started");
 
-        let index_tx = build_index(response_sender.clone());
-
         watch_path(Path::new(WATCHED_PATH.get().unwrap()), index_tx)
             .expect("Failed to start file watcher");
 
-        let (peer_ev_sender, mut peer_ev_rcv): (UnboundedSender<PeerConnectionEvent>, UnboundedReceiver<PeerConnectionEvent>) = mpsc::unbounded_channel();
+        let (peer_ev_sender, mut peer_ev_rcv): (
+            UnboundedSender<PeerConnectionEvent>,
+            UnboundedReceiver<PeerConnectionEvent>,
+        ) = mpsc::unbounded_channel();
 
         let mut first_time = true;
         loop {
-
             if first_time {
-              let _  = peer_ev_sender.send(PeerConnectionEvent::InitialConnection((args.peer_id.to_string(), PEER_ID.to_string())));
-              first_time = false;
+                let _ = peer_ev_sender.send(PeerConnectionEvent::InitialConnection((
+                    args.peer_id.to_string(),
+                    PEER_ID.to_string(),
+                )));
+                first_time = false;
             }
 
             tokio::select! {
                 _ = swarm.next() => {
-                  info!("Swarm event");
+                  trace!("Swarm event");
                 },
                 response = response_rcv.recv() => {
-                  info!("Event: {:?}", response);
                   if let Some(event) = response {
                     let json_bytes = serde_json::to_vec(&event).unwrap();
 
@@ -128,7 +133,7 @@ pub mod coordinator {
             )))
             .expect("Should be serializable");
 
-            info!("Hahah happening rn!!");
+            info!("Starting initial peer connection.");
 
             swarm
                 .behaviour_mut()
@@ -144,8 +149,7 @@ pub mod coordinator {
         let index_path_str = watched_path + index_name;
         let index_path = Path::new(&index_path_str);
         info!("CRDT Index path: {:?}", index_path);
-        let index =
-            CRDTIndex::load_or_init(index_uuid, index_path_str).unwrap();
+        let index = CRDTIndex::load_or_init(index_uuid, index_path_str).unwrap();
 
         let (tx, mut rx) = mpsc::unbounded_channel();
         tokio::spawn(async move {
@@ -155,14 +159,14 @@ pub mod coordinator {
                     IndexCmd::LocalOp { mutation, cur } => {
                         let op = index.apply_local_op(&cur, mutation);
                         let _ = index.save_to_disk();
-                        info!("Broadcasting local operation");
+                        info!("Local operation has been applied and is broadcasted to peers!");
                         let _ = broadcast_tx.send(op);
                     }
                     IndexCmd::RemoteOp { mutation, cur } => {
                         let op = index.make_op(cur, mutation);
                         let _ = index.apply_remote(&op);
-                        info!("Broadcasting remote operation");
-                        let _ = broadcast_tx.send(op);
+                        let _ = index.save_to_disk();
+                        info!("Remote operation has been applied!");
                     }
                 }
             }
