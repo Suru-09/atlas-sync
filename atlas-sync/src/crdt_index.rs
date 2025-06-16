@@ -169,8 +169,8 @@ pub mod crdt_index {
             components.next_back(); // remove the last component
             let watched_path = components.as_path();
 
-            println!("Path: {:?}", path);
-            println!("Watched path: {:?}", watched_path);
+            // println!("Path: {:?}", path);
+            // println!("Watched path: {:?}", watched_path);
 
             for entry in WalkDir::new(watched_path)
                 .into_iter()
@@ -206,7 +206,7 @@ pub mod crdt_index {
             let path = Path::new(&self.root_path);
             let json = serde_json::to_vec_pretty(&self)
                 .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
-            error!("Writing to disk to path: {:?}", path);
+            debug!("Writing to disk to path: {:?}", path);
             std::fs::write(path, json)
         }
     }

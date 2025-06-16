@@ -27,12 +27,15 @@ pub mod p2p_network {
         // tx for Index actions
         #[behaviour(ignore)]
         pub index_tx: UnboundedSender<IndexCmd>,
+        #[behaviour(ignore)]
+        pub peer_tx: UnboundedSender<PeerConnectionEvent>,
     }
 
     #[derive(Debug, Serialize, Deserialize)]
     pub enum PeerConnectionEvent {
         InitialConnection((String, String)),
         SyncFile((String, FileBlob)),
+        InitialConnCompleted(String),
     }
 
     impl NetworkBehaviourEventProcess<FloodsubEvent> for AtlasSyncBehavior {
@@ -81,11 +84,10 @@ pub mod p2p_network {
                     } else if let Ok(parsed) =
                         serde_json::from_slice::<PeerConnectionEvent>(&msg.data)
                     {
-                        info!("I am receiving a peer connection event: {:?}!", parsed);
                         let base_path = Path::new(WATCHED_PATH.get().unwrap());
                         match parsed {
                             PeerConnectionEvent::InitialConnection((target_peer, source_peer)) => {
-                                info!("Target peer: {}, Source peer: {}", target_peer, source_peer);
+                                //info!("Target peer: {}, Source peer: {}", target_peer, source_peer);
                                 if PEER_ID.to_string() == target_peer {
                                     // go through each file and do stuff.
                                     let blob_files =
@@ -102,9 +104,16 @@ pub mod p2p_network {
                                 }
                             }
                             PeerConnectionEvent::SyncFile((target_peer, file_blob)) => {
-                                info!("Sync file event!");
+                                //info!("Sync file event!");
                                 if PEER_ID.to_string() == target_peer {
                                     let _ = file_blob.write_to_disk(&base_path);
+                                }
+                            }
+                            PeerConnectionEvent::InitialConnCompleted(target_peer) => {
+                                if PEER_ID.to_string() == target_peer {
+                                    let _ = self.peer_tx.send(
+                                        PeerConnectionEvent::InitialConnCompleted(target_peer),
+                                    );
                                 }
                             }
                         }

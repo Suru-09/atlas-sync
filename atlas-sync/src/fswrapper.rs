@@ -1,14 +1,14 @@
 pub mod fswrapper {
+    use core::panic::PanicInfo;
     use log::error;
+    use once_cell::sync::{Lazy, OnceCell};
     use serde::{Deserialize, Serialize};
     use sha2::{Digest, Sha256};
-    use core::panic::PanicInfo;
     use std::io::Write;
     use std::os::unix::fs::{MetadataExt, PermissionsExt};
-    use std::path::{Path, Component, PathBuf};
+    use std::path::{Component, Path, PathBuf};
     use std::time::UNIX_EPOCH;
     use std::{default, fs, io};
-    use once_cell::sync::{Lazy, OnceCell};
 
     pub static INDEX_NAME: Lazy<String> = Lazy::new(|| String::from("/index.json"));
     pub static WATCHED_PATH: OnceCell<String> = OnceCell::new();
@@ -47,7 +47,9 @@ pub mod fswrapper {
                 if path.is_dir() {
                     blobs.extend(FileBlob::collect_files_to_be_synced(&path)?);
                 } else if path.is_file() {
-                    let name = path.to_string_lossy().into_owned();
+                    let name = compute_file_relative_path(&path)
+                        .to_string_lossy()
+                        .into_owned();
                     let content = fs::read(&path)?;
                     let mut hasher = Sha256::new();
                     hasher.update(&content);
@@ -143,7 +145,10 @@ pub mod fswrapper {
             if path.is_dir() {
                 return Ok(EntryMeta {
                     name,
-                    path: compute_file_relative_path(path).to_str().unwrap().to_string(),
+                    path: compute_file_relative_path(path)
+                        .to_str()
+                        .unwrap()
+                        .to_string(),
                     is_directory: true,
                     accessed: last_accesed,
                     modified: last_modified,
@@ -161,7 +166,10 @@ pub mod fswrapper {
 
                 return Ok(EntryMeta {
                     name,
-                    path: compute_file_relative_path(path).to_str().unwrap().to_string(),
+                    path: compute_file_relative_path(path)
+                        .to_str()
+                        .unwrap()
+                        .to_string(),
                     is_directory: true,
                     accessed: last_accesed,
                     modified: last_modified,
@@ -217,15 +225,12 @@ pub mod fswrapper {
     }
 
     pub fn compute_file_relative_path(abs_path: &Path) -> PathBuf {
-      let last_name_watched = last_name(&Path::new(WATCHED_PATH.get().unwrap())).unwrap();
-      relative_intersection(
-          abs_path,
-          &Path::new(&last_name_watched)
-      ).unwrap()
+        let last_name_watched = last_name(&Path::new(WATCHED_PATH.get().unwrap())).unwrap();
+        relative_intersection(abs_path, &Path::new(&last_name_watched)).unwrap()
     }
 
     pub fn compute_file_absolute_path(relative_path: &Path) -> PathBuf {
-      let watched_path = &Path::new(WATCHED_PATH.get().unwrap());
-      watched_path.join(relative_path)
+        let watched_path = &Path::new(WATCHED_PATH.get().unwrap());
+        watched_path.join(relative_path)
     }
 }

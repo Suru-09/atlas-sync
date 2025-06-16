@@ -55,6 +55,10 @@ pub mod coordinator {
             .boxed();
 
         let index_tx = build_index(response_sender.clone());
+        let (peer_ev_sender, mut peer_ev_rcv): (
+            UnboundedSender<PeerConnectionEvent>,
+            UnboundedReceiver<PeerConnectionEvent>,
+        ) = mpsc::unbounded_channel();
 
         let mut behaviour = AtlasSyncBehavior {
             floodsub: Floodsub::new(PEER_ID.clone()),
@@ -62,6 +66,7 @@ pub mod coordinator {
                 .await
                 .expect("can create mdns"),
             index_tx: index_tx.clone(),
+            peer_tx: peer_ev_sender.clone(),
         };
 
         behaviour.floodsub.subscribe(TOPIC.clone());
@@ -80,22 +85,50 @@ pub mod coordinator {
         )
         .expect("swarm can be started");
 
+        let mut first_time = true;
+        let syncing = !args.peer_id.is_empty();
+        while syncing {
+            tokio::select! {
+                _ = swarm.next() => {
+                  trace!("Swarm event");
+                },
+                peer_rsp = peer_ev_rcv.recv() => {
+                    match peer_rsp {
+                      Some(PeerConnectionEvent::InitialConnection(_)) => {
+                          if !args.peer_id.is_empty() {
+                              handle_initial_peer_connection(&args.peer_id, &PEER_ID.to_string(), &mut swarm);
+                          }
+                      }
+                      Some(PeerConnectionEvent::InitialConnCompleted(_)) => {
+                          info!("Initial connection synchronization has been completed");
+                          break;
+                      }
+                      _ => {
+                        todo!("");
+                      }
+                    }
+                },
+                _ = tokio::time::sleep(tokio::time::Duration::from_secs(1)) => {
+                    if first_time{
+                        if !args.peer_id.is_empty() {
+                            let _ = peer_ev_sender.send(PeerConnectionEvent::InitialConnection((
+                                args.peer_id.to_string(),
+                                PEER_ID.to_string(),
+                            )));
+                        }
+                        first_time = false;
+                    }
+                }
+            }
+        }
+
+        info!(
+            "Starting to watch path: {:?}",
+            Path::new(WATCHED_PATH.get().unwrap())
+        );
         watch_path(Path::new(WATCHED_PATH.get().unwrap()), index_tx)
             .expect("Failed to start file watcher");
 
-        let (peer_ev_sender, mut peer_ev_rcv): (
-            UnboundedSender<PeerConnectionEvent>,
-            UnboundedReceiver<PeerConnectionEvent>,
-        ) = mpsc::unbounded_channel();
-
-        let flag = Arc::new(AtomicBool::new(false));
-        let flag_clone = flag.clone();
-        tokio::spawn(async move {
-            tokio::time::sleep(tokio::time::Duration::from_secs(5)).await;
-            flag_clone.store(true, Ordering::SeqCst);
-        });
-
-        let mut first_time = true;
         loop {
             tokio::select! {
                 _ = swarm.next() => {
@@ -111,29 +144,6 @@ pub mod coordinator {
                         .publish(TOPIC.clone(), json_bytes);
                   }
                 },
-                peer_rsp = peer_ev_rcv.recv() => {
-                    match peer_rsp {
-                      Some(PeerConnectionEvent::InitialConnection(_)) => {
-                          if first_time && !args.peer_id.is_empty() {
-                              handle_initial_peer_connection(&args.peer_id, &PEER_ID.to_string(), &mut swarm);
-                              first_time = false;
-                          }
-                      }
-                      _ => {
-                        todo!("");
-                      }
-                    }
-                },
-                _ = tokio::time::sleep(tokio::time::Duration::from_secs(1)) => {
-                    if flag.load(Ordering::SeqCst) {
-                        if !args.peer_id.is_empty() {
-                            let _ = peer_ev_sender.send(PeerConnectionEvent::InitialConnection((
-                                args.peer_id.to_string(),
-                                PEER_ID.to_string(),
-                            )));
-                        }
-                    }
-                }
             }
         }
     }

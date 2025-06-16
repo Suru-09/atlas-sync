@@ -1,62 +1,6 @@
 {
-  "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a",
+  "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333",
   "root": {
-    "my_fiiile": {
-      "metadata": {
-        "name": "watched/src/resources/test_watcher/my_fiiile",
-        "path": "watched/src/resources/test_watcher/my_fiiile",
-        "is_directory": false,
-        "accessed": null,
-        "modified": null,
-        "created": null,
-        "permissions": null,
-        "size": null,
-        "owner": null,
-        "content_hash": null
-      }
-    },
-    "random_file.txt": {
-      "metadata": {
-        "name": "watched/src/resources/test_watcher/random_file.txt",
-        "path": "watched/src/resources/test_watcher/random_file.txt",
-        "is_directory": false,
-        "accessed": null,
-        "modified": null,
-        "created": null,
-        "permissions": null,
-        "size": null,
-        "owner": null,
-        "content_hash": null
-      }
-    },
-    "src": {
-      "metadata": {
-        "name": "watched/src",
-        "path": "watched/src",
-        "is_directory": true,
-        "accessed": null,
-        "modified": null,
-        "created": null,
-        "permissions": null,
-        "size": null,
-        "owner": null,
-        "content_hash": null
-      }
-    },
-    "test": {
-      "metadata": {
-        "name": "watched/src/resources/test_watcher/test",
-        "path": "watched/src/resources/test_watcher/test",
-        "is_directory": false,
-        "accessed": null,
-        "modified": null,
-        "created": null,
-        "permissions": null,
-        "size": null,
-        "owner": null,
-        "content_hash": null
-      }
-    },
     "test_watcher": {
       ".DS_Store": {
         "metadata": {
@@ -90,8 +34,8 @@
         "name": "test_watcher",
         "path": "test_watcher",
         "is_directory": true,
-        "accessed": 1750096867,
-        "modified": 1750096867,
+        "accessed": 1750100333,
+        "modified": 1750100333,
         "created": 1745950619,
         "permissions": 16893,
         "size": 4096,
@@ -157,61 +101,45 @@
     }
   },
   "root_path": "src/resources/test_watcher/index.json",
-  "clock": 14,
+  "clock": 7,
   "vv": {
-    "019779e8-5230-771f-bcfb-d9a12a962b0a": 13
+    "01977a1b-f4f0-7342-a043-f49591f45333": 7
   },
   "applied": [
     {
-      "counter": 6,
-      "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
-    },
-    {
-      "counter": 10,
-      "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
-    },
-    {
-      "counter": 4,
-      "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
-    },
-    {
-      "counter": 13,
-      "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
-    },
-    {
-      "counter": 5,
-      "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
-    },
-    {
-      "counter": 9,
-      "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
-    },
-    {
-      "counter": 8,
-      "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
+      "counter": 1,
+      "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
     },
     {
       "counter": 3,
-      "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
+      "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
+    },
+    {
+      "counter": 6,
+      "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
     },
     {
       "counter": 2,
-      "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
+      "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
+    },
+    {
+      "counter": 4,
+      "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
+    },
+    {
+      "counter": 5,
+      "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
     },
     {
       "counter": 7,
-      "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
-    },
-    {
-      "counter": 1,
-      "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
+      "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
     }
   ],
   "op_log": [
     {
       "id": {
         "counter": 1,
-        "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
+        "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
       },
       "deps": [],
       "cursor": [
@@ -224,8 +152,8 @@
             "name": "test_watcher",
             "path": "test_watcher",
             "is_directory": true,
-            "accessed": 1750096867,
-            "modified": 1750096867,
+            "accessed": 1750100333,
+            "modified": 1750100333,
             "created": 1745950619,
             "permissions": 16893,
             "size": 4096,
@@ -238,12 +166,12 @@
     {
       "id": {
         "counter": 2,
-        "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
+        "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
       },
       "deps": [
         {
           "counter": 1,
-          "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
+          "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
         }
       ],
       "cursor": [
@@ -271,12 +199,12 @@
     {
       "id": {
         "counter": 3,
-        "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
+        "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
       },
       "deps": [
         {
           "counter": 2,
-          "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
+          "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
         }
       ],
       "cursor": [
@@ -304,12 +232,12 @@
     {
       "id": {
         "counter": 4,
-        "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
+        "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
       },
       "deps": [
         {
           "counter": 3,
-          "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
+          "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
         }
       ],
       "cursor": [
@@ -337,12 +265,12 @@
     {
       "id": {
         "counter": 5,
-        "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
+        "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
       },
       "deps": [
         {
           "counter": 4,
-          "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
+          "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
         }
       ],
       "cursor": [
@@ -370,12 +298,12 @@
     {
       "id": {
         "counter": 6,
-        "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
+        "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
       },
       "deps": [
         {
           "counter": 5,
-          "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
+          "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
         }
       ],
       "cursor": [
@@ -403,12 +331,12 @@
     {
       "id": {
         "counter": 7,
-        "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
+        "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
       },
       "deps": [
         {
           "counter": 6,
-          "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
+          "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
         }
       ],
       "cursor": [
@@ -427,134 +355,6 @@
             "created": 1746284810,
             "permissions": 16893,
             "size": 4096,
-            "owner": null,
-            "content_hash": null
-          }
-        }
-      }
-    },
-    {
-      "id": {
-        "counter": 8,
-        "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
-      },
-      "deps": [
-        {
-          "counter": 7,
-          "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
-        }
-      ],
-      "cursor": [
-        "src"
-      ],
-      "mutation": {
-        "New": {
-          "key": "src",
-          "value": {
-            "name": "watched/src",
-            "path": "watched/src",
-            "is_directory": true,
-            "accessed": null,
-            "modified": null,
-            "created": null,
-            "permissions": null,
-            "size": null,
-            "owner": null,
-            "content_hash": null
-          }
-        }
-      }
-    },
-    {
-      "id": {
-        "counter": 9,
-        "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
-      },
-      "deps": [
-        {
-          "counter": 8,
-          "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
-        }
-      ],
-      "cursor": [
-        "my_fiiile"
-      ],
-      "mutation": {
-        "New": {
-          "key": "my_fiiile",
-          "value": {
-            "name": "watched/src/resources/test_watcher/my_fiiile",
-            "path": "watched/src/resources/test_watcher/my_fiiile",
-            "is_directory": false,
-            "accessed": null,
-            "modified": null,
-            "created": null,
-            "permissions": null,
-            "size": null,
-            "owner": null,
-            "content_hash": null
-          }
-        }
-      }
-    },
-    {
-      "id": {
-        "counter": 10,
-        "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
-      },
-      "deps": [
-        {
-          "counter": 9,
-          "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
-        }
-      ],
-      "cursor": [
-        "test"
-      ],
-      "mutation": {
-        "New": {
-          "key": "test",
-          "value": {
-            "name": "watched/src/resources/test_watcher/test",
-            "path": "watched/src/resources/test_watcher/test",
-            "is_directory": false,
-            "accessed": null,
-            "modified": null,
-            "created": null,
-            "permissions": null,
-            "size": null,
-            "owner": null,
-            "content_hash": null
-          }
-        }
-      }
-    },
-    {
-      "id": {
-        "counter": 13,
-        "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
-      },
-      "deps": [
-        {
-          "counter": 10,
-          "replica_id": "019779e8-5230-771f-bcfb-d9a12a962b0a"
-        }
-      ],
-      "cursor": [
-        "random_file.txt"
-      ],
-      "mutation": {
-        "New": {
-          "key": "random_file.txt",
-          "value": {
-            "name": "watched/src/resources/test_watcher/random_file.txt",
-            "path": "watched/src/resources/test_watcher/random_file.txt",
-            "is_directory": false,
-            "accessed": null,
-            "modified": null,
-            "created": null,
-            "permissions": null,
-            "size": null,
             "owner": null,
             "content_hash": null
           }
