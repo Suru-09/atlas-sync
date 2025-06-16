@@ -81,6 +81,7 @@ pub mod p2p_network {
                     } else if let Ok(parsed) =
                         serde_json::from_slice::<PeerConnectionEvent>(&msg.data)
                     {
+                        info!("I am receiving a peer connection event: {:?}!", parsed);
                         let base_path = Path::new(WATCHED_PATH.get().unwrap());
                         match parsed {
                             PeerConnectionEvent::InitialConnection((target_peer, source_peer)) => {

@@ -6,6 +6,7 @@ pub mod coordinator {
     use crate::p2p_network::p2p_network::*;
     use crate::uuid_wrapper::uuid_wrapper::create_new_uuid;
     use crate::watcher::watcher::watch_path;
+    use futures::future::{ready, Either};
     use libp2p::{
         core::upgrade,
         floodsub::Floodsub,
@@ -19,8 +20,12 @@ pub mod coordinator {
     };
     use log::{info, trace};
     use std::path::Path;
+    use std::sync::atomic::{AtomicBool, Ordering};
+    use std::sync::Arc;
+    use std::time::Duration;
     use tokio::sync::mpsc::UnboundedSender;
     use tokio::sync::mpsc::{self, UnboundedReceiver};
+    use tokio::time::sleep;
 
     pub async fn start_coordination(args: Args) {
         match args.watch_path.is_empty() {
@@ -83,16 +88,15 @@ pub mod coordinator {
             UnboundedReceiver<PeerConnectionEvent>,
         ) = mpsc::unbounded_channel();
 
+        let flag = Arc::new(AtomicBool::new(false));
+        let flag_clone = flag.clone();
+        tokio::spawn(async move {
+            tokio::time::sleep(tokio::time::Duration::from_secs(5)).await;
+            flag_clone.store(true, Ordering::SeqCst);
+        });
+
         let mut first_time = true;
         loop {
-            if first_time {
-                let _ = peer_ev_sender.send(PeerConnectionEvent::InitialConnection((
-                    args.peer_id.to_string(),
-                    PEER_ID.to_string(),
-                )));
-                first_time = false;
-            }
-
             tokio::select! {
                 _ = swarm.next() => {
                   trace!("Swarm event");
@@ -110,13 +114,26 @@ pub mod coordinator {
                 peer_rsp = peer_ev_rcv.recv() => {
                     match peer_rsp {
                       Some(PeerConnectionEvent::InitialConnection(_)) => {
-                        handle_initial_peer_connection(&args.peer_id, &PEER_ID.to_string(), &mut swarm);
+                          if first_time && !args.peer_id.is_empty() {
+                              handle_initial_peer_connection(&args.peer_id, &PEER_ID.to_string(), &mut swarm);
+                              first_time = false;
+                          }
                       }
                       _ => {
                         todo!("");
                       }
                     }
                 },
+                _ = tokio::time::sleep(tokio::time::Duration::from_secs(1)) => {
+                    if flag.load(Ordering::SeqCst) {
+                        if !args.peer_id.is_empty() {
+                            let _ = peer_ev_sender.send(PeerConnectionEvent::InitialConnection((
+                                args.peer_id.to_string(),
+                                PEER_ID.to_string(),
+                            )));
+                        }
+                    }
+                }
             }
         }
     }
@@ -133,7 +150,10 @@ pub mod coordinator {
             )))
             .expect("Should be serializable");
 
-            info!("Starting initial peer connection.");
+            info!(
+                "Starting initial peer connection from peer: {} to target peer: {}.",
+                peer_id, local_peer_id
+            );
 
             swarm
                 .behaviour_mut()
