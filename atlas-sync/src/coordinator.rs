@@ -1,12 +1,12 @@
 pub mod coordinator {
     use crate::args_parser::args_parser::Args;
-    use crate::crdt::crdt::{Mutation, Operation};
+    use crate::crdt::crdt::Operation;
     use crate::crdt_index::crdt_index::{CRDTIndex, IndexCmd};
-    use crate::fswrapper::fswrapper::{INDEX_NAME, WATCHED_PATH};
+    use crate::fswrapper::fswrapper::{FileBlob, INDEX_NAME, WATCHED_PATH};
     use crate::p2p_network::p2p_network::*;
     use crate::uuid_wrapper::uuid_wrapper::create_new_uuid;
     use crate::watcher::watcher::watch_path;
-    use futures::future::{ready, Either};
+    use libp2p::request_response::{ProtocolSupport, RequestResponse, RequestResponseConfig};
     use libp2p::{
         core::upgrade,
         floodsub::Floodsub,
@@ -20,12 +20,8 @@ pub mod coordinator {
     };
     use log::{info, trace};
     use std::path::Path;
-    use std::sync::atomic::{AtomicBool, Ordering};
-    use std::sync::Arc;
-    use std::time::Duration;
     use tokio::sync::mpsc::UnboundedSender;
     use tokio::sync::mpsc::{self, UnboundedReceiver};
-    use tokio::time::sleep;
 
     pub async fn start_coordination(args: Args) {
         match args.watch_path.is_empty() {
@@ -60,11 +56,18 @@ pub mod coordinator {
             UnboundedReceiver<PeerConnectionEvent>,
         ) = mpsc::unbounded_channel();
 
+        // request response protocol
+        let protocols = std::iter::once((FileProtocol(), ProtocolSupport::Full));
+        let mut cfg = RequestResponseConfig::default();
+        cfg.set_connection_keep_alive(std::time::Duration::from_secs(10));
+        let req_resp = RequestResponse::new(FileCodec(), protocols.clone(), cfg.clone());
+
         let mut behaviour = AtlasSyncBehavior {
             floodsub: Floodsub::new(PEER_ID.clone()),
             mdns: Mdns::new(Default::default())
                 .await
                 .expect("can create mdns"),
+            req_resp: req_resp,
             index_tx: index_tx.clone(),
             peer_tx: peer_ev_sender.clone(),
         };

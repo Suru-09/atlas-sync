@@ -7,6 +7,7 @@ pub mod p2p_network {
         floodsub::{Floodsub, FloodsubEvent, Topic},
         identity,
         mdns::{Mdns, MdnsEvent},
+        request_response::{ProtocolName, RequestResponseCodec, RequestResponseMessage},
         swarm::NetworkBehaviourEventProcess,
         NetworkBehaviour, PeerId,
     };
@@ -14,17 +15,26 @@ pub mod p2p_network {
     use once_cell::sync::Lazy;
     use serde::{Deserialize, Serialize};
     use std::path::Path;
+    use std::{io, iter};
     use tokio::sync::mpsc::UnboundedSender;
+
+    use futures::prelude::*;
+    use tracing_subscriber::EnvFilter;
 
     pub static KEYS: Lazy<identity::Keypair> = Lazy::new(|| identity::Keypair::generate_ed25519());
     pub static PEER_ID: Lazy<PeerId> = Lazy::new(|| PeerId::from(KEYS.public()));
     pub static TOPIC: Lazy<Topic> = Lazy::new(|| Topic::new("FILE_SHARING"));
 
+    #[derive(Debug, Serialize, Deserialize, Clone)]
+    pub struct FileRequest {
+        name: String,
+    }
+
     #[derive(NetworkBehaviour)]
     pub struct AtlasSyncBehavior {
         pub floodsub: Floodsub,
         pub mdns: Mdns,
-        // tx for Index actions
+        pub req_resp: RequestResponse<FileCodec>,
         #[behaviour(ignore)]
         pub index_tx: UnboundedSender<IndexCmd>,
         #[behaviour(ignore)]
@@ -101,6 +111,15 @@ pub mod p2p_network {
                                             .expect("File Blob is serializable");
                                         self.floodsub.publish(TOPIC.clone(), json_bytes);
                                     }
+
+                                    // signal the end of the initial connection.
+                                    let json_bytes = serde_json::to_vec(
+                                        &PeerConnectionEvent::InitialConnCompleted(
+                                            target_peer.clone(),
+                                        ),
+                                    )
+                                    .expect("File Blob is serializable");
+                                    self.floodsub.publish(TOPIC.clone(), json_bytes);
                                 }
                             }
                             PeerConnectionEvent::SyncFile((target_peer, file_blob)) => {
@@ -155,6 +174,124 @@ pub mod p2p_network {
                     }
                 }
             }
+        }
+    }
+
+    impl NetworkBehaviourEventProcess<RequestResponseEvent<FileRequest, FileBlob>>
+        for AtlasSyncBehavior
+    {
+        fn inject_event(&mut self, event: RequestResponseEvent<FileRequest, FileBlob>) {
+            match event {
+                RequestResponseEvent::Message { peer, message } => {
+                    info!("Request Message for peer: {} with msg: {:?}", peer, message);
+                    match message {
+                        RequestResponseMessage::Request {
+                            request_id,
+                            request,
+                            channel,
+                        } => {}
+                        RequestResponseMessage::Response {
+                            request_id,
+                            response,
+                        } => {}
+                    }
+                }
+                RequestResponseEvent::ResponseSent { peer, request_id } => {
+                    info!(
+                        "Response Sent for peer: {} with req_id: {:?}",
+                        peer, request_id
+                    );
+                }
+                _ => {
+                    error!("Request Response protocol inbound/outbound failure!");
+                }
+            }
+        }
+    }
+
+    use async_trait::async_trait;
+    use libp2p::request_response::{RequestResponse, RequestResponseEvent};
+
+    #[derive(Debug, Clone)]
+    pub struct FileProtocol();
+
+    #[derive(Clone)]
+    pub struct FileCodec();
+
+    impl ProtocolName for FileProtocol {
+        fn protocol_name(&self) -> &[u8] {
+            b"/my/protocol/1.0.0"
+        }
+    }
+
+    #[async_trait]
+    impl RequestResponseCodec for FileCodec {
+        type Protocol = FileProtocol;
+        type Request = FileRequest;
+        type Response = FileBlob;
+
+        async fn read_request<T>(
+            &mut self,
+            _: &FileProtocol,
+            io: &mut T,
+        ) -> io::Result<Self::Request>
+        where
+            T: AsyncRead + Unpin + Send,
+        {
+            let mut len_buf = [0u8; 4];
+            io.read_exact(&mut len_buf).await?;
+            let len = u32::from_be_bytes(len_buf) as usize;
+            let mut buf = vec![0u8; len];
+            io.read_exact(&mut buf).await?;
+            serde_json::from_slice(&buf).map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))
+        }
+
+        async fn read_response<T>(
+            &mut self,
+            _: &FileProtocol,
+            io: &mut T,
+        ) -> io::Result<Self::Response>
+        where
+            T: AsyncRead + Unpin + Send,
+        {
+            let mut len_buf = [0u8; 4];
+            io.read_exact(&mut len_buf).await?;
+            let len = u32::from_be_bytes(len_buf) as usize;
+            let mut buf = vec![0u8; len];
+            io.read_exact(&mut buf).await?;
+            serde_json::from_slice(&buf).map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))
+        }
+
+        async fn write_request<T>(
+            &mut self,
+            _: &FileProtocol,
+            io: &mut T,
+            req: FileRequest,
+        ) -> io::Result<()>
+        where
+            T: AsyncWrite + Unpin + Send,
+        {
+            let bytes = serde_json::to_vec(&req).unwrap();
+            let len = (bytes.len() as u32).to_be_bytes();
+            io.write_all(&len).await?;
+            io.write_all(&bytes).await?;
+            io.flush().await
+        }
+
+        async fn write_response<T>(
+            &mut self,
+            _: &FileProtocol,
+            io: &mut T,
+            resp: FileBlob,
+        ) -> io::Result<()>
+        where
+            T: AsyncWrite + Unpin + Send,
+        {
+            let bytes = serde_json::to_vec(&resp).unwrap();
+            let len = (bytes.len() as u32).to_be_bytes();
+            io.write_all(&len).await?;
+            io.write_all(&bytes).await?;
+            io.flush().await
         }
     }
 }
