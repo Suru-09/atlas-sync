@@ -16,7 +16,7 @@ pub mod p2p_network {
     use once_cell::sync::Lazy;
     use serde::{Deserialize, Serialize};
     use std::env;
-    use std::path::Path;
+    use std::path::{Path, PathBuf};
     use std::str::FromStr;
     use std::{io, iter};
     use tokio::sync::mpsc::UnboundedSender;
@@ -143,7 +143,7 @@ pub mod p2p_network {
                                     // signal the end of the initial connection.
                                     let json_bytes = serde_json::to_vec(
                                         &PeerConnectionEvent::InitialConnCompleted(
-                                            target_peer.clone(),
+                                            source_peer.clone(),
                                         ),
                                     )
                                     .expect("File Blob is serializable");
@@ -156,10 +156,10 @@ pub mod p2p_network {
                                     let _ = file_blob.write_to_disk(&base_path);
                                 }
                             }
-                            PeerConnectionEvent::InitialConnCompleted(target_peer) => {
-                                if PEER_ID.to_string() == target_peer {
+                            PeerConnectionEvent::InitialConnCompleted(source_peer) => {
+                                if PEER_ID.to_string() == source_peer {
                                     let _ = self.peer_tx.send(
-                                        PeerConnectionEvent::InitialConnCompleted(target_peer),
+                                        PeerConnectionEvent::InitialConnCompleted(source_peer),
                                     );
                                 }
                             }
@@ -234,7 +234,10 @@ pub mod p2p_network {
                             };
 
                             // really important to use the relative path and not absolute!!
-                            file_blob.name = request.name;
+                            // also skip the first thing in the path
+                            let path_components: PathBuf =
+                                Path::new(&request.name).components().skip(1).collect();
+                            file_blob.name = path_components.to_string_lossy().to_string();
                             let _ = self.req_resp.send_response(channel, file_blob);
                         }
                         RequestResponseMessage::Response {
