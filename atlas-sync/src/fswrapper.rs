@@ -30,9 +30,9 @@ pub mod fswrapper {
         pub content_hash: Option<String>,
     }
 
-    #[derive(Debug, Serialize, Deserialize, Clone)]
+    #[derive(Debug, Serialize, Deserialize, Clone, Default)]
     pub struct FileBlob {
-        name: String,
+        pub name: String,
         checksum: String,
         size: u64,
         content: Vec<u8>,
@@ -67,7 +67,7 @@ pub mod fswrapper {
         }
 
         pub fn write_to_disk(&self, base_path: &Path) -> io::Result<()> {
-            let full_path = base_path.join(&self.name);
+            let full_path = smart_join(base_path, &Path::new(&self.name));
 
             if let Some(parent) = full_path.parent() {
                 fs::create_dir_all(parent)?;
@@ -229,8 +229,25 @@ pub mod fswrapper {
         relative_intersection(abs_path, &Path::new(&last_name_watched)).unwrap()
     }
 
+    pub fn smart_join(a: &Path, b: &Path) -> PathBuf {
+        let a_components: Vec<_> = a.components().map(|c| c.as_os_str()).collect();
+        let b_components: Vec<_> = b.components().map(|c| c.as_os_str()).collect();
+
+        let mut overlap = 0;
+        let max_overlap = std::cmp::min(a_components.len(), b_components.len());
+        for i in 1..=max_overlap {
+            if a_components[a_components.len() - i..] == b_components[..i] {
+                overlap = i;
+            }
+        }
+
+        let mut result = a_components.clone();
+        result.extend_from_slice(&b_components[overlap..]);
+        result.iter().collect()
+    }
+
     pub fn compute_file_absolute_path(relative_path: &Path) -> PathBuf {
         let watched_path = &Path::new(WATCHED_PATH.get().unwrap());
-        watched_path.join(relative_path)
+        smart_join(watched_path, relative_path)
     }
 }

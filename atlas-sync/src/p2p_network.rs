@@ -1,6 +1,7 @@
 pub mod p2p_network {
     use crate::crdt::crdt::{Mutation, Operation};
     use crate::crdt_index::crdt_index::IndexCmd;
+    use crate::fswrapper;
     use crate::fswrapper::fswrapper::FileBlob;
     use crate::fswrapper::fswrapper::{INDEX_NAME, WATCHED_PATH};
     use libp2p::{
@@ -14,7 +15,9 @@ pub mod p2p_network {
     use log::{debug, error, info};
     use once_cell::sync::Lazy;
     use serde::{Deserialize, Serialize};
+    use std::env;
     use std::path::Path;
+    use std::str::FromStr;
     use std::{io, iter};
     use tokio::sync::mpsc::UnboundedSender;
 
@@ -64,9 +67,14 @@ pub mod p2p_network {
                                         key: key.clone(),
                                         value: value,
                                     },
-                                    cur: vec![key],
+                                    cur: vec![key.clone()],
                                 };
                                 let _ = self.index_tx.send(cmd);
+                                let _ = self.req_resp.send_request(
+                                    &PeerId::from_str(parsed.id.replica_id.as_str())
+                                        .expect("Valid peer id"),
+                                    FileRequest { name: key },
+                                );
                             }
                             Mutation::Edit { key, value } => {
                                 info!(
@@ -78,9 +86,14 @@ pub mod p2p_network {
                                         key: key.clone(),
                                         value: value,
                                     },
-                                    cur: vec![key],
+                                    cur: vec![key.clone()],
                                 };
                                 let _ = self.index_tx.send(cmd);
+                                let _ = self.req_resp.send_request(
+                                    &PeerId::from_str(parsed.id.replica_id.as_str())
+                                        .expect("Valid peer id"),
+                                    FileRequest { name: key },
+                                );
                             }
                             Mutation::Delete { key } => {
                                 info!("[REMOTE_EVENT] DELETE mutation with key: {:?}.", key);
@@ -189,11 +202,45 @@ pub mod p2p_network {
                             request_id,
                             request,
                             channel,
-                        } => {}
+                        } => {
+                            let path = fswrapper::fswrapper::compute_file_absolute_path(Path::new(
+                                &request.name,
+                            ));
+                            error!("request path: {:?}", path);
+                            let mut file_blob: FileBlob = match FileBlob::from_path(&path) {
+                                Ok(blob) => blob,
+                                Err(e) => {
+                                    error!(
+                                            "Could not extract file blob from request: {:?} with request_id: {} due to error: {:?}",
+                                            request, request_id, e
+                                        );
+                                    FileBlob::default()
+                                }
+                            };
+
+                            // really important to use the relative path and not absolute!!
+                            file_blob.name = request.name;
+                            let _ = self.req_resp.send_response(channel, file_blob);
+                        }
                         RequestResponseMessage::Response {
                             request_id,
                             response,
-                        } => {}
+                        } => {
+                            error!("received path: {:?}", response.name);
+                            let base_path = fswrapper::fswrapper::compute_file_absolute_path(
+                                Path::new(&response.name),
+                            );
+                            error!("base path: {:?}", base_path);
+                            match response.write_to_disk(&base_path) {
+                                Ok(_) => {}
+                                Err(e) => {
+                                    error!(
+                                        "Could not write blob from request_id: {} to disk: {:?}",
+                                        request_id, e
+                                    );
+                                }
+                            }
+                        }
                     }
                 }
                 RequestResponseEvent::ResponseSent { peer, request_id } => {
@@ -202,8 +249,19 @@ pub mod p2p_network {
                         peer, request_id
                     );
                 }
-                _ => {
-                    error!("Request Response protocol inbound/outbound failure!");
+                RequestResponseEvent::OutboundFailure {
+                    peer,
+                    request_id,
+                    error,
+                } => {
+                    error!("[OUTBOUND FAILURE] Peer: {peer:?}, RequestId: {request_id:?}, Error: {error:?}");
+                }
+                RequestResponseEvent::InboundFailure {
+                    peer,
+                    request_id,
+                    error,
+                } => {
+                    error!("[INBOUND FAILURE] Peer: {peer:?}, RequestId: {request_id:?}, Error: {error:?}");
                 }
             }
         }

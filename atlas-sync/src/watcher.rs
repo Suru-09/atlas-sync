@@ -1,18 +1,20 @@
 pub mod watcher {
     use crate::crdt::crdt::{JsonNode, Mutation};
     use crate::crdt_index::crdt_index::IndexCmd;
-    use crate::fswrapper::fswrapper::{compute_file_relative_path, last_name, path_to_vec, relative_intersection, EntryMeta};
+    use crate::fswrapper::fswrapper::{
+        compute_file_relative_path, last_name, path_to_vec, relative_intersection, EntryMeta,
+    };
     use crate::fswrapper::fswrapper::{INDEX_NAME, WATCHED_PATH};
     use log::{error, info};
     use notify::event::{CreateKind, DataChange, MetadataKind, ModifyKind, RemoveKind, RenameMode};
     use notify::{
         Event, EventKind, RecommendedWatcher, RecursiveMode, Result as NotifyResult, Watcher,
     };
-    use std::path::{ Path, PathBuf};
+    use std::path::{Path, PathBuf};
     use std::sync::mpsc::channel;
     use std::thread;
     use std::time::{SystemTime, UNIX_EPOCH};
-    use tokio::sync::mpsc::{UnboundedSender};
+    use tokio::sync::mpsc::UnboundedSender;
 
     pub fn watch_path(path: &Path, index_tx: UnboundedSender<IndexCmd>) -> NotifyResult<()> {
         let path = path.to_path_buf();
@@ -28,39 +30,46 @@ pub mod watcher {
             for res in rx {
                 match res {
                     Ok(event) => {
-                      if event.paths.iter().any(|p| p.file_name().map_or(false, |name| name == "index.json")) {
-                        continue; // skip index.json changes
-                      }
+                        if event.paths.iter().any(|p| {
+                            p.file_name().map_or(false, |name| {
+                                name == "index.json"
+                                    || name.to_str().unwrap_or("").contains(".goutput")
+                            })
+                        }) {
+                            continue; // skip index.json changes
+                        }
 
-                      match event.kind {
-                          EventKind::Access(_) => {
-                              // interesting only for initial connections, generally ignored.
-                          }
-                          EventKind::Create(create_kind) => {
-                              if let Some(new_cmd) = extract_new_cmd(&event.paths, &create_kind) {
-                                  info!("Sending new cmd: {:?}", new_cmd);
-                                  let _ = index_tx.send(new_cmd);
-                              }
-                          }
-                          EventKind::Modify(modify_kind) => {
-                              if let Some(update_cmd) = extract_update_cmd(&event.paths, &modify_kind)
-                              {
-                                  info!("Sending EDIT cmd: {:?}", update_cmd);
-                                  let _ = index_tx.send(update_cmd);
-                              }
-                          }
-                          EventKind::Remove(remove_kind) => {
-                              if let Some(delete_cmd) = extract_remove_op(&event.paths, &remove_kind)
-                              {
-                                  info!("Sending DELETE cmd: {:?}", delete_cmd);
-                                  let _ = index_tx.send(delete_cmd);
-                              }
-                          }
-                          EventKind::Other | EventKind::Any => {
-                              error!("Other or any event type: {:?}", event);
-                          }
-                      }
-                    },
+                        match event.kind {
+                            EventKind::Access(_) => {
+                                // interesting only for initial connections, generally ignored.
+                            }
+                            EventKind::Create(create_kind) => {
+                                if let Some(new_cmd) = extract_new_cmd(&event.paths, &create_kind) {
+                                    info!("Sending new cmd: {:?}", new_cmd);
+                                    let _ = index_tx.send(new_cmd);
+                                }
+                            }
+                            EventKind::Modify(modify_kind) => {
+                                if let Some(update_cmd) =
+                                    extract_update_cmd(&event.paths, &modify_kind)
+                                {
+                                    info!("Sending EDIT cmd: {:?}", update_cmd);
+                                    let _ = index_tx.send(update_cmd);
+                                }
+                            }
+                            EventKind::Remove(remove_kind) => {
+                                if let Some(delete_cmd) =
+                                    extract_remove_op(&event.paths, &remove_kind)
+                                {
+                                    info!("Sending DELETE cmd: {:?}", delete_cmd);
+                                    let _ = index_tx.send(delete_cmd);
+                                }
+                            }
+                            EventKind::Other | EventKind::Any => {
+                                error!("Other or any event type: {:?}", event);
+                            }
+                        }
+                    }
                     Err(e) => error!("watch error: {:?}", e),
                 }
             }
@@ -94,10 +103,8 @@ pub mod watcher {
                 Some(IndexCmd::LocalOp {
                     cur: path_to_vec(&path),
                     mutation: Mutation::New {
-                        key: last_name(&path).unwrap(),
-                        value: JsonNode::Entry(
-                          file_metadata
-                        ),
+                        key: path.to_string_lossy().into_owned(),
+                        value: JsonNode::Entry(file_metadata),
                     },
                 })
             }
@@ -117,10 +124,8 @@ pub mod watcher {
                 Some(IndexCmd::LocalOp {
                     cur: path_to_vec(&path),
                     mutation: Mutation::New {
-                        key: last_name(&path).unwrap(),
-                        value: JsonNode::Entry(
-                          file_metadata
-                        ),
+                        key: path.to_string_lossy().into_owned(),
+                        value: JsonNode::Entry(file_metadata),
                     },
                 })
             }
@@ -142,13 +147,13 @@ pub mod watcher {
             RemoveKind::File => Some(IndexCmd::LocalOp {
                 cur: path_to_vec(&path),
                 mutation: Mutation::Delete {
-                    key: last_name(&path).unwrap(),
+                    key: path.to_string_lossy().into_owned(),
                 },
             }),
             RemoveKind::Folder => Some(IndexCmd::LocalOp {
                 cur: path_to_vec(&path),
                 mutation: Mutation::Delete {
-                    key: last_name(&path).unwrap(),
+                    key: path.to_string_lossy().into_owned(),
                 },
             }),
         }
@@ -201,10 +206,8 @@ pub mod watcher {
                 Some(IndexCmd::LocalOp {
                     cur: path_to_vec(&path),
                     mutation: Mutation::Edit {
-                        key: last_name(&path).unwrap(),
-                        value: JsonNode::Entry(
-                          file_metadata
-                        ),
+                        key: path.to_string_lossy().into_owned(),
+                        value: JsonNode::Entry(file_metadata),
                     },
                 })
             }
@@ -231,10 +234,8 @@ pub mod watcher {
                 Some(IndexCmd::LocalOp {
                     cur: path_to_vec(&path),
                     mutation: Mutation::Edit {
-                        key: last_name(&path).unwrap(),
-                        value: JsonNode::Entry(
-                          file_metadata
-                        ),
+                        key: path.to_string_lossy().into_owned(),
+                        value: JsonNode::Entry(file_metadata),
                     },
                 })
             }
@@ -255,10 +256,8 @@ pub mod watcher {
                 Some(IndexCmd::LocalOp {
                     cur: path_to_vec(&path),
                     mutation: Mutation::Edit {
-                        key: last_name(&path).unwrap(),
-                        value: JsonNode::Entry(
-                          file_metadata
-                        ),
+                        key: path.to_string_lossy().into_owned(),
+                        value: JsonNode::Entry(file_metadata),
                     },
                 })
             }

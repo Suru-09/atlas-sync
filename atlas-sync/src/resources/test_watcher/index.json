@@ -1,5 +1,5 @@
 {
-  "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333",
+  "replica_id": "12D3KooWCCZVnxDSQPL9TxLq9YkgWuteZ4rbwFXZgAU91hCVef35",
   "root": {
     "test_watcher": {
       ".DS_Store": {
@@ -7,7 +7,7 @@
           "name": ".DS_Store",
           "path": "test_watcher/.DS_Store",
           "is_directory": true,
-          "accessed": 1750095882,
+          "accessed": 1750272694,
           "modified": 1749484361,
           "created": 1749484361,
           "permissions": 33204,
@@ -21,21 +21,21 @@
           "name": "file8",
           "path": "test_watcher/file8",
           "is_directory": true,
-          "accessed": 1750093968,
-          "modified": 1749930603,
-          "created": 1749930603,
+          "accessed": 1750272740,
+          "modified": 1750272739,
+          "created": 1750272739,
           "permissions": 33204,
           "size": 21,
           "owner": null,
-          "content_hash": "4c908e61b46edb65bb6caadbdb7855d96971b6a116695c3e6fd5fe4b38cb9139"
+          "content_hash": "2539391a8b27f6ee5acd9bb97d930b17798e6ec230254ff0c755a0b03912ecbe"
         }
       },
       "metadata": {
         "name": "test_watcher",
         "path": "test_watcher",
         "is_directory": true,
-        "accessed": 1750100333,
-        "modified": 1750100333,
+        "accessed": 1750276723,
+        "modified": 1750276723,
         "created": 1745950619,
         "permissions": 16893,
         "size": 4096,
@@ -47,7 +47,7 @@
           "name": "my_fiiile",
           "path": "test_watcher/my_fiiile",
           "is_directory": true,
-          "accessed": 1750095882,
+          "accessed": 1750272694,
           "modified": 1749484361,
           "created": 1749484361,
           "permissions": 33204,
@@ -61,7 +61,7 @@
           "name": "random_file.txt",
           "path": "test_watcher/random_file.txt",
           "is_directory": true,
-          "accessed": 1750093968,
+          "accessed": 1750272694,
           "modified": 1746210795,
           "created": 1746210795,
           "permissions": 33204,
@@ -75,13 +75,13 @@
           "name": "test",
           "path": "test_watcher/test",
           "is_directory": true,
-          "accessed": 1750095882,
-          "modified": 1749484361,
-          "created": 1749484361,
+          "accessed": 1750276694,
+          "modified": 1750276694,
+          "created": 1750276694,
           "permissions": 33204,
-          "size": 18,
+          "size": 21,
           "owner": null,
-          "content_hash": "cdbadd0147ab09cab7ff4abd5204946ca6494cad4cbd1458364397dae39dbfb6"
+          "content_hash": "14e25ad75ea999ba57a49ebc9c14c808c6d63a8bc73c0fa2bc4c75f65b9e090c"
         }
       },
       "unamed5": {
@@ -89,7 +89,7 @@
           "name": "unamed5",
           "path": "test_watcher/unamed5",
           "is_directory": true,
-          "accessed": 1750093968,
+          "accessed": 1750272684,
           "modified": 1746284810,
           "created": 1746284810,
           "permissions": 16893,
@@ -101,45 +101,45 @@
     }
   },
   "root_path": "src/resources/test_watcher/index.json",
-  "clock": 7,
+  "clock": 11,
   "vv": {
-    "01977a1b-f4f0-7342-a043-f49591f45333": 7
+    "12D3KooWCCZVnxDSQPL9TxLq9YkgWuteZ4rbwFXZgAU91hCVef35": 11
   },
   "applied": [
     {
-      "counter": 1,
-      "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
-    },
-    {
-      "counter": 3,
-      "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
+      "counter": 2,
+      "replica_id": "12D3KooWCCZVnxDSQPL9TxLq9YkgWuteZ4rbwFXZgAU91hCVef35"
     },
     {
       "counter": 6,
-      "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
-    },
-    {
-      "counter": 2,
-      "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
-    },
-    {
-      "counter": 4,
-      "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
-    },
-    {
-      "counter": 5,
-      "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
+      "replica_id": "12D3KooWCCZVnxDSQPL9TxLq9YkgWuteZ4rbwFXZgAU91hCVef35"
     },
     {
       "counter": 7,
-      "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
+      "replica_id": "12D3KooWCCZVnxDSQPL9TxLq9YkgWuteZ4rbwFXZgAU91hCVef35"
+    },
+    {
+      "counter": 4,
+      "replica_id": "12D3KooWCCZVnxDSQPL9TxLq9YkgWuteZ4rbwFXZgAU91hCVef35"
+    },
+    {
+      "counter": 5,
+      "replica_id": "12D3KooWCCZVnxDSQPL9TxLq9YkgWuteZ4rbwFXZgAU91hCVef35"
+    },
+    {
+      "counter": 1,
+      "replica_id": "12D3KooWCCZVnxDSQPL9TxLq9YkgWuteZ4rbwFXZgAU91hCVef35"
+    },
+    {
+      "counter": 3,
+      "replica_id": "12D3KooWCCZVnxDSQPL9TxLq9YkgWuteZ4rbwFXZgAU91hCVef35"
     }
   ],
   "op_log": [
     {
       "id": {
         "counter": 1,
-        "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
+        "replica_id": "12D3KooWCCZVnxDSQPL9TxLq9YkgWuteZ4rbwFXZgAU91hCVef35"
       },
       "deps": [],
       "cursor": [
@@ -152,8 +152,8 @@
             "name": "test_watcher",
             "path": "test_watcher",
             "is_directory": true,
-            "accessed": 1750100333,
-            "modified": 1750100333,
+            "accessed": 1750276723,
+            "modified": 1750276723,
             "created": 1745950619,
             "permissions": 16893,
             "size": 4096,
@@ -166,12 +166,12 @@
     {
       "id": {
         "counter": 2,
-        "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
+        "replica_id": "12D3KooWCCZVnxDSQPL9TxLq9YkgWuteZ4rbwFXZgAU91hCVef35"
       },
       "deps": [
         {
           "counter": 1,
-          "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
+          "replica_id": "12D3KooWCCZVnxDSQPL9TxLq9YkgWuteZ4rbwFXZgAU91hCVef35"
         }
       ],
       "cursor": [
@@ -185,13 +185,13 @@
             "name": "file8",
             "path": "test_watcher/file8",
             "is_directory": true,
-            "accessed": 1750093968,
-            "modified": 1749930603,
-            "created": 1749930603,
+            "accessed": 1750272740,
+            "modified": 1750272739,
+            "created": 1750272739,
             "permissions": 33204,
             "size": 21,
             "owner": null,
-            "content_hash": "4c908e61b46edb65bb6caadbdb7855d96971b6a116695c3e6fd5fe4b38cb9139"
+            "content_hash": "2539391a8b27f6ee5acd9bb97d930b17798e6ec230254ff0c755a0b03912ecbe"
           }
         }
       }
@@ -199,12 +199,12 @@
     {
       "id": {
         "counter": 3,
-        "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
+        "replica_id": "12D3KooWCCZVnxDSQPL9TxLq9YkgWuteZ4rbwFXZgAU91hCVef35"
       },
       "deps": [
         {
           "counter": 2,
-          "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
+          "replica_id": "12D3KooWCCZVnxDSQPL9TxLq9YkgWuteZ4rbwFXZgAU91hCVef35"
         }
       ],
       "cursor": [
@@ -218,13 +218,13 @@
             "name": "test",
             "path": "test_watcher/test",
             "is_directory": true,
-            "accessed": 1750095882,
-            "modified": 1749484361,
-            "created": 1749484361,
+            "accessed": 1750276694,
+            "modified": 1750276694,
+            "created": 1750276694,
             "permissions": 33204,
-            "size": 18,
+            "size": 21,
             "owner": null,
-            "content_hash": "cdbadd0147ab09cab7ff4abd5204946ca6494cad4cbd1458364397dae39dbfb6"
+            "content_hash": "14e25ad75ea999ba57a49ebc9c14c808c6d63a8bc73c0fa2bc4c75f65b9e090c"
           }
         }
       }
@@ -232,12 +232,12 @@
     {
       "id": {
         "counter": 4,
-        "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
+        "replica_id": "12D3KooWCCZVnxDSQPL9TxLq9YkgWuteZ4rbwFXZgAU91hCVef35"
       },
       "deps": [
         {
           "counter": 3,
-          "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
+          "replica_id": "12D3KooWCCZVnxDSQPL9TxLq9YkgWuteZ4rbwFXZgAU91hCVef35"
         }
       ],
       "cursor": [
@@ -251,7 +251,7 @@
             "name": "my_fiiile",
             "path": "test_watcher/my_fiiile",
             "is_directory": true,
-            "accessed": 1750095882,
+            "accessed": 1750272694,
             "modified": 1749484361,
             "created": 1749484361,
             "permissions": 33204,
@@ -265,12 +265,12 @@
     {
       "id": {
         "counter": 5,
-        "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
+        "replica_id": "12D3KooWCCZVnxDSQPL9TxLq9YkgWuteZ4rbwFXZgAU91hCVef35"
       },
       "deps": [
         {
           "counter": 4,
-          "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
+          "replica_id": "12D3KooWCCZVnxDSQPL9TxLq9YkgWuteZ4rbwFXZgAU91hCVef35"
         }
       ],
       "cursor": [
@@ -284,7 +284,7 @@
             "name": ".DS_Store",
             "path": "test_watcher/.DS_Store",
             "is_directory": true,
-            "accessed": 1750095882,
+            "accessed": 1750272694,
             "modified": 1749484361,
             "created": 1749484361,
             "permissions": 33204,
@@ -298,12 +298,12 @@
     {
       "id": {
         "counter": 6,
-        "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
+        "replica_id": "12D3KooWCCZVnxDSQPL9TxLq9YkgWuteZ4rbwFXZgAU91hCVef35"
       },
       "deps": [
         {
           "counter": 5,
-          "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
+          "replica_id": "12D3KooWCCZVnxDSQPL9TxLq9YkgWuteZ4rbwFXZgAU91hCVef35"
         }
       ],
       "cursor": [
@@ -317,7 +317,7 @@
             "name": "random_file.txt",
             "path": "test_watcher/random_file.txt",
             "is_directory": true,
-            "accessed": 1750093968,
+            "accessed": 1750272694,
             "modified": 1746210795,
             "created": 1746210795,
             "permissions": 33204,
@@ -331,12 +331,12 @@
     {
       "id": {
         "counter": 7,
-        "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
+        "replica_id": "12D3KooWCCZVnxDSQPL9TxLq9YkgWuteZ4rbwFXZgAU91hCVef35"
       },
       "deps": [
         {
           "counter": 6,
-          "replica_id": "01977a1b-f4f0-7342-a043-f49591f45333"
+          "replica_id": "12D3KooWCCZVnxDSQPL9TxLq9YkgWuteZ4rbwFXZgAU91hCVef35"
         }
       ],
       "cursor": [
@@ -350,11 +350,143 @@
             "name": "unamed5",
             "path": "test_watcher/unamed5",
             "is_directory": true,
-            "accessed": 1750093968,
+            "accessed": 1750272684,
             "modified": 1746284810,
             "created": 1746284810,
             "permissions": 16893,
             "size": 4096,
+            "owner": null,
+            "content_hash": null
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 8,
+        "replica_id": "12D3KooWCCZVnxDSQPL9TxLq9YkgWuteZ4rbwFXZgAU91hCVef35"
+      },
+      "deps": [
+        {
+          "counter": 7,
+          "replica_id": "12D3KooWCCZVnxDSQPL9TxLq9YkgWuteZ4rbwFXZgAU91hCVef35"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "test"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "test_watcher/test",
+          "value": {
+            "name": "placeholder",
+            "path": "placeholder",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": null
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 9,
+        "replica_id": "12D3KooWCCZVnxDSQPL9TxLq9YkgWuteZ4rbwFXZgAU91hCVef35"
+      },
+      "deps": [
+        {
+          "counter": 8,
+          "replica_id": "12D3KooWCCZVnxDSQPL9TxLq9YkgWuteZ4rbwFXZgAU91hCVef35"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "test"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "test_watcher/test",
+          "value": {
+            "name": "placeholder",
+            "path": "placeholder",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": null
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 10,
+        "replica_id": "12D3KooWCCZVnxDSQPL9TxLq9YkgWuteZ4rbwFXZgAU91hCVef35"
+      },
+      "deps": [
+        {
+          "counter": 9,
+          "replica_id": "12D3KooWCCZVnxDSQPL9TxLq9YkgWuteZ4rbwFXZgAU91hCVef35"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "test"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "test_watcher/test",
+          "value": {
+            "name": "placeholder",
+            "path": "placeholder",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
+            "owner": null,
+            "content_hash": null
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 11,
+        "replica_id": "12D3KooWCCZVnxDSQPL9TxLq9YkgWuteZ4rbwFXZgAU91hCVef35"
+      },
+      "deps": [
+        {
+          "counter": 10,
+          "replica_id": "12D3KooWCCZVnxDSQPL9TxLq9YkgWuteZ4rbwFXZgAU91hCVef35"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "test"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "test_watcher/test",
+          "value": {
+            "name": "placeholder",
+            "path": "placeholder",
+            "is_directory": false,
+            "accessed": null,
+            "modified": null,
+            "created": null,
+            "permissions": null,
+            "size": null,
             "owner": null,
             "content_hash": null
           }

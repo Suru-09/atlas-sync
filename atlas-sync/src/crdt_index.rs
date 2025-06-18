@@ -2,6 +2,9 @@ pub mod crdt_index {
     use crate::crdt::crdt::{JsonNode, LamportTimestamp, Mutation, Operation, VersionVector};
     use crate::fswrapper::fswrapper::{compute_file_relative_path, EntryMeta};
     use crate::fswrapper::fswrapper::{INDEX_NAME, WATCHED_PATH};
+    use crate::p2p_network::p2p_network::PEER_ID;
+    use futures::future::err;
+    use libp2p::PeerId;
     use log::{debug, error, info, trace};
     use serde::{Deserialize, Serialize};
     use std::collections::HashSet;
@@ -11,7 +14,7 @@ pub mod crdt_index {
 
     #[derive(Clone, Debug, Serialize, Deserialize)]
     pub struct CRDTIndex {
-        pub replica_id: Uuid,
+        pub replica_id: String,
         root: JsonNode,
         root_path: String,
         clock: u64,
@@ -21,7 +24,7 @@ pub mod crdt_index {
     }
 
     impl CRDTIndex {
-        pub fn new(replica_id: Uuid, root_path: String) -> Self {
+        pub fn new(replica_id: String, root_path: String) -> Self {
             Self {
                 replica_id,
                 root: JsonNode::new_map(),
@@ -37,7 +40,7 @@ pub mod crdt_index {
             self.clock += 1;
             LamportTimestamp {
                 counter: self.clock,
-                replica_id: self.replica_id,
+                replica_id: PEER_ID.to_string(),
             }
         }
 
@@ -54,7 +57,7 @@ pub mod crdt_index {
                 .iter()
                 .map(|(rid, c)| LamportTimestamp {
                     counter: *c,
-                    replica_id: *rid,
+                    replica_id: rid.clone(),
                 })
                 .collect()
         }
@@ -149,7 +152,7 @@ pub mod crdt_index {
             op
         }
 
-        pub fn load_or_init(replica_id: Uuid, root_path: String) -> std::io::Result<Self> {
+        pub fn load_or_init(replica_id: String, root_path: String) -> std::io::Result<Self> {
             let path = Path::new(&root_path);
             if path.exists() {
                 let bytes = std::fs::read(path)?;
@@ -198,7 +201,10 @@ pub mod crdt_index {
                 idx.record_apply(op.clone());
             }
 
-            let _ = idx.save_to_disk();
+            match idx.save_to_disk() {
+                Ok(_) => info!("Writing index to disk..."),
+                Err(e) => error!("Could not write index to disk due to: {:?}", e),
+            }
             Ok(idx)
         }
 
@@ -334,7 +340,7 @@ pub mod crdt_index {
         }
 
         fn timed_local_test(variant: &str, count: usize) {
-            let mut index = CRDTIndex::new(Uuid::new_v4(), "dummy_path.json".to_string());
+            let mut index = CRDTIndex::new(PEER_ID.to_string(), "dummy_path.json".to_string());
             let start = Instant::now();
             for i in 0..count {
                 let cursor = vec!["root".to_string()];
@@ -352,7 +358,7 @@ pub mod crdt_index {
         }
 
         fn timed_remote_test(variant: &str, count: usize) {
-            let mut index = CRDTIndex::new(Uuid::new_v4(), "dummy_path.json".to_string());
+            let mut index = CRDTIndex::new(PEER_ID.to_string(), "dummy_path.json".to_string());
             let mut ops = Vec::new();
             for i in 0..count {
                 let cursor = vec!["root".to_string()];

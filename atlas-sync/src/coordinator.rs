@@ -176,13 +176,12 @@ pub mod coordinator {
     }
 
     pub fn build_index(broadcast_tx: UnboundedSender<Operation>) -> UnboundedSender<IndexCmd> {
-        let index_uuid = create_new_uuid();
         let watched_path = WATCHED_PATH.get().unwrap().to_owned();
         let index_name = INDEX_NAME.as_str();
         let index_path_str = watched_path + index_name;
         let index_path = Path::new(&index_path_str);
         info!("CRDT Index path: {:?}", index_path);
-        let index = CRDTIndex::load_or_init(index_uuid, index_path_str).unwrap();
+        let index = CRDTIndex::load_or_init(PEER_ID.to_string(), index_path_str).unwrap();
 
         let (tx, mut rx) = mpsc::unbounded_channel();
         tokio::spawn(async move {

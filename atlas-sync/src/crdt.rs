@@ -1,5 +1,6 @@
 pub mod crdt {
     use crate::fswrapper::fswrapper::EntryMeta;
+    use libp2p::PeerId;
     use log::{error, info};
     use serde::{Deserialize, Serialize};
     use std::collections::{btree_map, BTreeMap, HashMap, HashSet};
@@ -8,7 +9,7 @@ pub mod crdt {
     #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
     pub struct LamportTimestamp {
         pub counter: u64,
-        pub replica_id: Uuid,
+        pub replica_id: String,
     }
 
     impl LamportTimestamp {
@@ -26,12 +27,12 @@ pub mod crdt {
     }
 
     #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct VersionVector(pub HashMap<Uuid, u64>);
+    pub struct VersionVector(pub HashMap<String, u64>);
 
     impl VersionVector {
         pub fn record(&mut self, ts: &LamportTimestamp) {
             self.0
-                .entry(ts.replica_id)
+                .entry(ts.replica_id.clone())
                 .and_modify(|c| *c = (*c).max(ts.counter))
                 .or_insert(ts.counter);
         }
@@ -45,7 +46,7 @@ pub mod crdt {
         pub fn merge(&mut self, other: &Self) {
             for (id, c) in &other.0 {
                 self.0
-                    .entry(*id)
+                    .entry(id.clone())
                     .and_modify(|cc| *cc = (*cc).max(*c))
                     .or_insert(*c);
             }
