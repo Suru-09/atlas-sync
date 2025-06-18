@@ -111,7 +111,7 @@ pub mod coordinator {
                       }
                     }
                 },
-                _ = tokio::time::sleep(tokio::time::Duration::from_secs(1)) => {
+                _ = tokio::time::sleep(tokio::time::Duration::from_millis(500)) => {
                     if first_time{
                         if !args.peer_id.is_empty() {
                             let _ = peer_ev_sender.send(PeerConnectionEvent::InitialConnection((

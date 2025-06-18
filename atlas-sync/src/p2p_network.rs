@@ -4,6 +4,7 @@ pub mod p2p_network {
     use crate::fswrapper;
     use crate::fswrapper::fswrapper::FileBlob;
     use crate::fswrapper::fswrapper::{delete_path, path_to_vec, INDEX_NAME, WATCHED_PATH};
+    use crate::watcher::watcher::RECENTLY_WRITTEN;
     use libp2p::{
         floodsub::{Floodsub, FloodsubEvent, Topic},
         identity,
@@ -238,6 +239,10 @@ pub mod p2p_network {
                             let path_components: PathBuf =
                                 Path::new(&request.name).components().skip(1).collect();
                             file_blob.name = path_components.to_string_lossy().to_string();
+
+                            let mut set = RECENTLY_WRITTEN.lock().unwrap();
+                            set.insert(path_components.to_string_lossy().to_string());
+
                             let _ = self.req_resp.send_response(channel, file_blob);
                         }
                         RequestResponseMessage::Response {

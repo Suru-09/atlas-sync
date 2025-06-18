@@ -10,11 +10,17 @@ pub mod watcher {
     use notify::{
         Event, EventKind, RecommendedWatcher, RecursiveMode, Result as NotifyResult, Watcher,
     };
+    use once_cell::sync::Lazy;
+    use std::collections::HashSet;
     use std::path::{Path, PathBuf};
     use std::sync::mpsc::channel;
+    use std::sync::{Arc, Mutex};
     use std::thread;
     use std::time::{SystemTime, UNIX_EPOCH};
     use tokio::sync::mpsc::UnboundedSender;
+
+    pub static RECENTLY_WRITTEN: Lazy<Arc<Mutex<HashSet<String>>>> =
+        Lazy::new(|| Arc::new(Mutex::new(HashSet::new())));
 
     pub fn watch_path(path: &Path, index_tx: UnboundedSender<IndexCmd>) -> NotifyResult<()> {
         let path = path.to_path_buf();
@@ -32,8 +38,17 @@ pub mod watcher {
                     Ok(event) => {
                         if event.paths.iter().any(|p| {
                             p.file_name().map_or(false, |name| {
+                                let name_str = name.to_str().unwrap_or("");
+                                let mut set = RECENTLY_WRITTEN.lock().unwrap();
+                                let set_contains = set
+                                    .iter()
+                                    .any(|val| last_name(Path::new(val)).unwrap() == name_str);
+                                if set_contains {
+                                    set.remove(name_str);
+                                }
                                 name == "index.json"
-                                    || name.to_str().unwrap_or("").contains(".goutput")
+                                    || name_str.contains(".goutput")
+                                    || set_contains
                             })
                         }) {
                             continue; // skip index.json changes
