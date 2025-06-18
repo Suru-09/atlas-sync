@@ -3,7 +3,7 @@ pub mod p2p_network {
     use crate::crdt_index::crdt_index::IndexCmd;
     use crate::fswrapper;
     use crate::fswrapper::fswrapper::FileBlob;
-    use crate::fswrapper::fswrapper::{INDEX_NAME, WATCHED_PATH};
+    use crate::fswrapper::fswrapper::{delete_path, path_to_vec, INDEX_NAME, WATCHED_PATH};
     use libp2p::{
         floodsub::{Floodsub, FloodsubEvent, Topic},
         identity,
@@ -58,6 +58,9 @@ pub mod p2p_network {
                     if let Ok(parsed) = serde_json::from_slice::<Operation>(&msg.data) {
                         match parsed.mutation {
                             Mutation::New { key, value } => {
+                                let path = fswrapper::fswrapper::compute_file_absolute_path(
+                                    Path::new(&key),
+                                );
                                 info!(
                                     "[REMOTE_EVENT] New mutation with key: {:?} and value: {:?}",
                                     key, value
@@ -67,7 +70,7 @@ pub mod p2p_network {
                                         key: key.clone(),
                                         value: value,
                                     },
-                                    cur: vec![key.clone()],
+                                    cur: path_to_vec(&path),
                                 };
                                 let _ = self.index_tx.send(cmd);
                                 let _ = self.req_resp.send_request(
@@ -77,6 +80,9 @@ pub mod p2p_network {
                                 );
                             }
                             Mutation::Edit { key, value } => {
+                                let path = fswrapper::fswrapper::compute_file_absolute_path(
+                                    Path::new(&key),
+                                );
                                 info!(
                                     "[REMOTE_EVENT] EDIT mutation with key: {:?} and value: {:?}",
                                     key, value
@@ -86,7 +92,7 @@ pub mod p2p_network {
                                         key: key.clone(),
                                         value: value,
                                     },
-                                    cur: vec![key.clone()],
+                                    cur: path_to_vec(&path),
                                 };
                                 let _ = self.index_tx.send(cmd);
                                 let _ = self.req_resp.send_request(
@@ -97,11 +103,20 @@ pub mod p2p_network {
                             }
                             Mutation::Delete { key } => {
                                 info!("[REMOTE_EVENT] DELETE mutation with key: {:?}.", key);
+                                let path = fswrapper::fswrapper::compute_file_absolute_path(
+                                    Path::new(&key),
+                                );
                                 let cmd = IndexCmd::RemoteOp {
                                     mutation: Mutation::Delete { key: key.clone() },
-                                    cur: vec![key],
+                                    cur: path_to_vec(&path),
                                 };
                                 let _ = self.index_tx.send(cmd);
+                                match delete_path(path) {
+                                    Ok(_) => {}
+                                    Err(e) => {
+                                        error!("Could not delete path due to: {:?}", e)
+                                    }
+                                }
                             }
                         }
                     } else if let Ok(parsed) =

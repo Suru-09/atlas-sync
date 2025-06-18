@@ -250,4 +250,13 @@ pub mod fswrapper {
         let watched_path = &Path::new(WATCHED_PATH.get().unwrap());
         smart_join(watched_path, relative_path)
     }
+
+    pub fn delete_path<P: AsRef<Path>>(path: P) -> io::Result<()> {
+        let path = path.as_ref();
+        if path.is_dir() {
+            fs::remove_dir_all(path)
+        } else {
+            fs::remove_file(path)
+        }
+    }
 }
