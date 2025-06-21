@@ -1,5 +1,4 @@
 pub mod fswrapper {
-    use core::panic::PanicInfo;
     use log::error;
     use once_cell::sync::{Lazy, OnceCell};
     use serde::{Deserialize, Serialize};
@@ -8,7 +7,7 @@ pub mod fswrapper {
     use std::os::unix::fs::{MetadataExt, PermissionsExt};
     use std::path::{Component, Path, PathBuf};
     use std::time::UNIX_EPOCH;
-    use std::{default, fs, io};
+    use std::{fs, io};
 
     pub static INDEX_NAME: Lazy<String> = Lazy::new(|| String::from("/index.json"));
     pub static WATCHED_PATH: OnceCell<String> = OnceCell::new();

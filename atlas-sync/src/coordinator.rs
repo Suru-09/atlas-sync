@@ -2,9 +2,8 @@ pub mod coordinator {
     use crate::args_parser::args_parser::Args;
     use crate::crdt::crdt::Operation;
     use crate::crdt_index::crdt_index::{CRDTIndex, IndexCmd};
-    use crate::fswrapper::fswrapper::{FileBlob, INDEX_NAME, WATCHED_PATH};
+    use crate::fswrapper::fswrapper::{INDEX_NAME, WATCHED_PATH};
     use crate::p2p_network::p2p_network::*;
-    use crate::uuid_wrapper::uuid_wrapper::create_new_uuid;
     use crate::watcher::watcher::watch_path;
     use libp2p::request_response::{ProtocolSupport, RequestResponse, RequestResponseConfig};
     use libp2p::{

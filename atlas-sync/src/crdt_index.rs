@@ -1,15 +1,11 @@
 pub mod crdt_index {
     use crate::crdt::crdt::{JsonNode, LamportTimestamp, Mutation, Operation, VersionVector};
     use crate::fswrapper::fswrapper::{compute_file_relative_path, EntryMeta};
-    use crate::fswrapper::fswrapper::{INDEX_NAME, WATCHED_PATH};
     use crate::p2p_network::p2p_network::PEER_ID;
-    use futures::future::err;
-    use libp2p::PeerId;
-    use log::{debug, error, info, trace};
+    use log::{debug, error, info};
     use serde::{Deserialize, Serialize};
     use std::collections::HashSet;
-    use std::path::{Path, PathBuf};
-    use uuid::Uuid;
+    use std::path::Path;
     use walkdir::WalkDir;
 
     #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -132,11 +128,11 @@ pub mod crdt_index {
             ok
         }
 
-        pub fn summary(&self) -> &VersionVector {
+        pub fn _summary(&self) -> &VersionVector {
             &self.vv
         }
 
-        pub fn compact(&mut self, retain_after: &VersionVector) {
+        pub fn _compact(&mut self, retain_after: &VersionVector) {
             self.root.compress();
             self.op_log.retain(|op| !retain_after.dominates(&op.id));
         }
@@ -234,7 +230,6 @@ pub mod crdt_index {
         use super::*;
         use crate::crdt::crdt::{JsonNode, Mutation};
         use std::time::Instant;
-        use uuid::Uuid;
 
         fn make_mutation(i: usize, variant: &str) -> Mutation {
             let key = format!("file_{}", i);

@@ -3,8 +3,9 @@ pub mod p2p_network {
     use crate::crdt_index::crdt_index::IndexCmd;
     use crate::fswrapper;
     use crate::fswrapper::fswrapper::FileBlob;
-    use crate::fswrapper::fswrapper::{delete_path, path_to_vec, INDEX_NAME, WATCHED_PATH};
+    use crate::fswrapper::fswrapper::{delete_path, path_to_vec, WATCHED_PATH};
     use crate::watcher::watcher::RECENTLY_WRITTEN;
+    use futures::prelude::*;
     use libp2p::{
         floodsub::{Floodsub, FloodsubEvent, Topic},
         identity,
@@ -16,14 +17,10 @@ pub mod p2p_network {
     use log::{debug, error, info};
     use once_cell::sync::Lazy;
     use serde::{Deserialize, Serialize};
-    use std::env;
+    use std::io;
     use std::path::{Path, PathBuf};
     use std::str::FromStr;
-    use std::{io, iter};
     use tokio::sync::mpsc::UnboundedSender;
-
-    use futures::prelude::*;
-    use tracing_subscriber::EnvFilter;
 
     pub static KEYS: Lazy<identity::Keypair> = Lazy::new(|| identity::Keypair::generate_ed25519());
     pub static PEER_ID: Lazy<PeerId> = Lazy::new(|| PeerId::from(KEYS.public()));

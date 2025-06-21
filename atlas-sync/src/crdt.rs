@@ -1,10 +1,8 @@
 pub mod crdt {
     use crate::fswrapper::fswrapper::EntryMeta;
-    use libp2p::PeerId;
     use log::{error, info};
     use serde::{Deserialize, Serialize};
-    use std::collections::{btree_map, BTreeMap, HashMap, HashSet};
-    use uuid::Uuid;
+    use std::collections::{BTreeMap, HashMap, HashSet};
 
     #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
     pub struct LamportTimestamp {

@@ -2,9 +2,8 @@ pub mod watcher {
     use crate::crdt::crdt::{JsonNode, Mutation};
     use crate::crdt_index::crdt_index::IndexCmd;
     use crate::fswrapper::fswrapper::{
-        compute_file_relative_path, last_name, path_to_vec, relative_intersection, EntryMeta,
+        compute_file_relative_path, last_name, path_to_vec, EntryMeta,
     };
-    use crate::fswrapper::fswrapper::{INDEX_NAME, WATCHED_PATH};
     use log::{error, info};
     use notify::event::{CreateKind, DataChange, MetadataKind, ModifyKind, RemoveKind, RenameMode};
     use notify::{
