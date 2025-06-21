@@ -2,10 +2,11 @@ pub mod crdt_index {
     use crate::crdt::crdt::{JsonNode, LamportTimestamp, Mutation, Operation, VersionVector};
     use crate::fswrapper::fswrapper::{compute_file_relative_path, EntryMeta};
     use crate::p2p_network::p2p_network::PEER_ID;
-    use log::{debug, error, info};
+    use log::{debug, error, info, warn};
     use serde::{Deserialize, Serialize};
     use std::collections::HashSet;
-    use std::path::Path;
+    use std::path::{Path, PathBuf};
+    use std::{fs, io};
     use walkdir::WalkDir;
 
     #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -159,7 +160,16 @@ pub mod crdt_index {
                 for id in &idx.applied {
                     idx.vv.record(id);
                 }
-                return Ok(idx);
+
+                match idx.check_integrity() {
+                    Ok(()) => return Ok(idx),
+                    Err(e) => {
+                        warn!(
+                            "Check integrity failed due to: {}, fallback on cold start",
+                            e
+                        );
+                    }
+                }
             }
 
             /* ---------- Cold start: build from filesystem ------------------ */
@@ -210,6 +220,66 @@ pub mod crdt_index {
                 .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
             debug!("Writing to disk to path: {:?}", path);
             std::fs::write(path, json)
+        }
+
+        pub fn check_integrity(&self) -> io::Result<()> {
+            fn collect_entries<'a>(
+                node: &'a JsonNode,
+                path: PathBuf,
+                entries: &mut Vec<(PathBuf, &'a EntryMeta)>,
+            ) {
+                match node {
+                    JsonNode::Entry(meta) => {
+                        entries.push((path, meta));
+                    }
+                    JsonNode::Map(map) => {
+                        for (name, child) in map {
+                            let mut child_path = path.clone();
+                            child_path.push(name);
+                            collect_entries(child, child_path, entries);
+                        }
+                    }
+                    _ => {}
+                }
+            }
+
+            let fs_root = Path::new(&self.root_path);
+            let mut entries = Vec::new();
+            collect_entries(&self.root, PathBuf::new(), &mut entries);
+
+            for (rel_path, meta) in &entries {
+                let abs_path = fs_root.join(rel_path);
+
+                if meta.is_directory {
+                    if !abs_path.exists() {
+                        return Err(io::Error::new(
+                            io::ErrorKind::InvalidData,
+                            format!("Directory: {:?} does not exist!", abs_path),
+                        ));
+                    }
+                } else {
+                    if !abs_path.exists() {
+                        return Err(io::Error::new(
+                            io::ErrorKind::InvalidData,
+                            format!("File: {:?} does not exist!", abs_path),
+                        ));
+                    } else {
+                    }
+                }
+            }
+
+            Ok(())
+        }
+
+        pub fn compute_missing_ops(&self, remote_vv: &VersionVector) -> Vec<Operation> {
+            self.op_log
+                .iter()
+                .filter(|op| {
+                    let remote_seen = remote_vv.0.get(&op.id.replica_id).copied().unwrap_or(0);
+                    op.id.counter > remote_seen
+                })
+                .cloned()
+                .collect()
         }
     }
 

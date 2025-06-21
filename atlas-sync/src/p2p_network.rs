@@ -1,5 +1,5 @@
 pub mod p2p_network {
-    use crate::crdt::crdt::{Mutation, Operation};
+    use crate::crdt::crdt::{Mutation, Operation, VersionVector};
     use crate::crdt_index::crdt_index::IndexCmd;
     use crate::fswrapper;
     use crate::fswrapper::fswrapper::FileBlob;
@@ -29,6 +29,26 @@ pub mod p2p_network {
     #[derive(Debug, Serialize, Deserialize, Clone)]
     pub struct FileRequest {
         name: String,
+    }
+
+    #[derive(Debug, Serialize, Deserialize, Clone)]
+    pub struct VVRequest {
+        version_vector: VersionVector,
+    }
+
+    #[derive(Debug, Serialize, Deserialize, Clone)]
+    pub struct VVResponse {
+        version_vector: VersionVector,
+    }
+
+    #[derive(Debug, Serialize, Deserialize, Clone)]
+    pub struct MissingOpsRequest {
+        ops: Vec<Operation>,
+    }
+
+    #[derive(Debug, Serialize, Deserialize, Clone)]
+    pub struct MissingOpsResponse {
+        ops: Vec<Operation>,
     }
 
     #[derive(NetworkBehaviour)]
