@@ -4,7 +4,7 @@ pub mod watcher {
     use crate::fswrapper::fswrapper::{
         compute_file_relative_path, last_name, path_to_vec, EntryMeta,
     };
-    use log::{error, info};
+    use log::{debug, error, info};
     use notify::event::{CreateKind, DataChange, MetadataKind, ModifyKind, RemoveKind, RenameMode};
     use notify::{
         Event, EventKind, RecommendedWatcher, RecursiveMode, Result as NotifyResult, Watcher,
@@ -39,18 +39,28 @@ pub mod watcher {
                             p.file_name().map_or(false, |name| {
                                 let name_str = name.to_str().unwrap_or("");
                                 let mut set = RECENTLY_WRITTEN.lock().unwrap();
-                                let set_contains = set
+                                info!(
+                                    "Should this be ignored?: {}, rec WRITTEN: {:?}",
+                                    name_str, set
+                                );
+                                let to_remove = set
                                     .iter()
-                                    .any(|val| last_name(Path::new(val)).unwrap() == name_str);
-                                if set_contains {
-                                    set.remove(name_str);
-                                }
+                                    .find(|val| last_name(Path::new(val)).unwrap() == name_str)
+                                    .cloned();
+
+                                let set_contains = if let Some(skip) = to_remove {
+                                    set.remove(&skip)
+                                } else {
+                                    false
+                                };
+
                                 name == "index.json"
                                     || name_str.contains(".goutput")
                                     || set_contains
                             })
                         }) {
-                            continue; // skip index.json changes
+                            info!("Skiping files from event paths: {:?}", event.paths);
+                            continue;
                         }
 
                         match event.kind {

@@ -1,9 +1,10 @@
 pub mod p2p_network {
     use crate::crdt::crdt::{Mutation, Operation, VersionVector};
     use crate::crdt_index::crdt_index::IndexCmd;
-    use crate::fswrapper;
-    use crate::fswrapper::fswrapper::FileBlob;
-    use crate::fswrapper::fswrapper::{delete_path, path_to_vec, WATCHED_PATH};
+    use crate::fswrapper::fswrapper::{
+        components_to_path_string, compute_file_absolute_path, delete_path, path_to_vec, FileBlob,
+        WATCHED_PATH,
+    };
     use crate::watcher::watcher::RECENTLY_WRITTEN;
     use futures::prelude::*;
     use libp2p::{
@@ -18,7 +19,7 @@ pub mod p2p_network {
     use once_cell::sync::Lazy;
     use serde::{de::DeserializeOwned, Deserialize, Serialize};
     use std::io;
-    use std::path::{Path, PathBuf};
+    use std::path::{Component, Path, PathBuf};
     use std::str::FromStr;
     use tokio::sync::mpsc::UnboundedSender;
 
@@ -77,9 +78,7 @@ pub mod p2p_network {
                     if let Ok(parsed) = serde_json::from_slice::<Operation>(&msg.data) {
                         match parsed.mutation {
                             Mutation::New { key, value } => {
-                                let path = fswrapper::fswrapper::compute_file_absolute_path(
-                                    Path::new(&key),
-                                );
+                                let path = compute_file_absolute_path(Path::new(&key));
                                 info!(
                                     "[REMOTE_EVENT] New mutation with key: {:?} and value: {:?}",
                                     key, value
@@ -99,9 +98,7 @@ pub mod p2p_network {
                                 );
                             }
                             Mutation::Edit { key, value } => {
-                                let path = fswrapper::fswrapper::compute_file_absolute_path(
-                                    Path::new(&key),
-                                );
+                                let path = compute_file_absolute_path(Path::new(&key));
                                 info!(
                                     "[REMOTE_EVENT] EDIT mutation with key: {:?} and value: {:?}",
                                     key, value
@@ -122,9 +119,7 @@ pub mod p2p_network {
                             }
                             Mutation::Delete { key } => {
                                 info!("[REMOTE_EVENT] DELETE mutation with key: {:?}.", key);
-                                let path = fswrapper::fswrapper::compute_file_absolute_path(
-                                    Path::new(&key),
-                                );
+                                let path = compute_file_absolute_path(Path::new(&key));
                                 let cmd = IndexCmd::RemoteOp {
                                     mutation: Mutation::Delete { key: key.clone() },
                                     cur: path_to_vec(&path),
@@ -147,9 +142,17 @@ pub mod p2p_network {
                                 //info!("Target peer: {}, Source peer: {}", target_peer, source_peer);
                                 if PEER_ID.to_string() == target_peer {
                                     // go through each file and do stuff.
-                                    let blob_files =
+                                    let mut blob_files =
                                         FileBlob::collect_files_to_be_synced(base_path).unwrap();
-                                    for file_blob in blob_files.iter() {
+                                    for file_blob in blob_files.iter_mut() {
+                                        // remove  first thing in the base path
+                                        // we are only interested in the contents of the file watched
+                                        let name_components = Path::new(&file_blob.name)
+                                            .components()
+                                            .skip(1)
+                                            .collect::<Vec<Component>>();
+                                        let name = components_to_path_string(&name_components);
+                                        file_blob.name = name;
                                         let json_bytes =
                                             serde_json::to_vec(&PeerConnectionEvent::SyncFile((
                                                 source_peer.clone(),
@@ -237,9 +240,7 @@ pub mod p2p_network {
                             request,
                             channel,
                         } => {
-                            let path = fswrapper::fswrapper::compute_file_absolute_path(Path::new(
-                                &request.name,
-                            ));
+                            let path = compute_file_absolute_path(Path::new(&request.name));
                             error!("request path: {:?}", path);
                             let mut file_blob: FileBlob = match FileBlob::from_path(&path) {
                                 Ok(blob) => blob,
@@ -259,7 +260,11 @@ pub mod p2p_network {
                             file_blob.name = path_components.to_string_lossy().to_string();
 
                             let mut set = RECENTLY_WRITTEN.lock().unwrap();
-                            set.insert(path_components.to_string_lossy().to_string());
+                            let name_vec = path_to_vec(Path::new(&file_blob.name.clone()));
+                            for n in name_vec {
+                                set.insert(n);
+                            }
+                            info!("Recenlty WRITTEN: {:?}", set);
 
                             let _ = self.file_request.send_response(channel, file_blob);
                         }
@@ -268,9 +273,7 @@ pub mod p2p_network {
                             response,
                         } => {
                             error!("received path: {:?}", response.name);
-                            let base_path = fswrapper::fswrapper::compute_file_absolute_path(
-                                Path::new(&response.name),
-                            );
+                            let base_path = compute_file_absolute_path(Path::new(&response.name));
                             error!("base path: {:?}", base_path);
                             match response.write_to_disk(&base_path) {
                                 Ok(_) => {}
@@ -360,8 +363,7 @@ pub mod p2p_network {
                                 Mutation::Delete { key } => key,
                             };
 
-                            let path =
-                                fswrapper::fswrapper::compute_file_absolute_path(Path::new(&key));
+                            let path = compute_file_absolute_path(Path::new(&key));
 
                             let cmd = IndexCmd::RemoteOp {
                                 mutation: mis_op.mutation.clone(),
@@ -397,8 +399,7 @@ pub mod p2p_network {
                                 Mutation::Edit { key, value: _ } => key,
                                 Mutation::Delete { key } => key,
                             };
-                            let path =
-                                fswrapper::fswrapper::compute_file_absolute_path(Path::new(&key));
+                            let path = compute_file_absolute_path(Path::new(&key));
 
                             let cmd = IndexCmd::RemoteOp {
                                 mutation: mis_op.mutation.clone(),

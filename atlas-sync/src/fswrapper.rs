@@ -223,6 +223,14 @@ pub mod fswrapper {
         })
     }
 
+    pub fn components_to_path_string(components: &[Component<'_>]) -> String {
+        let mut pb = PathBuf::new();
+        for c in components {
+            pb.push(c.as_os_str());
+        }
+        pb.to_string_lossy().to_string()
+    }
+
     pub fn compute_file_relative_path(abs_path: &Path) -> PathBuf {
         let last_name_watched = last_name(&Path::new(WATCHED_PATH.get().unwrap())).unwrap();
         relative_intersection(abs_path, &Path::new(&last_name_watched)).unwrap()
