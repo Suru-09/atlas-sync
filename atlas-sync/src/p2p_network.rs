@@ -16,7 +16,7 @@ pub mod p2p_network {
     };
     use log::{debug, error, info};
     use once_cell::sync::Lazy;
-    use serde::{Deserialize, Serialize};
+    use serde::{de::DeserializeOwned, Deserialize, Serialize};
     use std::io;
     use std::path::{Path, PathBuf};
     use std::str::FromStr;
@@ -293,26 +293,39 @@ pub mod p2p_network {
     #[derive(Debug, Clone)]
     pub struct FileProtocol();
 
-    #[derive(Clone)]
-    pub struct FileCodec();
-
     impl ProtocolName for FileProtocol {
         fn protocol_name(&self) -> &[u8] {
             b"/my/protocol/1.0.0"
         }
     }
 
+    pub type FileCodec = SerdeCodec<FileProtocol, FileRequest, FileBlob>;
+
+    #[derive(Clone)]
+    pub struct SerdeCodec<Proto, Req, Resp> {
+        pub _phantom: std::marker::PhantomData<(Proto, Req, Resp)>,
+    }
+
+    impl<Proto, Req, Resp> Default for SerdeCodec<Proto, Req, Resp> {
+        fn default() -> Self {
+            SerdeCodec {
+                _phantom: std::marker::PhantomData,
+            }
+        }
+    }
+
     #[async_trait]
-    impl RequestResponseCodec for FileCodec {
-        type Protocol = FileProtocol;
-        type Request = FileRequest;
-        type Response = FileBlob;
+    impl<Proto, Req, Resp> RequestResponseCodec for SerdeCodec<Proto, Req, Resp>
+    where
+        Req: Serialize + DeserializeOwned + Send + 'static,
+        Resp: Serialize + DeserializeOwned + Send + 'static,
+        Proto: Send + Sync + 'static + Clone + ProtocolName,
+    {
+        type Protocol = Proto;
+        type Request = Req;
+        type Response = Resp;
 
-        async fn read_request<T>(
-            &mut self,
-            _: &FileProtocol,
-            io: &mut T,
-        ) -> io::Result<Self::Request>
+        async fn read_request<T>(&mut self, _: &Proto, io: &mut T) -> io::Result<Req>
         where
             T: AsyncRead + Unpin + Send,
         {
@@ -324,11 +337,7 @@ pub mod p2p_network {
             serde_json::from_slice(&buf).map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))
         }
 
-        async fn read_response<T>(
-            &mut self,
-            _: &FileProtocol,
-            io: &mut T,
-        ) -> io::Result<Self::Response>
+        async fn read_response<T>(&mut self, _: &Proto, io: &mut T) -> io::Result<Resp>
         where
             T: AsyncRead + Unpin + Send,
         {
@@ -340,12 +349,7 @@ pub mod p2p_network {
             serde_json::from_slice(&buf).map_err(|e| io::Error::new(io::ErrorKind::InvalidData, e))
         }
 
-        async fn write_request<T>(
-            &mut self,
-            _: &FileProtocol,
-            io: &mut T,
-            req: FileRequest,
-        ) -> io::Result<()>
+        async fn write_request<T>(&mut self, _: &Proto, io: &mut T, req: Req) -> io::Result<()>
         where
             T: AsyncWrite + Unpin + Send,
         {
@@ -356,12 +360,7 @@ pub mod p2p_network {
             io.flush().await
         }
 
-        async fn write_response<T>(
-            &mut self,
-            _: &FileProtocol,
-            io: &mut T,
-            resp: FileBlob,
-        ) -> io::Result<()>
+        async fn write_response<T>(&mut self, _: &Proto, io: &mut T, resp: Resp) -> io::Result<()>
         where
             T: AsyncWrite + Unpin + Send,
         {

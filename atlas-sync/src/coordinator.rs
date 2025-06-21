@@ -59,7 +59,7 @@ pub mod coordinator {
         let protocols = std::iter::once((FileProtocol(), ProtocolSupport::Full));
         let mut cfg = RequestResponseConfig::default();
         cfg.set_connection_keep_alive(std::time::Duration::from_secs(10));
-        let req_resp = RequestResponse::new(FileCodec(), protocols.clone(), cfg.clone());
+        let req_resp = RequestResponse::new(FileCodec::default(), protocols.clone(), cfg.clone());
 
         let mut behaviour = AtlasSyncBehavior {
             floodsub: Floodsub::new(PEER_ID.clone()),
