@@ -55,7 +55,8 @@ pub mod p2p_network {
     pub struct AtlasSyncBehavior {
         pub floodsub: Floodsub,
         pub mdns: Mdns,
-        pub req_resp: RequestResponse<FileCodec>,
+        pub file_request: RequestResponse<FileCodec>,
+        pub vv_codec: RequestResponse<VersionVectorCodec>,
         #[behaviour(ignore)]
         pub index_tx: UnboundedSender<IndexCmd>,
         #[behaviour(ignore)]
@@ -91,7 +92,7 @@ pub mod p2p_network {
                                     cur: path_to_vec(&path),
                                 };
                                 let _ = self.index_tx.send(cmd);
-                                let _ = self.req_resp.send_request(
+                                let _ = self.file_request.send_request(
                                     &PeerId::from_str(parsed.id.replica_id.as_str())
                                         .expect("Valid peer id"),
                                     FileRequest { name: key },
@@ -113,7 +114,7 @@ pub mod p2p_network {
                                     cur: path_to_vec(&path),
                                 };
                                 let _ = self.index_tx.send(cmd);
-                                let _ = self.req_resp.send_request(
+                                let _ = self.file_request.send_request(
                                     &PeerId::from_str(parsed.id.replica_id.as_str())
                                         .expect("Valid peer id"),
                                     FileRequest { name: key },
@@ -260,7 +261,7 @@ pub mod p2p_network {
                             let mut set = RECENTLY_WRITTEN.lock().unwrap();
                             set.insert(path_components.to_string_lossy().to_string());
 
-                            let _ = self.req_resp.send_response(channel, file_blob);
+                            let _ = self.file_request.send_response(channel, file_blob);
                         }
                         RequestResponseMessage::Response {
                             request_id,
@@ -307,6 +308,135 @@ pub mod p2p_network {
         }
     }
 
+    impl NetworkBehaviourEventProcess<RequestResponseEvent<VVRequest, VVResponse>>
+        for AtlasSyncBehavior
+    {
+        fn inject_event(&mut self, event: RequestResponseEvent<VVRequest, VVResponse>) {
+            match event {
+                RequestResponseEvent::Message { peer, message } => match message {
+                    RequestResponseMessage::Request {
+                        request_id,
+                        request,
+                        channel,
+                    } => {
+                        let (vv_tx, vv_rx) = std::sync::mpsc::channel();
+                        if let Err(e) = self
+                            .index_tx
+                            .send(IndexCmd::GetVersionVector { respond_ch: vv_tx })
+                        {
+                            error!("Could not get Local version vector due to err {:?}", e);
+                        }
+
+                        let local_vv = vv_rx
+                            .recv_timeout(std::time::Duration::from_secs(3))
+                            .unwrap_or_else(|_| VersionVector::default());
+
+                        if let Err(e) = self.vv_codec.send_response(
+                            channel,
+                            VVResponse {
+                                version_vector: local_vv,
+                            },
+                        ) {
+                            error!("Could not send vv response due to err: {:?}", e);
+                        }
+
+                        let remote_vv = request.version_vector;
+                        let (missing_ops_tx, missing_ops_rx) = std::sync::mpsc::channel();
+                        if let Err(e) = self.index_tx.send(IndexCmd::GetMissingOps {
+                            remote_vv: remote_vv,
+                            respond_ch: missing_ops_tx,
+                        }) {
+                            error!("Could not get local missing ops due to err {:?}", e);
+                        }
+
+                        let missing_ops = missing_ops_rx
+                            .recv_timeout(std::time::Duration::from_secs(3))
+                            .unwrap_or_else(|_| vec![]);
+
+                        for mis_op in missing_ops.iter() {
+                            let key = match mis_op.mutation.clone() {
+                                Mutation::New { key, value } => key,
+                                Mutation::Edit { key, value } => key,
+                                Mutation::Delete { key } => key,
+                            };
+
+                            let path =
+                                fswrapper::fswrapper::compute_file_absolute_path(Path::new(&key));
+
+                            let cmd = IndexCmd::RemoteOp {
+                                mutation: mis_op.mutation.clone(),
+                                cur: path_to_vec(&path),
+                            };
+
+                            let _ = self.index_tx.send(cmd);
+                            let _ = self
+                                .file_request
+                                .send_request(&peer, FileRequest { name: key });
+                        }
+                    }
+                    RequestResponseMessage::Response {
+                        request_id,
+                        response,
+                    } => {
+                        let remote_vv = response.version_vector;
+                        let (missing_ops_tx, missing_ops_rx) = std::sync::mpsc::channel();
+                        if let Err(e) = self.index_tx.send(IndexCmd::GetMissingOps {
+                            remote_vv: remote_vv,
+                            respond_ch: missing_ops_tx,
+                        }) {
+                            error!("Could not get local missing ops due to err {:?}", e);
+                        }
+
+                        let missing_ops = missing_ops_rx
+                            .recv_timeout(std::time::Duration::from_secs(3))
+                            .unwrap_or_else(|_| vec![]);
+
+                        for mis_op in missing_ops.iter() {
+                            let key = match mis_op.mutation.clone() {
+                                Mutation::New { key, value } => key,
+                                Mutation::Edit { key, value } => key,
+                                Mutation::Delete { key } => key,
+                            };
+
+                            let path =
+                                fswrapper::fswrapper::compute_file_absolute_path(Path::new(&key));
+
+                            let cmd = IndexCmd::RemoteOp {
+                                mutation: mis_op.mutation.clone(),
+                                cur: path_to_vec(&path),
+                            };
+
+                            let _ = self.index_tx.send(cmd);
+                            let _ = self
+                                .file_request
+                                .send_request(&peer, FileRequest { name: key });
+                        }
+                    }
+                },
+                RequestResponseEvent::ResponseSent { peer, request_id } => {
+                    debug!(
+                        "Response Sent for peer: {} with req_id: {:?}",
+                        peer, request_id
+                    );
+                }
+                RequestResponseEvent::OutboundFailure {
+                    peer,
+                    request_id,
+                    error,
+                } => {
+                    error!("[OUTBOUND FAILURE] Peer: {peer:?}, RequestId: {request_id:?}, Error: {error:?}");
+                }
+                RequestResponseEvent::InboundFailure {
+                    peer,
+                    request_id,
+                    error,
+                } => {
+                    error!("[INBOUND FAILURE] Peer: {peer:?}, RequestId: {request_id:?}, Error: {error:?}");
+                }
+            }
+        }
+    }
+
     use async_trait::async_trait;
     use libp2p::request_response::{RequestResponse, RequestResponseEvent};
 
@@ -315,11 +445,12 @@ pub mod p2p_network {
 
     impl ProtocolName for FileProtocol {
         fn protocol_name(&self) -> &[u8] {
-            b"/my/protocol/1.0.0"
+            b"/file/protocol/1.0.0"
         }
     }
 
     pub type FileCodec = SerdeCodec<FileProtocol, FileRequest, FileBlob>;
+    pub type VersionVectorCodec = SerdeCodec<FileProtocol, VVRequest, VVResponse>;
 
     #[derive(Clone)]
     pub struct SerdeCodec<Proto, Req, Resp> {

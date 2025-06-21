@@ -7,6 +7,7 @@ pub mod crdt_index {
     use std::collections::HashSet;
     use std::path::{Path, PathBuf};
     use std::{fs, io};
+    use tokio::sync::mpsc::UnboundedSender;
     use walkdir::WalkDir;
 
     #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -15,7 +16,7 @@ pub mod crdt_index {
         root: JsonNode,
         root_path: String,
         clock: u64,
-        vv: VersionVector,
+        pub vv: VersionVector,
         applied: HashSet<LamportTimestamp>,
         pub op_log: Vec<Operation>,
     }
@@ -292,6 +293,13 @@ pub mod crdt_index {
         RemoteOp {
             mutation: Mutation,
             cur: Vec<String>,
+        },
+        GetVersionVector {
+            respond_ch: std::sync::mpsc::Sender<VersionVector>,
+        },
+        GetMissingOps {
+            remote_vv: VersionVector,
+            respond_ch: std::sync::mpsc::Sender<Vec<Operation>>,
         },
     }
 

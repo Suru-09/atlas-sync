@@ -17,7 +17,7 @@ pub mod coordinator {
         tcp::TokioTcpConfig,
         Transport,
     };
-    use log::{info, trace};
+    use log::{error, info, trace};
     use std::path::Path;
     use tokio::sync::mpsc::UnboundedSender;
     use tokio::sync::mpsc::{self, UnboundedReceiver};
@@ -59,14 +59,21 @@ pub mod coordinator {
         let protocols = std::iter::once((FileProtocol(), ProtocolSupport::Full));
         let mut cfg = RequestResponseConfig::default();
         cfg.set_connection_keep_alive(std::time::Duration::from_secs(10));
+
         let req_resp = RequestResponse::new(FileCodec::default(), protocols.clone(), cfg.clone());
+        let vec_codec = RequestResponse::new(
+            VersionVectorCodec::default(),
+            protocols.clone(),
+            cfg.clone(),
+        );
 
         let mut behaviour = AtlasSyncBehavior {
             floodsub: Floodsub::new(PEER_ID.clone()),
             mdns: Mdns::new(Default::default())
                 .await
                 .expect("can create mdns"),
-            req_resp: req_resp,
+            file_request: req_resp,
+            vv_codec: vec_codec,
             index_tx: index_tx.clone(),
             peer_tx: peer_ev_sender.clone(),
         };
@@ -198,6 +205,19 @@ pub mod coordinator {
                         let _ = index.apply_remote(&op);
                         let _ = index.save_to_disk();
                         info!("Remote operation has been applied!");
+                    }
+                    IndexCmd::GetVersionVector { respond_ch } => {
+                        if let Err(e) = respond_ch.send(index.vv.clone()) {
+                            error!("Could not send local version due to err: {:?}.", e);
+                        }
+                    }
+                    IndexCmd::GetMissingOps {
+                        remote_vv,
+                        respond_ch,
+                    } => {
+                        if let Err(e) = respond_ch.send(index.compute_missing_ops(&remote_vv)) {
+                            error!("Could send missing ops due to err: {:?}.", e);
+                        }
                     }
                 }
             }
