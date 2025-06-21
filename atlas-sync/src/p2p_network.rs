@@ -355,8 +355,8 @@ pub mod p2p_network {
 
                         for mis_op in missing_ops.iter() {
                             let key = match mis_op.mutation.clone() {
-                                Mutation::New { key, value } => key,
-                                Mutation::Edit { key, value } => key,
+                                Mutation::New { key, value: _ } => key,
+                                Mutation::Edit { key, value: _ } => key,
                                 Mutation::Delete { key } => key,
                             };
 
@@ -393,23 +393,40 @@ pub mod p2p_network {
 
                         for mis_op in missing_ops.iter() {
                             let key = match mis_op.mutation.clone() {
-                                Mutation::New { key, value } => key,
-                                Mutation::Edit { key, value } => key,
+                                Mutation::New { key, value: _ } => key,
+                                Mutation::Edit { key, value: _ } => key,
                                 Mutation::Delete { key } => key,
                             };
-
                             let path =
                                 fswrapper::fswrapper::compute_file_absolute_path(Path::new(&key));
 
                             let cmd = IndexCmd::RemoteOp {
                                 mutation: mis_op.mutation.clone(),
-                                cur: path_to_vec(&path),
+                                cur: path_to_vec(&path.clone()),
                             };
 
                             let _ = self.index_tx.send(cmd);
-                            let _ = self
-                                .file_request
-                                .send_request(&peer, FileRequest { name: key });
+
+                            match mis_op.mutation.clone() {
+                                Mutation::New { key, value: _ } => {
+                                    let _ = self
+                                        .file_request
+                                        .send_request(&peer, FileRequest { name: key });
+                                }
+                                Mutation::Edit { key, value: _ } => {
+                                    let _ = self
+                                        .file_request
+                                        .send_request(&peer, FileRequest { name: key });
+                                }
+                                Mutation::Delete { key: _ } => {
+                                    if let Err(e) = delete_path(&path) {
+                                        error!(
+                                            "Could not delete given path: {:?} with err: {}",
+                                            path, e
+                                        );
+                                    }
+                                }
+                            }
                         }
                     }
                 },
