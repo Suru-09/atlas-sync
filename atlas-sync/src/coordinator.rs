@@ -219,6 +219,14 @@ pub mod coordinator {
                             error!("Could send missing ops due to err: {:?}.", e);
                         }
                     }
+                    IndexCmd::GetEntryMetadata {
+                        entry_cursor,
+                        respond_ch,
+                    } => {
+                        if let Err(e) = respond_ch.send(index.get_entry_meta(&entry_cursor)) {
+                            error!("Could send entry metadata due to err: {:?}.", e);
+                        }
+                    }
                 }
             }
         });

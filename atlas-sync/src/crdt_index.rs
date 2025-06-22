@@ -1,6 +1,8 @@
 pub mod crdt_index {
     use crate::crdt::crdt::{JsonNode, LamportTimestamp, Mutation, Operation, VersionVector};
-    use crate::fswrapper::fswrapper::{compute_file_relative_path, EntryMeta};
+    use crate::fswrapper::fswrapper::{
+        compute_file_absolute_path, compute_file_relative_path, EntryMeta,
+    };
     use crate::p2p_network::p2p_network::PEER_ID;
     use log::{debug, error, info, warn};
     use serde::{Deserialize, Serialize};
@@ -58,6 +60,10 @@ pub mod crdt_index {
                     replica_id: rid.clone(),
                 })
                 .collect()
+        }
+
+        pub fn get_entry_meta(&self, cursor: &[String]) -> Option<EntryMeta> {
+            return self.root.get_entry_meta(cursor);
         }
 
         pub fn apply_local_op(&mut self, cursor: &[String], mutation: Mutation) -> Operation {
@@ -236,7 +242,9 @@ pub mod crdt_index {
                     JsonNode::Map(map) => {
                         for (name, child) in map {
                             let mut child_path = path.clone();
-                            child_path.push(name);
+                            if name != "metadata" {
+                                child_path.push(name);
+                            }
                             collect_entries(child, child_path, entries);
                         }
                     }
@@ -244,12 +252,11 @@ pub mod crdt_index {
                 }
             }
 
-            let fs_root = Path::new(&self.root_path);
             let mut entries = Vec::new();
             collect_entries(&self.root, PathBuf::new(), &mut entries);
 
             for (rel_path, meta) in &entries {
-                let abs_path = fs_root.join(rel_path);
+                let abs_path = compute_file_absolute_path(rel_path);
 
                 if meta.is_directory {
                     if !abs_path.exists() {
@@ -300,6 +307,10 @@ pub mod crdt_index {
         GetMissingOps {
             remote_vv: VersionVector,
             respond_ch: std::sync::mpsc::Sender<Vec<Operation>>,
+        },
+        GetEntryMetadata {
+            entry_cursor: Vec<String>,
+            respond_ch: std::sync::mpsc::Sender<Option<EntryMeta>>,
         },
     }
 

@@ -146,6 +146,31 @@ pub mod crdt {
                 _ => {}
             }
         }
+
+        pub fn get_entry_meta(&self, cursor: &[String]) -> Option<EntryMeta> {
+            let mut target = self;
+            for segment in cursor.iter() {
+                match target {
+                    JsonNode::Map(map) => {
+                        let key = segment.clone();
+                        if map.contains_key(&key) {
+                            target = map.get(&key).unwrap();
+                        }
+                    }
+                    _ => {}
+                }
+            }
+
+            if let JsonNode::Map(map) = target {
+                if map.contains_key("metadata") {
+                    if let JsonNode::Entry(e) = map.get("metadata").unwrap() {
+                        return Some(e.clone());
+                    }
+                }
+            }
+
+            None
+        }
     }
 
     #[cfg(test)]

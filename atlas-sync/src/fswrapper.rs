@@ -29,6 +29,16 @@ pub mod fswrapper {
         pub content_hash: Option<String>,
     }
 
+    #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+    pub enum EditAction {
+        None,
+        Download,
+        ChangePermissions,
+        ChangeAccessed,
+        ChangeLastModified,
+        ChangeCreated,
+    }
+
     #[derive(Debug, Serialize, Deserialize, Clone, Default)]
     pub struct FileBlob {
         pub name: String,
@@ -181,6 +191,24 @@ pub mod fswrapper {
             }
 
             Err(std::io::Error::new(std::io::ErrorKind::Other, "HMM.."))
+        }
+
+        pub fn get_edit_action(&self, other: Option<EntryMeta>) -> EditAction {
+            error!("Other metadata: {:?} and self: {:?}", other, self);
+            if other.is_none() {
+                return EditAction::None;
+            }
+            let other_meta = other.unwrap();
+
+            if self.content_hash.is_some() && other_meta.content_hash.is_some() {
+                let hash_self = self.content_hash.clone().unwrap();
+                let hash_other = other_meta.content_hash.unwrap();
+
+                if hash_self != hash_other {
+                    return EditAction::Download;
+                }
+            }
+            EditAction::None
         }
     }
 

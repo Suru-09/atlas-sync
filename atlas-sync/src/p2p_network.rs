@@ -1,9 +1,9 @@
 pub mod p2p_network {
-    use crate::crdt::crdt::{Mutation, Operation, VersionVector};
+    use crate::crdt::crdt::{JsonNode, Mutation, Operation, VersionVector};
     use crate::crdt_index::crdt_index::IndexCmd;
     use crate::fswrapper::fswrapper::{
-        components_to_path_string, compute_file_absolute_path, delete_path, path_to_vec, FileBlob,
-        WATCHED_PATH,
+        components_to_path_string, compute_file_absolute_path, delete_path, path_to_vec,
+        EditAction, FileBlob, WATCHED_PATH,
     };
     use crate::watcher::watcher::RECENTLY_WRITTEN;
     use futures::prelude::*;
@@ -91,6 +91,7 @@ pub mod p2p_network {
                                     cur: path_to_vec(&path),
                                 };
                                 let _ = self.index_tx.send(cmd);
+
                                 let _ = self.file_request.send_request(
                                     &PeerId::from_str(parsed.id.replica_id.as_str())
                                         .expect("Valid peer id"),
@@ -106,16 +107,42 @@ pub mod p2p_network {
                                 let cmd = IndexCmd::RemoteOp {
                                     mutation: Mutation::Edit {
                                         key: key.clone(),
-                                        value: value,
+                                        value: value.clone(),
                                     },
                                     cur: path_to_vec(&path),
                                 };
                                 let _ = self.index_tx.send(cmd);
-                                let _ = self.file_request.send_request(
-                                    &PeerId::from_str(parsed.id.replica_id.as_str())
-                                        .expect("Valid peer id"),
-                                    FileRequest { name: key },
-                                );
+
+                                if let JsonNode::Entry(e) = value {
+                                    let cur = path_to_vec(&path);
+                                    let (entry_tx, entry_rx) = std::sync::mpsc::channel();
+                                    if let Err(e) = self.index_tx.send(IndexCmd::GetEntryMetadata {
+                                        entry_cursor: cur,
+                                        respond_ch: entry_tx,
+                                    }) {
+                                        error!(
+                                            "Could not get local entry metadata due to err {:?}",
+                                            e
+                                        );
+                                    }
+
+                                    let entry_meta = entry_rx
+                                        .recv_timeout(std::time::Duration::from_secs(3))
+                                        .unwrap_or_else(|_| None);
+
+                                    let edit_action = e.get_edit_action(entry_meta);
+                                    info!("[EDIT_ACTION] {:?}", edit_action);
+                                    match edit_action {
+                                        EditAction::Download => {
+                                            let _ = self.file_request.send_request(
+                                                &PeerId::from_str(parsed.id.replica_id.as_str())
+                                                    .expect("Valid peer id"),
+                                                FileRequest { name: key },
+                                            );
+                                        }
+                                        _ => {}
+                                    }
+                                }
                             }
                             Mutation::Delete { key } => {
                                 info!("[REMOTE_EVENT] DELETE mutation with key: {:?}.", key);
@@ -259,13 +286,6 @@ pub mod p2p_network {
                                 Path::new(&request.name).components().skip(1).collect();
                             file_blob.name = path_components.to_string_lossy().to_string();
 
-                            let mut set = RECENTLY_WRITTEN.lock().unwrap();
-                            let name_vec = path_to_vec(Path::new(&file_blob.name.clone()));
-                            for n in name_vec {
-                                set.insert(n);
-                            }
-                            info!("Recenlty WRITTEN: {:?}", set);
-
                             let _ = self.file_request.send_response(channel, file_blob);
                         }
                         RequestResponseMessage::Response {
@@ -275,6 +295,8 @@ pub mod p2p_network {
                             error!("received path: {:?}", response.name);
                             let base_path = compute_file_absolute_path(Path::new(&response.name));
                             error!("base path: {:?}", base_path);
+                            let mut set = RECENTLY_WRITTEN.lock().unwrap();
+                            set.push(response.name.clone());
                             match response.write_to_disk(&base_path) {
                                 Ok(_) => {}
                                 Err(e) => {
@@ -318,7 +340,7 @@ pub mod p2p_network {
             match event {
                 RequestResponseEvent::Message { peer, message } => match message {
                     RequestResponseMessage::Request {
-                        request_id,
+                        request_id: _,
                         request,
                         channel,
                     } => {
@@ -377,7 +399,7 @@ pub mod p2p_network {
                         }
                     }
                     RequestResponseMessage::Response {
-                        request_id,
+                        request_id: _,
                         response,
                     } => {
                         let remote_vv = response.version_vector;

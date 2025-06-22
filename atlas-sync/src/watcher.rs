@@ -2,7 +2,7 @@ pub mod watcher {
     use crate::crdt::crdt::{JsonNode, Mutation};
     use crate::crdt_index::crdt_index::IndexCmd;
     use crate::fswrapper::fswrapper::{
-        compute_file_relative_path, last_name, path_to_vec, EntryMeta,
+        compute_file_absolute_path, compute_file_relative_path, last_name, path_to_vec, EntryMeta,
     };
     use log::{debug, error, info};
     use notify::event::{CreateKind, DataChange, MetadataKind, ModifyKind, RemoveKind, RenameMode};
@@ -10,7 +10,6 @@ pub mod watcher {
         Event, EventKind, RecommendedWatcher, RecursiveMode, Result as NotifyResult, Watcher,
     };
     use once_cell::sync::Lazy;
-    use std::collections::HashSet;
     use std::path::{Path, PathBuf};
     use std::sync::mpsc::channel;
     use std::sync::{Arc, Mutex};
@@ -18,8 +17,8 @@ pub mod watcher {
     use std::time::{SystemTime, UNIX_EPOCH};
     use tokio::sync::mpsc::UnboundedSender;
 
-    pub static RECENTLY_WRITTEN: Lazy<Arc<Mutex<HashSet<String>>>> =
-        Lazy::new(|| Arc::new(Mutex::new(HashSet::new())));
+    pub static RECENTLY_WRITTEN: Lazy<Arc<Mutex<Vec<String>>>> =
+        Lazy::new(|| Arc::new(Mutex::new(Vec::new())));
 
     pub fn watch_path(path: &Path, index_tx: UnboundedSender<IndexCmd>) -> NotifyResult<()> {
         let path = path.to_path_buf();
@@ -38,21 +37,20 @@ pub mod watcher {
                         if event.paths.iter().any(|p| {
                             p.file_name().map_or(false, |name| {
                                 let name_str = name.to_str().unwrap_or("");
-                                let mut set = RECENTLY_WRITTEN.lock().unwrap();
+                                let mut vec = RECENTLY_WRITTEN.lock().unwrap();
                                 info!(
                                     "Should this be ignored?: {}, rec WRITTEN: {:?}",
-                                    name_str, set
+                                    name_str, vec
                                 );
-                                let to_remove = set
-                                    .iter()
-                                    .find(|val| last_name(Path::new(val)).unwrap() == name_str)
-                                    .cloned();
 
-                                let set_contains = if let Some(skip) = to_remove {
-                                    set.remove(&skip)
-                                } else {
-                                    false
-                                };
+                                let mut set_contains = false;
+                                if let Some(pos) = vec
+                                    .iter()
+                                    .position(|val| last_name(Path::new(val)).unwrap() == name_str)
+                                {
+                                    vec.remove(pos);
+                                    set_contains = true;
+                                }
 
                                 name == "index.json"
                                     || name_str.contains(".goutput")
@@ -105,6 +103,7 @@ pub mod watcher {
     fn extract_new_cmd(paths: &Vec<PathBuf>, create_kind: &CreateKind) -> Option<IndexCmd> {
         assert!(paths.len() == 1); // why would I have multiple paths on a create operation?
         let path = compute_file_relative_path(paths.first().unwrap());
+        let abs_path = compute_file_absolute_path(&path);
 
         match create_kind {
             CreateKind::Any | CreateKind::Other => {
@@ -112,18 +111,7 @@ pub mod watcher {
                 None
             }
             CreateKind::File => {
-                let file_metadata = EntryMeta {
-                    name: path.to_str().unwrap().to_string(),
-                    path: path.to_str().unwrap().to_string(),
-                    is_directory: false,
-                    accessed: None,
-                    modified: None,
-                    created: None,
-                    permissions: None,
-                    size: None,
-                    content_hash: None,
-                    owner: None,
-                };
+                let file_metadata = EntryMeta::from_path(&abs_path).unwrap();
                 Some(IndexCmd::LocalOp {
                     cur: path_to_vec(&path),
                     mutation: Mutation::New {
@@ -133,18 +121,7 @@ pub mod watcher {
                 })
             }
             CreateKind::Folder => {
-                let file_metadata = EntryMeta {
-                    name: path.to_str().unwrap().to_string(),
-                    path: path.to_str().unwrap().to_string(),
-                    is_directory: true,
-                    accessed: None,
-                    modified: None,
-                    created: None,
-                    permissions: None,
-                    size: None,
-                    content_hash: None,
-                    owner: None,
-                };
+                let file_metadata = EntryMeta::from_path(&abs_path).unwrap();
                 Some(IndexCmd::LocalOp {
                     cur: path_to_vec(&path),
                     mutation: Mutation::New {
@@ -209,24 +186,12 @@ pub mod watcher {
                 error!("Why am I receiving Other/Any on update operation? update_kind: {:?} with path: {:?}", modify_kind, path);
                 None
             }
-            ModifyKind::Data(data_change) => {
+            ModifyKind::Data(_) => {
                 assert!(paths.len() == 1);
                 path = compute_file_relative_path(paths.first().unwrap());
+                let abs_path = compute_file_absolute_path(&path);
 
-                file_metadata.name = last_name(&path).unwrap();
-                file_metadata.path = path.to_str().unwrap().to_string();
-
-                match data_change {
-                    DataChange::Any | DataChange::Other => {
-                        file_metadata.content_hash = Some(String::from("Data change"));
-                    }
-                    DataChange::Size => {
-                        file_metadata.size = Some(156);
-                    }
-                    DataChange::Content => {
-                        file_metadata.content_hash = Some(String::from("Content change"));
-                    }
-                }
+                file_metadata = EntryMeta::from_path(&abs_path).unwrap();
                 Some(IndexCmd::LocalOp {
                     cur: path_to_vec(&path),
                     mutation: Mutation::Edit {
@@ -238,6 +203,9 @@ pub mod watcher {
             ModifyKind::Metadata(metadata_kind) => {
                 assert!(paths.len() == 1);
                 path = compute_file_relative_path(paths.first().unwrap());
+                let abs_path = compute_file_absolute_path(&path);
+
+                file_metadata = EntryMeta::from_path(&abs_path).unwrap();
                 match metadata_kind {
                     MetadataKind::Ownership => {
                         file_metadata.owner = Some(String::from("Suru"));
@@ -264,6 +232,7 @@ pub mod watcher {
                 })
             }
             ModifyKind::Name(name) => {
+                error!("Why the fuck am I on RENAME????");
                 path = match name {
                     RenameMode::Both => {
                         let tmp_path = compute_file_relative_path(paths.first().unwrap());
@@ -277,6 +246,8 @@ pub mod watcher {
                     }
                     _ => compute_file_relative_path(paths.first().unwrap()),
                 };
+                let abs_path = compute_file_absolute_path(&path);
+                file_metadata = EntryMeta::from_path(&abs_path).unwrap();
                 Some(IndexCmd::LocalOp {
                     cur: path_to_vec(&path),
                     mutation: Mutation::Edit {
