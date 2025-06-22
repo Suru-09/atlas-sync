@@ -72,11 +72,20 @@ pub mod watcher {
                                 }
                             }
                             EventKind::Modify(modify_kind) => {
-                                if let Some(update_cmd) =
-                                    extract_update_cmd(&event.paths, &modify_kind)
-                                {
-                                    info!("Sending EDIT cmd: {:?}", update_cmd);
-                                    let _ = index_tx.send(update_cmd);
+                                for cmd in extract_update_cmd(&event.paths, &modify_kind) {
+                                    match cmd {
+                                        Some(command) => {
+                                            if let Err(e) = index_tx.send(command) {
+                                                error!(
+                                                    "Failed sending update command due to err: {}",
+                                                    e
+                                                );
+                                            }
+                                        }
+                                        _ => {
+                                            error!("Extract update command failed miserably!");
+                                        }
+                                    }
                                 }
                             }
                             EventKind::Remove(remove_kind) => {
@@ -160,7 +169,7 @@ pub mod watcher {
         }
     }
 
-    fn extract_update_cmd(paths: &Vec<PathBuf>, modify_kind: &ModifyKind) -> Option<IndexCmd> {
+    fn extract_update_cmd(paths: &Vec<PathBuf>, modify_kind: &ModifyKind) -> Vec<Option<IndexCmd>> {
         if paths.len() >= 3 || paths.len() < 1 {
             panic!("Should be some logical value...");
         }
@@ -184,7 +193,7 @@ pub mod watcher {
                 assert!(paths.len() == 1);
                 path = compute_file_relative_path(paths.first().unwrap());
                 error!("Why am I receiving Other/Any on update operation? update_kind: {:?} with path: {:?}", modify_kind, path);
-                None
+                vec![]
             }
             ModifyKind::Data(_) => {
                 assert!(paths.len() == 1);
@@ -192,13 +201,13 @@ pub mod watcher {
                 let abs_path = compute_file_absolute_path(&path);
 
                 file_metadata = EntryMeta::from_path(&abs_path).unwrap();
-                Some(IndexCmd::LocalOp {
+                vec![Some(IndexCmd::LocalOp {
                     cur: path_to_vec(&path),
                     mutation: Mutation::Edit {
                         key: path.to_string_lossy().into_owned(),
                         value: JsonNode::Entry(file_metadata),
                     },
-                })
+                })]
             }
             ModifyKind::Metadata(metadata_kind) => {
                 assert!(paths.len() == 1);
@@ -223,38 +232,44 @@ pub mod watcher {
                     }
                     _ => {}
                 }
-                Some(IndexCmd::LocalOp {
+                vec![Some(IndexCmd::LocalOp {
                     cur: path_to_vec(&path),
                     mutation: Mutation::Edit {
                         key: path.to_string_lossy().into_owned(),
                         value: JsonNode::Entry(file_metadata),
                     },
-                })
+                })]
             }
-            ModifyKind::Name(name) => {
-                path = match name {
-                    RenameMode::Both => {
-                        let tmp_path = compute_file_relative_path(paths.first().unwrap());
-                        let name = tmp_path
-                            .file_name()
-                            .map(|os_str| os_str.to_string_lossy().to_string());
-                        if let Some(name) = name {
-                            file_metadata.name = name;
-                        }
-                        tmp_path
-                    }
-                    _ => compute_file_relative_path(paths.first().unwrap()),
-                };
-                let abs_path = compute_file_absolute_path(&path);
-                file_metadata = EntryMeta::from_path(&abs_path).unwrap_or(file_metadata);
-                Some(IndexCmd::LocalOp {
-                    cur: path_to_vec(&path),
-                    mutation: Mutation::Edit {
-                        key: path.to_string_lossy().into_owned(),
-                        value: JsonNode::Entry(file_metadata),
-                    },
-                })
-            }
+            ModifyKind::Name(name) => match name {
+                RenameMode::Both => {
+                    let path = compute_file_relative_path(paths.first().unwrap());
+                    let abs_path = compute_file_absolute_path(&path);
+                    file_metadata = EntryMeta::from_path(&abs_path).unwrap_or(file_metadata);
+
+                    let delete_op = IndexCmd::LocalOp {
+                        cur: path_to_vec(&path),
+                        mutation: Mutation::Delete {
+                            key: path.to_string_lossy().into_owned(),
+                        },
+                    };
+
+                    let renamed_path = compute_file_relative_path(paths.get(1).unwrap());
+                    file_metadata.name =
+                        last_name(&renamed_path).unwrap_or_else(|| String::from("empty_name??"));
+                    file_metadata.path = renamed_path.to_string_lossy().into_owned();
+
+                    let new_op = IndexCmd::LocalOp {
+                        cur: path_to_vec(&renamed_path),
+                        mutation: Mutation::New {
+                            key: renamed_path.to_string_lossy().into_owned(),
+                            value: JsonNode::Entry(file_metadata),
+                        },
+                    };
+
+                    vec![Some(delete_op), Some(new_op)]
+                }
+                _ => vec![],
+            },
         }
     }
 }
