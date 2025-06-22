@@ -38,7 +38,7 @@ pub mod watcher {
                             p.file_name().map_or(false, |name| {
                                 let name_str = name.to_str().unwrap_or("");
                                 let mut vec = RECENTLY_WRITTEN.lock().unwrap();
-                                info!(
+                                debug!(
                                     "Should this be ignored?: {}, rec WRITTEN: {:?}",
                                     name_str, vec
                                 );
@@ -57,7 +57,7 @@ pub mod watcher {
                                     || set_contains
                             })
                         }) {
-                            info!("Skiping files from event paths: {:?}", event.paths);
+                            debug!("Skiping files from event paths: {:?}", event.paths);
                             continue;
                         }
 
@@ -246,7 +246,7 @@ pub mod watcher {
                     _ => compute_file_relative_path(paths.first().unwrap()),
                 };
                 let abs_path = compute_file_absolute_path(&path);
-                file_metadata = EntryMeta::from_path(&abs_path).unwrap();
+                file_metadata = EntryMeta::from_path(&abs_path).unwrap_or(file_metadata);
                 Some(IndexCmd::LocalOp {
                     cur: path_to_vec(&path),
                     mutation: Mutation::Edit {

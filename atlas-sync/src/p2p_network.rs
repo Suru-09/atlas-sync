@@ -65,14 +65,23 @@ pub mod p2p_network {
     }
 
     #[derive(Debug, Serialize, Deserialize)]
+    pub struct SyncIndexS {
+        pub local_vv: VersionVector,
+        pub target_peer: String,
+        pub local_peer: String,
+    }
+
+    #[derive(Debug, Serialize, Deserialize)]
     pub enum PeerConnectionEvent {
         InitialConnection((String, String)),
+        SyncIndex(SyncIndexS),
         SyncFile((String, FileBlob)),
         InitialConnCompleted(String),
     }
 
     impl NetworkBehaviourEventProcess<FloodsubEvent> for AtlasSyncBehavior {
         fn inject_event(&mut self, event: FloodsubEvent) {
+            error!("Is my event received? :{:?}", event);
             match event {
                 FloodsubEvent::Message(msg) => {
                     if let Ok(parsed) = serde_json::from_slice::<Operation>(&msg.data) {
@@ -224,6 +233,27 @@ pub mod p2p_network {
                                     let _ = self.peer_tx.send(
                                         PeerConnectionEvent::InitialConnCompleted(source_peer),
                                     );
+                                }
+                            }
+                            PeerConnectionEvent::SyncIndex(sync_index) => {
+                                info!("[SyncIndex] event received: {:?}", sync_index);
+                                if PEER_ID.to_string() == sync_index.target_peer {
+                                    let source_peer =
+                                        PeerId::from_str(&sync_index.local_peer).unwrap();
+                                    let _ = self.vv_codec.send_request(
+                                        &source_peer,
+                                        VVRequest {
+                                            version_vector: sync_index.local_vv,
+                                        },
+                                    );
+
+                                    if let Err(e) = self.peer_tx.send(
+                                        PeerConnectionEvent::InitialConnCompleted(
+                                            PEER_ID.to_string(),
+                                        ),
+                                    ) {
+                                        error!("Could't finish initial connection synchronization due to err: {}", e);
+                                    }
                                 }
                             }
                         }

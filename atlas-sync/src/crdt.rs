@@ -1,6 +1,6 @@
 pub mod crdt {
     use crate::fswrapper::fswrapper::EntryMeta;
-    use log::{error, info};
+    use log::{debug, error, info};
     use serde::{Deserialize, Serialize};
     use std::collections::{BTreeMap, HashMap, HashSet};
 
@@ -100,7 +100,7 @@ pub mod crdt {
                 }
             }
 
-            error!("APPLY OP: {:?} on target: {:?}", op, target);
+            debug!("APPLY OP: {:?} on target: {:?}", op, target);
 
             match &op.mutation {
                 Mutation::New { key, value } => match target {
