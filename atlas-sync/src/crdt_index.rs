@@ -124,10 +124,10 @@ pub mod crdt_index {
         }
 
         pub fn apply_remote(&mut self, op: &Operation) -> bool {
-            if self.applied.contains(&op.id) || !op.deps.iter().all(|d| self.applied.contains(d)) {
-                debug!("I am deduplicating op: {:?}", op);
-                return false; // duplicate or out‑of‑causal‑order
-            }
+            // if self.applied.contains(&op.id) || !op.deps.iter().all(|d| self.applied.contains(d)) {
+            //     debug!("I am deduplicating op: {:?}", op);
+            //     return false; // duplicate or out‑of‑causal‑order
+            // }
             let ok = self.root.apply(op, &mut self.applied);
             if ok {
                 self.vv.record(&op.id);

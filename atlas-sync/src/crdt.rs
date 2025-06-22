@@ -88,6 +88,7 @@ pub mod crdt {
             // if !op.deps.is_subset(applied_ops) {
             //      return false;
             // }
+            //
 
             let mut target = self;
             for segment in &op.cursor {
@@ -99,7 +100,7 @@ pub mod crdt {
                 }
             }
 
-            //error!("NEWLY_CREATED: {} and target: {:?}", newly_created, target);
+            error!("APPLY OP: {:?} on target: {:?}", op, target);
 
             match &op.mutation {
                 Mutation::New { key, value } => match target {
@@ -115,16 +116,14 @@ pub mod crdt {
                 Mutation::Delete { .. } => {
                     *target = JsonNode::Tombstone;
                 }
-                Mutation::Edit { key, value } => match target {
+                Mutation::Edit { key: _, value } => match target {
                     JsonNode::Map(map) => {
-                        if let Some(entry) = map.get_mut(key) {
-                            if !matches!(entry, JsonNode::Tombstone) {
-                                *entry = value.clone();
+                        if let JsonNode::Entry(e) = value {
+                            if let Some(entry) = map.get_mut("metadata") {
+                                *entry = JsonNode::Entry(e.clone());
                             } else {
                                 return false;
                             }
-                        } else {
-                            return false;
                         }
                     }
                     _ => return false,
@@ -148,6 +147,7 @@ pub mod crdt {
         }
 
         pub fn get_entry_meta(&self, cursor: &[String]) -> Option<EntryMeta> {
+            error!("[get_entry_meta] Cursor: {:?}", cursor);
             let mut target = self;
             for segment in cursor.iter() {
                 match target {

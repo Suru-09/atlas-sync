@@ -232,7 +232,6 @@ pub mod watcher {
                 })
             }
             ModifyKind::Name(name) => {
-                error!("Why the fuck am I on RENAME????");
                 path = match name {
                     RenameMode::Both => {
                         let tmp_path = compute_file_relative_path(paths.first().unwrap());

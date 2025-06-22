@@ -2,8 +2,8 @@ pub mod p2p_network {
     use crate::crdt::crdt::{JsonNode, Mutation, Operation, VersionVector};
     use crate::crdt_index::crdt_index::IndexCmd;
     use crate::fswrapper::fswrapper::{
-        components_to_path_string, compute_file_absolute_path, delete_path, path_to_vec,
-        EditAction, FileBlob, WATCHED_PATH,
+        components_to_path_string, compute_file_absolute_path, compute_file_relative_path,
+        delete_path, last_name, path_to_vec, EditAction, FileBlob, WATCHED_PATH,
     };
     use crate::watcher::watcher::RECENTLY_WRITTEN;
     use futures::prelude::*;
@@ -78,42 +78,46 @@ pub mod p2p_network {
                     if let Ok(parsed) = serde_json::from_slice::<Operation>(&msg.data) {
                         match parsed.mutation {
                             Mutation::New { key, value } => {
-                                let path = compute_file_absolute_path(Path::new(&key));
-                                info!(
-                                    "[REMOTE_EVENT] New mutation with key: {:?} and value: {:?}",
-                                    key, value
-                                );
-                                let cmd = IndexCmd::RemoteOp {
-                                    mutation: Mutation::New {
-                                        key: key.clone(),
-                                        value: value,
-                                    },
-                                    cur: path_to_vec(&path),
-                                };
-                                let _ = self.index_tx.send(cmd);
+                                if let JsonNode::Entry(e) = value {
+                                    let root_name =
+                                        last_name(Path::new(WATCHED_PATH.get().unwrap())).unwrap();
+                                    let new_path: PathBuf =
+                                        Path::new(&e.path).components().skip(1).collect();
+                                    let path = Path::new(&root_name).join(new_path);
+                                    error!("[NEW] PATH used: {:?}", path);
+                                    info!(
+                                        "[REMOTE_EVENT] New mutation with key: {:?} and value: {:?}",
+                                        key, e
+                                    );
+                                    let cmd = IndexCmd::RemoteOp {
+                                        mutation: Mutation::New {
+                                            key: key.clone(),
+                                            value: JsonNode::Entry(e),
+                                        },
+                                        cur: path_to_vec(&path),
+                                    };
+                                    let _ = self.index_tx.send(cmd);
 
-                                let _ = self.file_request.send_request(
-                                    &PeerId::from_str(parsed.id.replica_id.as_str())
-                                        .expect("Valid peer id"),
-                                    FileRequest { name: key },
-                                );
+                                    let _ = self.file_request.send_request(
+                                        &PeerId::from_str(parsed.id.replica_id.as_str())
+                                            .expect("Valid peer id"),
+                                        FileRequest { name: key },
+                                    );
+                                }
                             }
                             Mutation::Edit { key, value } => {
-                                let path = compute_file_absolute_path(Path::new(&key));
-                                info!(
-                                    "[REMOTE_EVENT] EDIT mutation with key: {:?} and value: {:?}",
-                                    key, value
-                                );
-                                let cmd = IndexCmd::RemoteOp {
-                                    mutation: Mutation::Edit {
-                                        key: key.clone(),
-                                        value: value.clone(),
-                                    },
-                                    cur: path_to_vec(&path),
-                                };
-                                let _ = self.index_tx.send(cmd);
-
                                 if let JsonNode::Entry(e) = value {
+                                    let root_name =
+                                        last_name(Path::new(WATCHED_PATH.get().unwrap())).unwrap();
+                                    let new_path: PathBuf =
+                                        Path::new(&e.path).components().skip(1).collect();
+                                    let path = Path::new(&root_name).join(new_path);
+                                    error!("[EDIT] PATH USED: {:?}", path);
+                                    info!(
+                                        "[REMOTE_EVENT] EDIT mutation with key: {:?} and value: {:?}",
+                                        key, e
+                                    );
+
                                     let cur = path_to_vec(&path);
                                     let (entry_tx, entry_rx) = std::sync::mpsc::channel();
                                     if let Err(e) = self.index_tx.send(IndexCmd::GetEntryMetadata {
@@ -137,11 +141,21 @@ pub mod p2p_network {
                                             let _ = self.file_request.send_request(
                                                 &PeerId::from_str(parsed.id.replica_id.as_str())
                                                     .expect("Valid peer id"),
-                                                FileRequest { name: key },
+                                                FileRequest { name: key.clone() },
                                             );
                                         }
                                         _ => {}
                                     }
+
+                                    let cmd = IndexCmd::RemoteOp {
+                                        mutation: Mutation::Edit {
+                                            key: key.clone(),
+                                            value: JsonNode::Entry(e),
+                                        },
+                                        cur: path_to_vec(&path),
+                                    };
+
+                                    let _ = self.index_tx.send(cmd);
                                 }
                             }
                             Mutation::Delete { key } => {
