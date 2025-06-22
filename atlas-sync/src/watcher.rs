@@ -38,7 +38,7 @@ pub mod watcher {
                             p.file_name().map_or(false, |name| {
                                 let name_str = name.to_str().unwrap_or("");
                                 let mut vec = RECENTLY_WRITTEN.lock().unwrap();
-                                debug!(
+                                info!(
                                     "Should this be ignored?: {}, rec WRITTEN: {:?}",
                                     name_str, vec
                                 );
@@ -170,6 +170,7 @@ pub mod watcher {
     }
 
     fn extract_update_cmd(paths: &Vec<PathBuf>, modify_kind: &ModifyKind) -> Vec<Option<IndexCmd>> {
+        error!("Who am I? ev: {:?} with paths: {:?}", modify_kind, paths);
         if paths.len() >= 3 || paths.len() < 1 {
             panic!("Should be some logical value...");
         }
@@ -267,6 +268,22 @@ pub mod watcher {
                     };
 
                     vec![Some(delete_op), Some(new_op)]
+                }
+                // for some reason this one is editing a file...
+                RenameMode::To => {
+                    let path = compute_file_relative_path(paths.first().unwrap());
+                    let abs_path = compute_file_absolute_path(&path);
+                    file_metadata = EntryMeta::from_path(&abs_path).unwrap_or(file_metadata);
+
+                    let update_op = IndexCmd::LocalOp {
+                        cur: path_to_vec(&path),
+                        mutation: Mutation::Edit {
+                            key: path.to_string_lossy().into_owned(),
+                            value: JsonNode::Entry(file_metadata),
+                        },
+                    };
+
+                    vec![Some(update_op)]
                 }
                 _ => vec![],
             },

@@ -81,23 +81,22 @@ pub mod p2p_network {
 
     impl NetworkBehaviourEventProcess<FloodsubEvent> for AtlasSyncBehavior {
         fn inject_event(&mut self, event: FloodsubEvent) {
-            error!("Is my event received? :{:?}", event);
             match event {
                 FloodsubEvent::Message(msg) => {
                     if let Ok(parsed) = serde_json::from_slice::<Operation>(&msg.data) {
                         match parsed.mutation {
                             Mutation::New { key, value } => {
+                                info!(
+                                    "[REMOTE_EVENT] New mutation with key: {:?} and value: {:?}",
+                                    key, value
+                                );
                                 if let JsonNode::Entry(e) = value {
                                     let root_name =
                                         last_name(Path::new(WATCHED_PATH.get().unwrap())).unwrap();
                                     let new_path: PathBuf =
                                         Path::new(&e.path).components().skip(1).collect();
                                     let path = Path::new(&root_name).join(new_path);
-                                    error!("[NEW] PATH used: {:?}", path);
-                                    info!(
-                                        "[REMOTE_EVENT] New mutation with key: {:?} and value: {:?}",
-                                        key, e
-                                    );
+
                                     let cmd = IndexCmd::RemoteOp {
                                         mutation: Mutation::New {
                                             key: key.clone(),
@@ -115,6 +114,10 @@ pub mod p2p_network {
                                 }
                             }
                             Mutation::Edit { key, value } => {
+                                info!(
+                                    "[REMOTE_EVENT] Edit mutation with key: {:?} and value: {:?}",
+                                    key, value
+                                );
                                 if let JsonNode::Entry(e) = value {
                                     let root_name =
                                         last_name(Path::new(WATCHED_PATH.get().unwrap())).unwrap();
@@ -165,20 +168,34 @@ pub mod p2p_network {
                                     };
 
                                     let _ = self.index_tx.send(cmd);
+                                } else {
+                                    error!(
+                                        "What am I if not an entry???? key: {}, value: {:?}",
+                                        key, value
+                                    );
                                 }
                             }
                             Mutation::Delete { key } => {
                                 info!("[REMOTE_EVENT] DELETE mutation with key: {:?}.", key);
-                                let path = compute_file_absolute_path(Path::new(&key));
+                                let root_name =
+                                    last_name(Path::new(WATCHED_PATH.get().unwrap())).unwrap();
+                                let new_path: PathBuf =
+                                    Path::new(&key).components().skip(1).collect();
+                                let path = Path::new(&root_name).join(new_path);
+                                let abs_path = compute_file_absolute_path(&path);
+
                                 let cmd = IndexCmd::RemoteOp {
                                     mutation: Mutation::Delete { key: key.clone() },
                                     cur: path_to_vec(&path),
                                 };
                                 let _ = self.index_tx.send(cmd);
-                                match delete_path(path) {
+                                match delete_path(abs_path.clone()) {
                                     Ok(_) => {}
                                     Err(e) => {
-                                        error!("Could not delete path due to: {:?}", e)
+                                        error!(
+                                            "Could not delete path: {:?} due to: {}",
+                                            abs_path, e
+                                        )
                                     }
                                 }
                             }

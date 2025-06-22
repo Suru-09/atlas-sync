@@ -1,17 +1,6 @@
 {
-  "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv",
+  "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v",
   "root": {
-    "src": {
-      "resources": {
-        "test_watcher": {
-          "watched": {
-            "another_folder": "Tombstone",
-            "file8": "Tombstone",
-            "weird_file.txt": "Tombstone"
-          }
-        }
-      }
-    },
     "test_watcher": {
       ".DS_Store": {
         "metadata": {
@@ -28,30 +17,30 @@
         }
       },
       "another_folder": {
-        "Untitled Document": "Tombstone",
-        "empty_file.txt": {
+        "empty_file.txt": "Tombstone",
+        "empty_file_enhanced_version.txt": {
           "metadata": {
-            "name": "empty_file.txt",
-            "path": "test_watcher/another_folder/empty_file.txt",
-            "is_directory": false,
-            "accessed": null,
-            "modified": null,
-            "created": null,
-            "permissions": null,
-            "size": null,
+            "name": "empty_file_enhanced_version.txt",
+            "path": "test_watcher/another_folder/empty_file_enhanced_version.txt",
+            "is_directory": true,
+            "accessed": 1750601623,
+            "modified": 1750601623,
+            "created": 1750601623,
+            "permissions": 33204,
+            "size": 11,
             "owner": null,
-            "content_hash": null
+            "content_hash": "7c7513eba3b0749c12a27723a97783234764f971c15b2307ce9b2e11d18bfd0f"
           }
         },
         "metadata": {
           "name": "another_folder",
           "path": "test_watcher/another_folder",
-          "is_directory": false,
-          "accessed": null,
-          "modified": null,
-          "created": null,
-          "permissions": null,
-          "size": null,
+          "is_directory": true,
+          "accessed": 1750601581,
+          "modified": 1750601580,
+          "created": 1746284810,
+          "permissions": 16893,
+          "size": 4096,
           "owner": null,
           "content_hash": null
         }
@@ -74,21 +63,20 @@
         "name": "test_watcher",
         "path": "test_watcher",
         "is_directory": true,
-        "accessed": 1750600271,
-        "modified": 1750600271,
+        "accessed": 1750601584,
+        "modified": 1750601584,
         "created": 1745950619,
         "permissions": 16893,
         "size": 4096,
         "owner": null,
         "content_hash": null
       },
-      "unamed5": "Tombstone",
       "weird_file.txt": {
         "metadata": {
           "name": "weird_file.txt",
           "path": "test_watcher/weird_file.txt",
           "is_directory": true,
-          "accessed": 1750538911,
+          "accessed": 1750600277,
           "modified": 1750538911,
           "created": 1749484361,
           "permissions": 33204,
@@ -100,101 +88,85 @@
     }
   },
   "root_path": "src/resources/test_watcher/index.json",
-  "clock": 21,
+  "clock": 18,
   "vv": {
-    "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv": 21
+    "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v": 18
   },
   "applied": [
     {
-      "counter": 10,
-      "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-    },
-    {
-      "counter": 4,
-      "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-    },
-    {
-      "counter": 8,
-      "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-    },
-    {
-      "counter": 2,
-      "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-    },
-    {
-      "counter": 17,
-      "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-    },
-    {
-      "counter": 18,
-      "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-    },
-    {
-      "counter": 13,
-      "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-    },
-    {
-      "counter": 15,
-      "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-    },
-    {
-      "counter": 11,
-      "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-    },
-    {
-      "counter": 19,
-      "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-    },
-    {
-      "counter": 21,
-      "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-    },
-    {
-      "counter": 1,
-      "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-    },
-    {
-      "counter": 5,
-      "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-    },
-    {
-      "counter": 12,
-      "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-    },
-    {
       "counter": 6,
-      "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
+      "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
     },
     {
       "counter": 9,
-      "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-    },
-    {
-      "counter": 14,
-      "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
+      "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
     },
     {
       "counter": 16,
-      "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
+      "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
     },
     {
-      "counter": 20,
-      "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
+      "counter": 5,
+      "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
     },
     {
-      "counter": 7,
-      "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
+      "counter": 4,
+      "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
     },
     {
       "counter": 3,
-      "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
+      "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+    },
+    {
+      "counter": 1,
+      "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+    },
+    {
+      "counter": 7,
+      "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+    },
+    {
+      "counter": 10,
+      "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+    },
+    {
+      "counter": 11,
+      "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+    },
+    {
+      "counter": 2,
+      "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+    },
+    {
+      "counter": 18,
+      "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+    },
+    {
+      "counter": 15,
+      "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+    },
+    {
+      "counter": 17,
+      "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+    },
+    {
+      "counter": 13,
+      "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+    },
+    {
+      "counter": 14,
+      "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+    },
+    {
+      "counter": 8,
+      "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
     }
   ],
   "op_log": [
     {
       "id": {
         "counter": 1,
-        "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
+        "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
       },
       "deps": [],
       "cursor": [
@@ -207,8 +179,8 @@
             "name": "test_watcher",
             "path": "test_watcher",
             "is_directory": true,
-            "accessed": 1750600271,
-            "modified": 1750600271,
+            "accessed": 1750601584,
+            "modified": 1750601584,
             "created": 1745950619,
             "permissions": 16893,
             "size": 4096,
@@ -221,12 +193,79 @@
     {
       "id": {
         "counter": 2,
-        "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
+        "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
       },
       "deps": [
         {
           "counter": 1,
-          "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
+          "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "another_folder"
+      ],
+      "mutation": {
+        "New": {
+          "key": "another_folder",
+          "value": {
+            "name": "another_folder",
+            "path": "test_watcher/another_folder",
+            "is_directory": true,
+            "accessed": 1750601581,
+            "modified": 1750601580,
+            "created": 1746284810,
+            "permissions": 16893,
+            "size": 4096,
+            "owner": null,
+            "content_hash": null
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 3,
+        "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+      },
+      "deps": [
+        {
+          "counter": 2,
+          "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "another_folder",
+        "empty_file.txt"
+      ],
+      "mutation": {
+        "New": {
+          "key": "empty_file.txt",
+          "value": {
+            "name": "empty_file.txt",
+            "path": "test_watcher/another_folder/empty_file.txt",
+            "is_directory": true,
+            "accessed": 1750601580,
+            "modified": 1750601580,
+            "created": 1750601580,
+            "permissions": 33204,
+            "size": 0,
+            "owner": null,
+            "content_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 4,
+        "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+      },
+      "deps": [
+        {
+          "counter": 3,
+          "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
         }
       ],
       "cursor": [
@@ -253,13 +292,13 @@
     },
     {
       "id": {
-        "counter": 3,
-        "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
+        "counter": 5,
+        "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
       },
       "deps": [
         {
-          "counter": 2,
-          "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
+          "counter": 4,
+          "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
         }
       ],
       "cursor": [
@@ -273,7 +312,7 @@
             "name": "weird_file.txt",
             "path": "test_watcher/weird_file.txt",
             "is_directory": true,
-            "accessed": 1750538911,
+            "accessed": 1750600277,
             "modified": 1750538911,
             "created": 1749484361,
             "permissions": 33204,
@@ -286,13 +325,13 @@
     },
     {
       "id": {
-        "counter": 4,
-        "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
+        "counter": 6,
+        "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
       },
       "deps": [
         {
-          "counter": 3,
-          "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
+          "counter": 5,
+          "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
         }
       ],
       "cursor": [
@@ -319,334 +358,13 @@
     },
     {
       "id": {
-        "counter": 5,
-        "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-      },
-      "deps": [
-        {
-          "counter": 4,
-          "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-        }
-      ],
-      "cursor": [
-        "test_watcher",
-        "unamed5"
-      ],
-      "mutation": {
-        "New": {
-          "key": "unamed5",
-          "value": {
-            "name": "unamed5",
-            "path": "test_watcher/unamed5",
-            "is_directory": true,
-            "accessed": 1750593772,
-            "modified": 1750593772,
-            "created": 1746284810,
-            "permissions": 16893,
-            "size": 4096,
-            "owner": null,
-            "content_hash": null
-          }
-        }
-      }
-    },
-    {
-      "id": {
-        "counter": 6,
-        "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-      },
-      "deps": [
-        {
-          "counter": 5,
-          "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-        }
-      ],
-      "cursor": [
-        "test_watcher",
-        "unamed5"
-      ],
-      "mutation": {
-        "Delete": {
-          "key": "test_watcher/unamed5"
-        }
-      }
-    },
-    {
-      "id": {
         "counter": 7,
-        "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
+        "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
       },
       "deps": [
         {
           "counter": 6,
-          "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-        }
-      ],
-      "cursor": [
-        "test_watcher",
-        "unamed5"
-      ],
-      "mutation": {
-        "Delete": {
-          "key": "test_watcher/unamed5"
-        }
-      }
-    },
-    {
-      "id": {
-        "counter": 8,
-        "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-      },
-      "deps": [
-        {
-          "counter": 7,
-          "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-        }
-      ],
-      "cursor": [
-        "test_watcher",
-        "another_folder"
-      ],
-      "mutation": {
-        "New": {
-          "key": "test_watcher/another_folder",
-          "value": {
-            "name": "another_folder",
-            "path": "test_watcher/another_folder",
-            "is_directory": false,
-            "accessed": null,
-            "modified": null,
-            "created": null,
-            "permissions": null,
-            "size": null,
-            "owner": null,
-            "content_hash": null
-          }
-        }
-      }
-    },
-    {
-      "id": {
-        "counter": 9,
-        "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-      },
-      "deps": [
-        {
-          "counter": 8,
-          "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-        }
-      ],
-      "cursor": [
-        "test_watcher",
-        "another_folder"
-      ],
-      "mutation": {
-        "New": {
-          "key": "test_watcher/another_folder",
-          "value": {
-            "name": "another_folder",
-            "path": "test_watcher/another_folder",
-            "is_directory": false,
-            "accessed": null,
-            "modified": null,
-            "created": null,
-            "permissions": null,
-            "size": null,
-            "owner": null,
-            "content_hash": null
-          }
-        }
-      }
-    },
-    {
-      "id": {
-        "counter": 10,
-        "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-      },
-      "deps": [
-        {
-          "counter": 9,
-          "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-        }
-      ],
-      "cursor": [
-        "test_watcher",
-        "another_folder",
-        "Untitled Document"
-      ],
-      "mutation": {
-        "New": {
-          "key": "test_watcher/another_folder/Untitled Document",
-          "value": {
-            "name": "Untitled Document",
-            "path": "test_watcher/another_folder/Untitled Document",
-            "is_directory": true,
-            "accessed": 1750600295,
-            "modified": 1750600295,
-            "created": 1750600295,
-            "permissions": 33204,
-            "size": 1,
-            "owner": null,
-            "content_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
-          }
-        }
-      }
-    },
-    {
-      "id": {
-        "counter": 11,
-        "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-      },
-      "deps": [
-        {
-          "counter": 10,
-          "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-        }
-      ],
-      "cursor": [
-        "test_watcher",
-        "another_folder",
-        "Untitled Document"
-      ],
-      "mutation": {
-        "New": {
-          "key": "test_watcher/another_folder/Untitled Document",
-          "value": {
-            "name": "Untitled Document",
-            "path": "test_watcher/another_folder/Untitled Document",
-            "is_directory": true,
-            "accessed": 1750600295,
-            "modified": 1750600295,
-            "created": 1750600295,
-            "permissions": 33204,
-            "size": 1,
-            "owner": null,
-            "content_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
-          }
-        }
-      }
-    },
-    {
-      "id": {
-        "counter": 12,
-        "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-      },
-      "deps": [
-        {
-          "counter": 11,
-          "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-        }
-      ],
-      "cursor": [
-        "test_watcher",
-        "another_folder",
-        "Untitled Document"
-      ],
-      "mutation": {
-        "Edit": {
-          "key": "test_watcher/another_folder/Untitled Document",
-          "value": {
-            "name": "Untitled Document",
-            "path": "test_watcher/another_folder/Untitled Document",
-            "is_directory": true,
-            "accessed": 1750600295,
-            "modified": 1750600295,
-            "created": 1750600295,
-            "permissions": 33204,
-            "size": 1,
-            "owner": null,
-            "content_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
-          }
-        }
-      }
-    },
-    {
-      "id": {
-        "counter": 13,
-        "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-      },
-      "deps": [
-        {
-          "counter": 12,
-          "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-        }
-      ],
-      "cursor": [
-        "test_watcher",
-        "another_folder",
-        "Untitled Document"
-      ],
-      "mutation": {
-        "Edit": {
-          "key": "test_watcher/another_folder/Untitled Document",
-          "value": {
-            "name": "Untitled Document",
-            "path": "test_watcher/another_folder/Untitled Document",
-            "is_directory": true,
-            "accessed": 1750600295,
-            "modified": 1750600295,
-            "created": 1750600295,
-            "permissions": 33204,
-            "size": 1,
-            "owner": null,
-            "content_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
-          }
-        }
-      }
-    },
-    {
-      "id": {
-        "counter": 14,
-        "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-      },
-      "deps": [
-        {
-          "counter": 13,
-          "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-        }
-      ],
-      "cursor": [
-        "test_watcher",
-        "another_folder",
-        "Untitled Document"
-      ],
-      "mutation": {
-        "Delete": {
-          "key": "test_watcher/another_folder/Untitled Document"
-        }
-      }
-    },
-    {
-      "id": {
-        "counter": 15,
-        "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-      },
-      "deps": [
-        {
-          "counter": 14,
-          "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-        }
-      ],
-      "cursor": [
-        "test_watcher",
-        "another_folder",
-        "Untitled Document"
-      ],
-      "mutation": {
-        "Delete": {
-          "key": "test_watcher/another_folder/Untitled Document"
-        }
-      }
-    },
-    {
-      "id": {
-        "counter": 16,
-        "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-      },
-      "deps": [
-        {
-          "counter": 15,
-          "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
+          "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
         }
       ],
       "cursor": [
@@ -655,11 +373,247 @@
         "empty_file.txt"
       ],
       "mutation": {
-        "New": {
+        "Edit": {
+          "key": "watched/another_folder/empty_file.txt",
+          "value": {
+            "name": "empty_file.txt",
+            "path": "watched/another_folder/empty_file.txt",
+            "is_directory": true,
+            "accessed": 1750601611,
+            "modified": 1750601611,
+            "created": 1750601611,
+            "permissions": 33204,
+            "size": 11,
+            "owner": null,
+            "content_hash": "7c7513eba3b0749c12a27723a97783234764f971c15b2307ce9b2e11d18bfd0f"
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 8,
+        "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+      },
+      "deps": [
+        {
+          "counter": 7,
+          "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "another_folder",
+        "empty_file.txt"
+      ],
+      "mutation": {
+        "Edit": {
           "key": "test_watcher/another_folder/empty_file.txt",
           "value": {
             "name": "empty_file.txt",
             "path": "test_watcher/another_folder/empty_file.txt",
+            "is_directory": true,
+            "accessed": 1750601598,
+            "modified": 1750601611,
+            "created": 1750601580,
+            "permissions": 33204,
+            "size": 11,
+            "owner": null,
+            "content_hash": "7c7513eba3b0749c12a27723a97783234764f971c15b2307ce9b2e11d18bfd0f"
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 9,
+        "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+      },
+      "deps": [
+        {
+          "counter": 8,
+          "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "another_folder",
+        "empty_file.txt"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "test_watcher/another_folder/empty_file.txt",
+          "value": {
+            "name": "empty_file.txt",
+            "path": "test_watcher/another_folder/empty_file.txt",
+            "is_directory": true,
+            "accessed": 1750601598,
+            "modified": 1750601611,
+            "created": 1750601580,
+            "permissions": 33204,
+            "size": 11,
+            "owner": null,
+            "content_hash": "7c7513eba3b0749c12a27723a97783234764f971c15b2307ce9b2e11d18bfd0f"
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 10,
+        "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+      },
+      "deps": [
+        {
+          "counter": 9,
+          "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "another_folder",
+        "empty_file.txt"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "test_watcher/another_folder/empty_file.txt",
+          "value": {
+            "name": "empty_file.txt",
+            "path": "test_watcher/another_folder/empty_file.txt",
+            "is_directory": true,
+            "accessed": 1750601611,
+            "modified": 1750601611,
+            "created": 1750601580,
+            "permissions": 33204,
+            "size": 11,
+            "owner": null,
+            "content_hash": "7c7513eba3b0749c12a27723a97783234764f971c15b2307ce9b2e11d18bfd0f"
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 11,
+        "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+      },
+      "deps": [
+        {
+          "counter": 10,
+          "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "another_folder",
+        "empty_file.txt"
+      ],
+      "mutation": {
+        "Edit": {
+          "key": "test_watcher/another_folder/empty_file.txt",
+          "value": {
+            "name": "empty_file.txt",
+            "path": "test_watcher/another_folder/empty_file.txt",
+            "is_directory": true,
+            "accessed": 1750601611,
+            "modified": 1750601611,
+            "created": 1750601580,
+            "permissions": 33204,
+            "size": 11,
+            "owner": null,
+            "content_hash": "7c7513eba3b0749c12a27723a97783234764f971c15b2307ce9b2e11d18bfd0f"
+          }
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 13,
+        "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+      },
+      "deps": [
+        {
+          "counter": 11,
+          "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "another_folder",
+        "empty_file.txt"
+      ],
+      "mutation": {
+        "Delete": {
+          "key": "watched/another_folder/empty_file.txt"
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 14,
+        "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+      },
+      "deps": [
+        {
+          "counter": 13,
+          "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "another_folder",
+        "empty_file.txt"
+      ],
+      "mutation": {
+        "Delete": {
+          "key": "test_watcher/another_folder/empty_file.txt"
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 15,
+        "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+      },
+      "deps": [
+        {
+          "counter": 14,
+          "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "another_folder",
+        "empty_file.txt"
+      ],
+      "mutation": {
+        "Delete": {
+          "key": "test_watcher/another_folder/empty_file.txt"
+        }
+      }
+    },
+    {
+      "id": {
+        "counter": 16,
+        "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+      },
+      "deps": [
+        {
+          "counter": 15,
+          "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
+        }
+      ],
+      "cursor": [
+        "test_watcher",
+        "another_folder",
+        "empty_file_enhanced_version.txt"
+      ],
+      "mutation": {
+        "New": {
+          "key": "watched/another_folder/empty_file_enhanced_version.txt",
+          "value": {
+            "name": "empty_file_enhanced_version.txt",
+            "path": "watched/another_folder/empty_file_enhanced_version.txt",
             "is_directory": false,
             "accessed": null,
             "modified": null,
@@ -675,33 +629,33 @@
     {
       "id": {
         "counter": 17,
-        "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
+        "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
       },
       "deps": [
         {
           "counter": 16,
-          "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
+          "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
         }
       ],
       "cursor": [
         "test_watcher",
         "another_folder",
-        "empty_file.txt"
+        "empty_file_enhanced_version.txt"
       ],
       "mutation": {
-        "New": {
-          "key": "test_watcher/another_folder/empty_file.txt",
+        "Edit": {
+          "key": "test_watcher/another_folder/empty_file_enhanced_version.txt",
           "value": {
-            "name": "empty_file.txt",
-            "path": "test_watcher/another_folder/empty_file.txt",
-            "is_directory": false,
-            "accessed": null,
-            "modified": null,
-            "created": null,
-            "permissions": null,
-            "size": null,
+            "name": "empty_file_enhanced_version.txt",
+            "path": "test_watcher/another_folder/empty_file_enhanced_version.txt",
+            "is_directory": true,
+            "accessed": 1750601623,
+            "modified": 1750601623,
+            "created": 1750601623,
+            "permissions": 33204,
+            "size": 11,
             "owner": null,
-            "content_hash": null
+            "content_hash": "7c7513eba3b0749c12a27723a97783234764f971c15b2307ce9b2e11d18bfd0f"
           }
         }
       }
@@ -709,97 +663,34 @@
     {
       "id": {
         "counter": 18,
-        "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
+        "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
       },
       "deps": [
         {
           "counter": 17,
-          "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
+          "replica_id": "12D3KooWKWw9wzXNLQvxUM5FR7GBfwx2z1JeMnaPnaMM2Mz1mt9v"
         }
       ],
       "cursor": [
-        "src",
-        "resources",
         "test_watcher",
-        "watched",
         "another_folder",
-        "empty_file.txt"
+        "empty_file_enhanced_version.txt"
       ],
       "mutation": {
-        "Delete": {
-          "key": "watched/another_folder/empty_file.txt"
-        }
-      }
-    },
-    {
-      "id": {
-        "counter": 19,
-        "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-      },
-      "deps": [
-        {
-          "counter": 18,
-          "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-        }
-      ],
-      "cursor": [
-        "src",
-        "resources",
-        "test_watcher",
-        "watched",
-        "file8"
-      ],
-      "mutation": {
-        "Delete": {
-          "key": "watched/file8"
-        }
-      }
-    },
-    {
-      "id": {
-        "counter": 20,
-        "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-      },
-      "deps": [
-        {
-          "counter": 19,
-          "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-        }
-      ],
-      "cursor": [
-        "src",
-        "resources",
-        "test_watcher",
-        "watched",
-        "weird_file.txt"
-      ],
-      "mutation": {
-        "Delete": {
-          "key": "watched/weird_file.txt"
-        }
-      }
-    },
-    {
-      "id": {
-        "counter": 21,
-        "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-      },
-      "deps": [
-        {
-          "counter": 20,
-          "replica_id": "12D3KooWG2nQtUwjWDLFJKBXJBhT87gR6o5sL3wkP15nrbFKjjPv"
-        }
-      ],
-      "cursor": [
-        "src",
-        "resources",
-        "test_watcher",
-        "watched",
-        "another_folder"
-      ],
-      "mutation": {
-        "Delete": {
-          "key": "watched/another_folder"
+        "Edit": {
+          "key": "test_watcher/another_folder/empty_file_enhanced_version.txt",
+          "value": {
+            "name": "empty_file_enhanced_version.txt",
+            "path": "test_watcher/another_folder/empty_file_enhanced_version.txt",
+            "is_directory": true,
+            "accessed": 1750601623,
+            "modified": 1750601623,
+            "created": 1750601623,
+            "permissions": 33204,
+            "size": 11,
+            "owner": null,
+            "content_hash": "7c7513eba3b0749c12a27723a97783234764f971c15b2307ce9b2e11d18bfd0f"
+          }
         }
       }
     }
