@@ -170,7 +170,10 @@ pub mod watcher {
     }
 
     fn extract_update_cmd(paths: &Vec<PathBuf>, modify_kind: &ModifyKind) -> Vec<Option<IndexCmd>> {
-        error!("Who am I? ev: {:?} with paths: {:?}", modify_kind, paths);
+        debug!(
+            "[extract_update_cmd] Update event: {:?} with paths: {:?}",
+            modify_kind, paths
+        );
         if paths.len() >= 3 || paths.len() < 1 {
             panic!("Should be some logical value...");
         }
@@ -280,6 +283,18 @@ pub mod watcher {
                         mutation: Mutation::Edit {
                             key: path.to_string_lossy().into_owned(),
                             value: JsonNode::Entry(file_metadata),
+                        },
+                    };
+
+                    vec![Some(update_op)]
+                }
+                // for some reason this one is deleting a file...
+                RenameMode::From => {
+                    let path = compute_file_relative_path(paths.first().unwrap());
+                    let update_op = IndexCmd::LocalOp {
+                        cur: path_to_vec(&path),
+                        mutation: Mutation::Delete {
+                            key: path.to_string_lossy().into_owned(),
                         },
                     };
 
