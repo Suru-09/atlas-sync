@@ -5,7 +5,7 @@ pub mod watcher {
         compute_file_absolute_path, compute_file_relative_path, last_name, path_to_vec, EntryMeta,
     };
     use log::{debug, error, info};
-    use notify::event::{CreateKind, DataChange, MetadataKind, ModifyKind, RemoveKind, RenameMode};
+    use notify::event::{CreateKind, MetadataKind, ModifyKind, RemoveKind, RenameMode};
     use notify::{
         Event, EventKind, RecommendedWatcher, RecursiveMode, Result as NotifyResult, Watcher,
     };

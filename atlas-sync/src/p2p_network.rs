@@ -2,8 +2,8 @@ pub mod p2p_network {
     use crate::crdt::crdt::{JsonNode, Mutation, Operation, VersionVector};
     use crate::crdt_index::crdt_index::IndexCmd;
     use crate::fswrapper::fswrapper::{
-        components_to_path_string, compute_file_absolute_path, compute_file_relative_path,
-        delete_path, last_name, path_to_vec, EditAction, FileBlob, WATCHED_PATH,
+        components_to_path_string, compute_file_absolute_path, delete_path, last_name, path_to_vec,
+        EditAction, FileBlob, WATCHED_PATH,
     };
     use crate::watcher::watcher::RECENTLY_WRITTEN;
     use futures::prelude::*;
